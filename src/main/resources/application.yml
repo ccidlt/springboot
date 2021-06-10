@@ -80,6 +80,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true #t对应属性可驼峰命名
     cache-enabled: true #开启全局二级缓存
+    call-setters-on-nulls: true #resultMap返回的是Map时，返回值为空的键值关系
 
 #PageHelper分页
 pagehelper:
