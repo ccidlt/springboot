@@ -1,23 +1,28 @@
 package com.ds;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @SpringBootApplication
-@EnableTransactionManagement
+//@EnableTransactionManagement
+@MapperScan("com.ds.dao")
 @EnableAsync
 @EnableScheduling
 @Slf4j
+@ServletComponentScan//检索@WebFilter、@WebListener
+@EnableSwagger2
 public class SpringbootApplication {
 
     public static void main(String[] args) {

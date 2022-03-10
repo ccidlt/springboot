@@ -1,8 +1,9 @@
 package com.ds.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -18,22 +19,29 @@ import java.util.List;
 @Configuration
 public class MyWebMvcConfig implements WebMvcConfigurer {
 
+    @Bean
+    public LoginInterceptor getLoginInterceptor(){
+        return new LoginInterceptor();
+    }
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/index.html").setViewName("index");
+        registry.addViewController("/").setViewName("forward:/login.html");
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration = registry.addInterceptor(new LoginInterceptor());
+        InterceptorRegistration registration = registry.addInterceptor(getLoginInterceptor());
         registration.addPathPatterns("/**");
         registration.excludePathPatterns(
                 "/toLogin",
                 "/login",
+                "/error",
                 "/**/*.html",
                 "/**/*.js",
-                "/**/*.css"
+                "/**/*.css",
+                "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
         );
     }
 
@@ -43,9 +51,8 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
          */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**").addResourceLocations("/images/");
-        registry.addResourceHandler("/js/**").addResourceLocations("/js/");
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+        registry.addResourceHandler("/mytest/**").addResourceLocations("classpath:/mytest/");
+        registry.addResourceHandler("/fileData/**").addResourceLocations("file:D:/myFile/");
     }
 
     /**
@@ -53,8 +60,17 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
      * @return
      */
     @Bean
-    public InternalResourceViewResolver resourceViewResolver()
-    {
+    public InternalResourceViewResolver resourceViewResolver() {
+        //thymeleaf默认提供的视图解析器，映射到template目录下，如果要访问页面自定义的目录，就需要在application.properties中配置
+        //1.thymeleaf依赖包
+        //2.application.properties中配置
+        //  spring.thymeleaf.prefix=classpath:/page/
+        //  spring.thymeleaf.suffix=.html
+
+        //thymeleaf优先级大于mvc
+        //1.application.properties中配置
+        //  spring.mvc.view.prefix=/html/
+        //  spring.mvc.view.suffix=.jsp
         InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
         //请求视图文件的前缀地址
         internalResourceViewResolver.setPrefix("/html/");

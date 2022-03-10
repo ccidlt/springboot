@@ -1,13 +1,8 @@
 package com.ds.config;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -23,9 +18,11 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @description redis配置  配置序列化方式以及缓存管理器 
@@ -39,7 +36,7 @@ Json序列化 - Json对象被缓存时的序列化
 @Cacheable - 表明对应方法的返回结果可以被缓存，首次调用后，下次就从缓存中读取结果，方法不会再被执行了。
 @CachePut - 更新缓存，方法每次都会执行
 @CacheEvict - 清除缓存，方法每次都会执行
-例如：@Cacheable(value = "user", key= "#userId") 不写key可以使用KeyGenerator="KeyGenerator"定义的键
+例如：@Cacheable(value = "user", key= "#userId") 不写key可以使用KeyGenerator="keyGenerator"定义的键
  */
 @Configuration
 @EnableCaching

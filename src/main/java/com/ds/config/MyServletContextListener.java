@@ -5,10 +5,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 
-@WebListener
+//@WebListener
+//@Component
 public class MyServletContextListener implements ServletContextListener {
 	private static WebApplicationContext context;
 

@@ -1,10 +1,14 @@
 package com.ds.config;
 
-import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-@WebListener
+/**
+ * request.getSession()触发sessionCreated
+ * request.getSession().invalidate()触发sessionDestroyed
+ */
+//@WebListener
+//@Component
 public class MyHttpSessionListener implements HttpSessionListener {
 	public static int online = 0;
 
