@@ -22,6 +22,7 @@ public interface UserService {
     public List<Boy> queryBoy(Boy boy);
 
     public int addBoy(Boy boy);
+    public Boy addBoy2(Boy boy);
 
     public int updateBoy(Boy boy);
 

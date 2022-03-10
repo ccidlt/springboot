@@ -1,5 +1,6 @@
 package com.ds.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ds.dao.UserDao;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 
 @Service("userService")
+@DS("db2")
 @CacheConfig(cacheNames = "user")
 public class UserServiceImpl implements UserService {
 
@@ -65,7 +67,12 @@ public class UserServiceImpl implements UserService {
     @Cacheable(keyGenerator = "keyGenerator")
     public List<Boy> queryBoy(Boy boy){
         QueryWrapper<Boy> objectQueryWrapper = new QueryWrapper<>();
-        objectQueryWrapper.like("name", boy.getName()).orderByDesc("id");
+        if(boy.getId() != 0){
+            objectQueryWrapper.eq("id", boy.getId());
+        }
+        if(boy.getName() != null){
+            objectQueryWrapper.like("name", boy.getName()).orderByDesc("id");
+        }
         List<Boy> boys = userDao.selectList(objectQueryWrapper);
         return boys;
     }
@@ -77,6 +84,12 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(key = "#boy.id+'_add_'+#boy.name", beforeInvocation = true, allEntries = true)
     public int addBoy(Boy boy){
         return userDao.insert(boy);
+    }
+    @Transactional
+    @CacheEvict(keyGenerator = "keyGenerator",allEntries = true)
+    public Boy addBoy2(Boy boy) {
+        userDao.insertBoy(boy);
+        return boy;
     }
 
     //修改
@@ -96,6 +109,10 @@ public class UserServiceImpl implements UserService {
     //分页
     @Cacheable(keyGenerator = "keyGenerator")
     public Page<Boy> queryBoy(int pagenum, int pagesize){
+        /*PageHelper.startPage(pagenum,pagesize);
+        List<Boy> boys = userDao.getBoyDataPage();
+        PageInfo<Boy> boyPageInfo = new PageInfo<>(boys);
+        return boyPageInfo.getList();*/
         Page<Boy> boyPage = new Page<>(pagenum, pagesize);
         userDao.selectPage(boyPage, null);
         return boyPage;

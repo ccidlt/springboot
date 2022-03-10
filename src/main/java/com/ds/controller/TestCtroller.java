@@ -1,7 +1,7 @@
 package com.ds.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ds.config.RedisUtils;
+import com.ds.utils.RedisUtils;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.User;
 import com.ds.service.MyAspectInterface;

@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ds.dao.UserDao">
-  <cache/>
-  <select id="getBoys" resultType="Boy">
---     select
---     b.id,
---     b.name,
---     group_concat(g.name)
---     from boy b
---     left join girl g on b.id=g.bid
---     group by b.id, b.name
+    <!--<cache-ref namespace="com.ds.dao.UserDao"></cache-ref>-->
+  <select id="getBoys" resultType="com.ds.entity.Boy">
+/*    select
+    b.id,
+    b.name,
+    group_concat(g.name)
+    from boy b
+    left join girl g on b.id=g.bid
+    group by b.id, b.name*/
     select b.*, g.name as girls from boy b left join girl g on b.id=g.bid
+  </select>
+
+    <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">
+    select * from boy where isdelete=0
   </select>
 </mapper>
