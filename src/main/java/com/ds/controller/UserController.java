@@ -4,6 +4,9 @@ import com.ds.entity.Boy;
 import com.ds.service.UserService;
 import com.ds.utils.Result;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -24,7 +28,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/")
 @Api("接口")
+@Slf4j
 public class UserController {
+
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     @Qualifier("userService")
@@ -38,7 +45,10 @@ public class UserController {
             @ApiResponse(code=500,message="后端程序报错")
     })
     public List<Boy> getBoys(){
-        return userService.getBoys();
+        List<Boy> boys = userService.getBoys();
+        logger.info("获取所有的表数据条数={}",boys != null ? boys.size() : 0);
+        log.info("获取所有的表数据条数={}",boys != null ? boys.size() : 0);
+        return boys;
     }
 
     @RequestMapping(value="/getBoysById",method = RequestMethod.GET)
@@ -66,7 +76,11 @@ public class UserController {
     @RequestMapping(value="/upload",method = RequestMethod.POST)
     @ApiOperation("文件上传")
     @ApiImplicitParam(name="file",value="文件",required = true,paramType = "query",dataType = "file")
-    public Result upload(MultipartFile file){
+    public Result upload(MultipartFile file, HttpServletRequest request){
+        /*ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
+        MultipartFile file = multipartHttpServletRequest.getFile("file");*/
         Result result = Result.getResult("1","文件上传成功","a");
         String originalFilename = file.getOriginalFilename();
         String hz = originalFilename.substring(originalFilename.lastIndexOf("."));

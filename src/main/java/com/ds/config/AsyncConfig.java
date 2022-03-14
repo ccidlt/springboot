@@ -2,14 +2,12 @@ package com.ds.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
@@ -38,8 +36,13 @@ public class AsyncConfig {
 
     @Scheduled(cron = "0 0/2 * * * ?")
     @Async("asyncExecutor")
-    public void aaa(){
+    public void a(){
         System.out.println("每2分钟执行一次的任务："+Thread.currentThread().getName() + ":" + LocalDateTime.now());
+    }
+
+    @Async("asyncExecutor")
+    public Future<String> b(){
+        return new AsyncResult<>("返回值："+Thread.currentThread().getName());
     }
 
 }
