@@ -109,6 +109,7 @@ public class SpringbootApplicationTests {
         //并集
         set1.addAll(set2);
         System.out.println("并集是" + set1);
+
         //差集
         set1.removeAll(set2);
         System.out.println("差集是 " + set1);
