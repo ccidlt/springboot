@@ -44,7 +44,7 @@ public class Boy implements Serializable {
     private Integer version;
 
     //逻辑删除
-    @TableLogic
+    @TableLogic(value = "0", delval = "1")
     @ApiModelProperty(value="逻辑删除（0-未删除、1-已删除）")
     private Integer isdelete;
 
