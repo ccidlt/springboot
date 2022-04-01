@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -27,9 +28,10 @@ public class MyAspect {
     @Around("cut()")
     public Object around(ProceedingJoinPoint joinPoint){
         MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-        String className = joinPoint.getTarget().getClass().getName();//类名
+        String className = joinPoint.getTarget().getClass().getName();//类名 com.ds.controller.******
         String methodName = signature.getName();//方法名
-        Object args[] = joinPoint.getArgs();
+        Object[] paramValues = joinPoint.getArgs();//参数值
+        String[] paramNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();//参数名称
         Method method = signature.getMethod();
         MyAspectInterface annotation = method.getAnnotation(MyAspectInterface.class);
         String annotationValue = annotation.value();
