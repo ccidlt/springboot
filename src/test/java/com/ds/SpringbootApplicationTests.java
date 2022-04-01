@@ -194,17 +194,24 @@ public class SpringbootApplicationTests {
         FatherAndSon fas3 = new FatherAndSon(3, "王五", 0);
         FatherAndSon fas4 = new FatherAndSon(4, "赵六", 2);
         FatherAndSon fas5 = new FatherAndSon(5, "钱七", 2);
+        FatherAndSon fas6 = new FatherAndSon(6, "武汉", 3);
+        FatherAndSon fas7 = new FatherAndSon(7, "南京", 5);
         List<FatherAndSon> fass = new ArrayList<>();
         fass.add(fas1);
         fass.add(fas2);
         fass.add(fas3);
         fass.add(fas4);
         fass.add(fas5);
+        fass.add(fas6);
+        fass.add(fas7);
         List<FatherAndSon> first = fass.stream().filter(item -> item.getPid() == 0).collect(Collectors.toList());
         for(FatherAndSon fas : first){
             fas.setFass(recursion2(fass, fas.getId()));
         }
         System.out.println(first);
+        List<Integer> depts = new ArrayList<>();
+        recursion3(fass, 2, depts);
+        System.out.println(depts);
     }
     public List<FatherAndSon> recursion2(List<FatherAndSon> fass, int id) {
         List<FatherAndSon> newfass = new ArrayList<>();
@@ -215,6 +222,14 @@ public class SpringbootApplicationTests {
             }
         }
         return newfass;
+    }
+    public void recursion3(List<FatherAndSon> depts, int id, List<Integer> ids) {
+        for(FatherAndSon dept : depts){
+            if(dept.getPid() == id){
+                ids.add(dept.getId());
+                recursion3(depts, dept.getId(), ids);
+            }
+        }
     }
 
 }
