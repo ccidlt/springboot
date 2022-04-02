@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
-@Api("接口")
+@Api(tags = "接口")
 @Slf4j
 public class UserController {
 
