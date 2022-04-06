@@ -6,9 +6,15 @@ public class Result<T> {
 
     private String msg;
 
-    private T t;
+    private T data;
 
     public Result() {
+    }
+
+    public Result(T data) {
+        this.code = "200";
+        this.msg = "操作成功";
+        this.data = data;
     }
 
     public Result(String code, String msg) {
@@ -16,10 +22,10 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public Result(String code, String msg, T t) {
+    public Result(String code, String msg, T data) {
         this.code = code;
         this.msg = msg;
-        this.t = t;
+        this.data = data;
     }
 
     public String getCode() {
@@ -38,19 +44,27 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public T getT() {
-        return t;
+    public T getData() {
+        return data;
     }
 
-    public void setT(T t) {
-        this.t = t;
+    public void setData(T data) {
+        this.data = data;
     }
 
     public static Result getResult(String code, String msg){
         return new Result(code, msg);
     }
 
-    public static<T> Result getResult(String code, String msg, T t){
-        return new Result(code, msg, t);
+    public static<T> Result getResult(String code, String msg, T data){
+        return new Result(code, msg, data);
+    }
+
+    public static<T> Result success(T data){
+        return new Result(data);
+    }
+
+    public static Result error(){
+        return new Result("500", "操作失败");
     }
 }
