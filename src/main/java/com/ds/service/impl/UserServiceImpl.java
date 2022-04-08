@@ -3,6 +3,7 @@ package com.ds.service.impl;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.dao.UserDao;
 import com.ds.entity.Boy;
 import com.ds.service.UserService;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service("userService")
 @DS("db2")
 @CacheConfig(cacheNames = "user")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserDao, Boy> implements UserService {
 
     @Resource
     private UserDao userDao;

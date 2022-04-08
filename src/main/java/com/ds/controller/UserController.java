@@ -11,14 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,6 +66,15 @@ public class UserController {
         Boy boy = new Boy();
         boy.setName("杨过");
         return userService.queryBoy(boy);
+    }
+
+    @RequestMapping(value="/addBoy",method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("新增/修改")
+    public Boy addBoy(@Valid @RequestBody Boy boy){
+        //boy中有id则为修改，没有为新增
+        userService.saveOrUpdate(boy);
+        return userService.getById(boy.getId());
     }
 
     @Value("${filePath:F:/file/}")

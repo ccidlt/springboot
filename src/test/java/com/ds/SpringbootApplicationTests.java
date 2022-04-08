@@ -206,28 +206,43 @@ public class SpringbootApplicationTests {
         fass.add(fas7);
         List<FatherAndSon> first = fass.stream().filter(item -> item.getPid() == 0).collect(Collectors.toList());
         for(FatherAndSon fas : first){
-            fas.setFass(recursion2(fass, fas.getId()));
+            fas.setFass(recursionDown(fass, fas.getId()));
         }
         System.out.println(first);
-        List<Integer> depts = new ArrayList<>();
-        recursion3(fass, 2, depts);
-        System.out.println(depts);
+
+        List<Integer> ids = new ArrayList<>();
+        recursionDown2(fass, 2, ids);
+        System.out.println(ids);
+
+        List<Integer> ids2 = new ArrayList<>();
+        ids.add(7);
+        recursionUp(fass, 5, ids2);
+        System.out.println(ids2);
     }
-    public List<FatherAndSon> recursion2(List<FatherAndSon> fass, int id) {
+    public List<FatherAndSon> recursionDown(List<FatherAndSon> fass, int id) {
         List<FatherAndSon> newfass = new ArrayList<>();
         for(FatherAndSon fas : fass){
             if(fas.getPid() == id){
-                fas.setFass(recursion2(fass, fas.getId()));
+                fas.setFass(recursionDown(fass, fas.getId()));
                 newfass.add(fas);
             }
         }
         return newfass;
     }
-    public void recursion3(List<FatherAndSon> depts, int id, List<Integer> ids) {
-        for(FatherAndSon dept : depts){
-            if(dept.getPid() == id){
-                ids.add(dept.getId());
-                recursion3(depts, dept.getId(), ids);
+    public void recursionDown2(List<FatherAndSon> fass, int id, List<Integer> ids) {
+        for(FatherAndSon fas : fass){
+            if(fas.getPid() == id){
+                ids.add(fas.getId());
+                recursionDown2(fass, fas.getId(), ids);
+            }
+        }
+    }
+
+    public void recursionUp(List<FatherAndSon> fass, int pid, List<Integer> ids) {
+        for(FatherAndSon fas : fass){
+            if(fas.getId() == pid){
+                ids.add(fas.getId());
+                recursionUp(fass, fas.getPid(), ids);
             }
         }
     }

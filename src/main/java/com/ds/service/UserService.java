@@ -2,31 +2,32 @@ package com.ds.service;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ds.entity.Boy;
 
 import java.util.List;
 import java.util.Map;
 
-public interface UserService {
+public interface UserService extends IService<Boy> {
 
-    public List<Boy> getBoys();
+    List<Boy> getBoys();
 
-    public List<Boy> queryBoy();
+    List<Boy> queryBoy();
 
-    public Boy queryBoy(int id);
+    Boy queryBoy(int id);
 
-    public List<Boy> queryBoy(List<Integer> ids);
+    List<Boy> queryBoy(List<Integer> ids);
 
-    public List<Boy> queryBoy(Map<String,Object> map);
+    List<Boy> queryBoy(Map<String,Object> map);
 
-    public List<Boy> queryBoy(Boy boy);
+    List<Boy> queryBoy(Boy boy);
 
-    public int addBoy(Boy boy);
-    public Boy addBoy2(Boy boy);
+    int addBoy(Boy boy);
+    Boy addBoy2(Boy boy);
 
-    public int updateBoy(Boy boy);
+    int updateBoy(Boy boy);
 
-    public int deleteBoy(int id);
+    int deleteBoy(int id);
 
-    public Page<Boy> queryBoy(int pagenum, int pagesize);
+    Page<Boy> queryBoy(int pagenum, int pagesize);
 }

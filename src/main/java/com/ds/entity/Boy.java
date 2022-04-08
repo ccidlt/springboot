@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -22,6 +23,7 @@ public class Boy implements Serializable {
     private int id;
 
     @ApiModelProperty("名称")
+    @NotBlank(message = "名称不能为空") //controller中可以用@Valid注解
     private String name;
 
     @ApiModelProperty("女朋友们")
