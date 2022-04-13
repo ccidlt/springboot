@@ -3,6 +3,7 @@ package com.ds;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -215,9 +216,9 @@ public class SpringbootApplicationTests {
         System.out.println(ids);
 
         List<Integer> ids2 = new ArrayList<>();
-        ids.add(7);
+        ids2.add(7);
         recursionUp(fass, 5, ids2);
-        System.out.println(ids2);
+        System.out.println(StringUtils.join(ids2.toArray(),","));
     }
     public List<FatherAndSon> recursionDown(List<FatherAndSon> fass, int id) {
         List<FatherAndSon> newfass = new ArrayList<>();
