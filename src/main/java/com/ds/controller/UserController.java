@@ -36,8 +36,10 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping(value="/getBoys",method = RequestMethod.POST, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation("获取Boy表所有数据")
+    //@ApiOperation(value="获取Boy表所有数据", response = Boy.class)
+    @ApiOperation(value="获取Boy表所有数据")
     @ApiResponses({
+            @ApiResponse(code=200,message="操作成功",response = Boy.class),
             @ApiResponse(code=400,message="请求参数没填好"),
             @ApiResponse(code=404,message="请求路径没有或页面跳转路径不对"),
             @ApiResponse(code=500,message="后端程序报错")
@@ -71,7 +73,10 @@ public class UserController {
     @RequestMapping(value="/addBoy",method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("新增/修改")
-    public Boy addBoy(@Valid @RequestBody Boy boy){
+    public Boy addBoy(
+            @ApiParam(name="boy", value="Boy", required = true)
+            @Valid
+            @RequestBody(required = true) Boy boy){
         //boy中有id则为修改，没有为新增
         userService.saveOrUpdate(boy);
         return userService.getById(boy.getId());
