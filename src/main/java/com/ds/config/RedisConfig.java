@@ -1,5 +1,6 @@
 package com.ds.config;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,8 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
+import org.apache.commons.codec.digest.DigestUtils;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,7 +118,7 @@ public class RedisConfig extends CachingConfigurerSupport{
     /**
      * 缓存的key是 包名+方法名+参数列表
      */
-    @Bean
+    /*@Bean
     public KeyGenerator keyGenerator() {
         return (target, method, objects) -> {
             StringBuilder sb = new StringBuilder();
@@ -126,6 +128,28 @@ public class RedisConfig extends CachingConfigurerSupport{
                 sb.append(obj.toString());
             }
             return sb.toString();
+        };
+    }*/
+
+    @Bean
+    public KeyGenerator keyGenerator() {
+        return new KeyGenerator() {
+            @Override
+            public Object generate(Object target, Method method, Object... params) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(target.getClass().getName());
+                sb.append(method.getName());
+                sb.append("&");
+                for (Object obj : params) {
+                    if (obj != null) {
+                        sb.append(obj.getClass().getName());
+                        sb.append("&");
+                        sb.append(JSON.toJSONString(obj));
+                        sb.append("&");
+                    }
+                }
+                return DigestUtils.sha256Hex(sb.toString());
+            }
         };
     }
 
