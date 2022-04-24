@@ -2,6 +2,7 @@ package com.ds.utils;
 
 public class Result<T> {
 
+    //1-成功，0-失败
     private String code;
 
     private String msg;
@@ -67,4 +68,9 @@ public class Result<T> {
     public static Result error(){
         return new Result("500", "操作失败");
     }
+
+    public static<T> Result error(T data){
+        return new Result("500", "操作失败", data);
+    }
+
 }

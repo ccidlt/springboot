@@ -14,7 +14,7 @@ public class BeanUtil extends BeanUtils {
 
         //判断是否是父子类关系
         if(child.getClass().getSuperclass() != father.getClass()){
-            throw  new Exception("参数异常!,非继承关系");
+            throw  new Exception("参数异常!,非继承关系!");
         }
         Class<?> fatherClass = father.getClass();
         Field[] fields = fatherClass.getFields();

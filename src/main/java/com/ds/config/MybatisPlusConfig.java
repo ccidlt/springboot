@@ -1,19 +1,20 @@
 package com.ds.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Configuration
 public class MybatisPlusConfig implements MetaObjectHandler {
 
+    /*//自动填充
     @Override
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByName("createTime",LocalDateTime.now(),metaObject);
@@ -27,32 +28,49 @@ public class MybatisPlusConfig implements MetaObjectHandler {
         this.setFieldValByName("updateTime", LocalDateTime.now(),metaObject);
     }
 
-    /**
-     * 可以使用page对象分页
-     * @return
-     */
+    //page对象分页
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
         return paginationInterceptor;
     }
 
-    /**
-     * 乐观锁
-     * @return
-     */
+    //乐观锁
     @Bean
     public OptimisticLockerInterceptor optimisticLockerInterceptor() {
         return new OptimisticLockerInterceptor();
     }
 
-    /**
-     * 逻辑删除
-     * @return
-     */
+    //逻辑删除
     @Bean
     public ISqlInjector sqlInjector(){
         return new LogicSqlInjector();
+    }*/
+
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        this.strictInsertFill(metaObject, "createTime", Date.class, new Date());
+        this.strictInsertFill(metaObject, "updateTime", Date.class, new Date());
+        this.strictInsertFill(metaObject, "timestamp", Long.class, new Date().getTime());
+        this.strictInsertFill(metaObject, "version", Integer.class, 1);
+        this.strictInsertFill(metaObject, "isdelete", Integer.class, 0);
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.strictUpdateFill(metaObject, "updateTime", Date.class, new Date());
+    }
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        //乐观锁
+        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        //分页
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        //防全表更新与删除
+        //interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
+        return interceptor;
     }
 }
 
