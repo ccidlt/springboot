@@ -77,6 +77,8 @@ spring:
       type: batch #开启批量消费
       concurrency: 1 #同时处理线程数
       poll-timeout: 1500 #只限自动提交
+      missing-topics-fatal: false #无主题不报异常
+      ack-mode: manual #当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后, 手动调用Acknowledgment.acknowledge()后提交
 
 #  rabbitmq:
 #    host: 127.0.0.1
