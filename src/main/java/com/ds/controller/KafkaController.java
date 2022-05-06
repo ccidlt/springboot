@@ -1,13 +1,26 @@
 package com.ds.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.springframework.kafka.listener.KafkaListenerErrorHandler;
+import org.springframework.kafka.listener.ListenerExecutionFailedException;
+import org.springframework.messaging.Message;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
 @RequestMapping("/kafka")
-public class KafkaController {
+public class KafkaController implements KafkaListenerErrorHandler {
+    @Override
+    public Object handleError(Message<?> message, ListenerExecutionFailedException e) {
+        return null;
+    }
+
+    @Override
+    public Object handleError(Message<?> message, ListenerExecutionFailedException exception, Consumer<?, ?> consumer) {
+        return null;
+    }
 
     /*@Bean
     public NewTopic initialTopic1(){
