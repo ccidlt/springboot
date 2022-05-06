@@ -97,9 +97,16 @@ public class KafkaController {
     //关闭监听
     @GetMapping("/stop")
     public String stop() {
-        // 暂停监听
-        registry.getListenerContainer("topic-new-1").pause();
+        registry.getListenerContainer("topic-new-1").stop();
         return "===> kafka Listener stop";
-    }*/
+    }
 
+    //暂停监听
+    @GetMapping("/pause")
+    public String pause() {
+        if(registry.getListenerContainer("topic-new-1").isRunning()) {
+            registry.getListenerContainer("topic-new-1").pause();
+        }
+        return "===> kafka Listener pause";
+    }*/
 }
