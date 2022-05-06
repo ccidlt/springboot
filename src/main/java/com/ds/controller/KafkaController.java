@@ -70,7 +70,7 @@ public class KafkaController {
         }
     }
 
-    @KafkaListener(id="topic-new-1",groupId = "topic-new-1-group",topics = {"topic-new-1"})
+    @KafkaListener(id="topic-new-1-id",groupId = "topic-new-1-group",topics = {"topic-new-1"})
     public void accept(List<ConsumerRecord<String,String>> records, Acknowledgment ack){
         if(records != null && !records.isEmpty()){
             for(ConsumerRecord<String,String> record : records){
@@ -85,27 +85,27 @@ public class KafkaController {
     @GetMapping("/start")
     public String start() {
         // 判断监听容器是否启动，未启动则将其启动
-        if (!registry.getListenerContainer("topic-new-1").isRunning()) {
-            registry.getListenerContainer("topic-new-1").start();
+        if (!registry.getListenerContainer("topic-new-1-id").isRunning()) {
+            registry.getListenerContainer("topic-new-1-id").start();
             return "===> kafka Listener start";
         }
         // 恢复启动
-        registry.getListenerContainer("topic-new-1").resume();
+        registry.getListenerContainer("topic-new-1-id").resume();
         return "===> kafka Listener resume";
     }
 
     //关闭监听
     @GetMapping("/stop")
     public String stop() {
-        registry.getListenerContainer("topic-new-1").stop();
+        registry.getListenerContainer("topic-new-1-id").stop();
         return "===> kafka Listener stop";
     }
 
     //暂停监听
     @GetMapping("/pause")
     public String pause() {
-        if(registry.getListenerContainer("topic-new-1").isRunning()) {
-            registry.getListenerContainer("topic-new-1").pause();
+        if(registry.getListenerContainer("topic-new-1-id").isRunning()) {
+            registry.getListenerContainer("topic-new-1-id").pause();
         }
         return "===> kafka Listener pause";
     }*/
