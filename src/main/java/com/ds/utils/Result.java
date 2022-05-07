@@ -1,12 +1,19 @@
 package com.ds.utils;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+
+@ApiModel("Result")
 public class Result<T> {
 
-    //1-成功，0-失败
+    @ApiModelProperty(value = "状态码")
     private String code;
 
+    @ApiModelProperty(value = "响应信息")
     private String msg;
 
+    @ApiModelProperty(value = "数据")
     private T data;
 
     public Result() {
@@ -58,11 +65,19 @@ public class Result<T> {
     }
 
     public static<T> Result getResult(String code, String msg, T data){
-        return new Result(code, msg, data);
+        return new Result<T>(code, msg, data);
+    }
+
+    public static Result success(){
+        return new Result("200", "操作成功");
     }
 
     public static<T> Result success(T data){
-        return new Result(data);
+        return new Result<T>(data);
+    }
+
+    public static<T> Result success(String msg, T data){
+        return new Result<T>("200", msg, data);
     }
 
     public static Result error(){
@@ -70,7 +85,15 @@ public class Result<T> {
     }
 
     public static<T> Result error(T data){
-        return new Result("500", "操作失败", data);
+        return new Result<T>("500", "操作失败", data);
+    }
+
+    public static Result error(String msg){
+        return new Result("500", msg);
+    }
+
+    public static<T> Result error(String msg, T data){
+        return new Result<T>("500", msg, data);
     }
 
 }
