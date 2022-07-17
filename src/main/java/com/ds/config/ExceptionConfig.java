@@ -19,13 +19,13 @@ public class ExceptionConfig {
      * 捕捉其他所有异常
      * */
     @ExceptionHandler(Exception.class)
-    public Result globalException(HttpServletRequest request, Throwable ex) {
-        if (ex instanceof NoHandlerFoundException) {
+    public Result globalException(HttpServletRequest request,Exception e) {
+        if (e instanceof NoHandlerFoundException) {
             return new Result("404" , "未找到页面: 请联系管理员");
         }
         else{
-            logger.error("系统异常： "+ex.getMessage());
-            return new Result("500" , "访问出错,请联系管理员");
+            logger.error("系统异常： "+e.getMessage());
+            return new Result("500" ,  this.getClass().getSimpleName()+": "+e.getMessage());
         }
     }
 

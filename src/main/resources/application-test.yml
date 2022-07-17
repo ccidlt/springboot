@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /
 spring:
+  profiles:
+    active: dev
   application:
     name: springboot
   datasource:
@@ -85,10 +87,10 @@ spring:
 #    password: guest
 
 
-logging:
-  level:
-    root: INFO
-    com.ds: DEBUG
+#logging:
+#  level:
+#    root: INFO
+#    com.ds: DEBUG
 #  file:
 #    path: log
 #  pattern:
@@ -101,7 +103,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true #t对应属性可驼峰命名
     cache-enabled: true #开启全局二级缓存
     call-setters-on-nulls: true #resultMap返回的是Map时，返回值为空的键值关系
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #sql语句详情打印
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #sql语句详情打印
   global-config:
     db-config:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
@@ -116,14 +118,5 @@ pagehelper:
   reasonable: true
   pageSizeZero: false #pageSize=0
   params: count=countSql
-
-swagger:
-  enable: true
-  title: springboot
-  description: 测试系统
-  version: 1.0
-  name: lt
-  url: http://xxx
-  email: xxx@qq.com
 
 filePath: F:/file/

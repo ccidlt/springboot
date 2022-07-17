@@ -1,4 +1,4 @@
-package com.ds.controller;
+package com.ds.controller.setting;
 
 import com.ds.entity.Boy;
 import com.ds.service.UserService;
