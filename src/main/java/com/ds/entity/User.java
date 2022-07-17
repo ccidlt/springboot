@@ -11,5 +11,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class User implements Serializable {
     private String name;
-    private  int age;
+    private int age;
+    private Integer roleId;
+    private Integer deptId;
+    private Integer roleScope;
+
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.ds.config.authority.DataScopeInnerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +65,7 @@ public class MybatisPlusConfig implements MetaObjectHandler {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(dataScopeInnerInterceptor());
         //乐观锁
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
         //分页
@@ -71,6 +73,11 @@ public class MybatisPlusConfig implements MetaObjectHandler {
         //防全表更新与删除
         //interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         return interceptor;
+    }
+
+    @Bean
+    public DataScopeInnerInterceptor dataScopeInnerInterceptor() {
+        return new DataScopeInnerInterceptor();
     }
 }
 
