@@ -1,6 +1,6 @@
-package com.ds.config;
+package com.ds.aop;
 
-import com.ds.service.MyAspectInterface;
+import com.ds.annotation.MyAspectInterface;
 import lombok.SneakyThrows;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -18,8 +18,8 @@ import java.lang.reflect.Method;
 @Order(value = 2)
 public class MyAspect {
 
-//    @Pointcut("execution(public * com.ds.controller.*.*(..))")
-    @Pointcut("@annotation(com.ds.service.MyAspectInterface)")
+//    @Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")
+    @Pointcut("@annotation(com.ds.annotation.MyAspectInterface)")
     public void cut(){
 
     }

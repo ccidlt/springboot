@@ -21,37 +21,35 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, HEAD");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		String token = request.getHeader("token");
+		return true;
 
-		/*if(StringUtils.isEmpty(token)){
+		/*String token = request.getHeader("token");
+		if(StringUtil.isEmpty(token)){
 			token = request.getParameter("token");
 		}
-		String redisToken = (String)redisTemplate.opsForValue().get("token");
-		if(!StringUtils.isEmpty(token) && !StringUtils.isEmpty(redisToken)){
-			redisTemplate.expire(token,30, TimeUnit.MINUTES);
-			return true;
-		}
-		response.sendRedirect("/");
+		if(!StringUtil.isEmpty(token)){
+			String redisToken = StringUtil.getString(redisTemplate.opsForValue().get(token));
+			if(!StringUtil.isEmpty(redisToken)){
+				redisTemplate.expire(token, 30, TimeUnit.MINUTES);
+				return true;
+			}
+		}*/
+
+		/*response.sendRedirect("/");
 		return false;*/
 
 		/*response.setCharacterEncoding("utf-8");
 		response.setContentType("application/json; charset=utf-8");
-		//PrintWriter out = response.getWriter();
 		ServletOutputStream out = response.getOutputStream();
 		JSONObject result = new JSONObject();
-		if(!"lt".equals(token)){
-			result.put("suc", false);
-			result.put("msg", "无法访问");
-			//out.print(result.toString());
-			out.write(result.toString().getBytes());
-			return false;
-		}*/
-
-		return true;
+		result.put("code", "401");
+		result.put("msg", "请重新登录！");
+		out.write(result.toString().getBytes());
+		return false;*/
 	}
 
 	@Override

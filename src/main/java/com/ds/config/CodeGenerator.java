@@ -3,12 +3,12 @@ package com.ds.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.InjectionConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
@@ -22,12 +22,14 @@ public class CodeGenerator {
 
         //1、全局配置
         GlobalConfig gc = new GlobalConfig();
-        String properties = System.getProperty("user.dir");
+        //String properties = System.getProperty("user.dir");
+        String properties = "D:/JAVA/IDEA/IdeaProjects/springboot";
         gc.setOutputDir(properties+"/src/main/java");
         gc.setAuthor("lt");
         gc.setOpen(false);
         gc.setFileOverride(false);//是否覆盖
         gc.setServiceName("%sService");//去Service的I前缀
+        gc.setMapperName("%sDao");//生成xxDao（默认xxMapper）
         gc.setIdType(IdType.AUTO);//id生成策略
         gc.setDateType(DateType.ONLY_DATE);
         gc.setSwagger2(true);
@@ -49,15 +51,45 @@ public class CodeGenerator {
         pc.setController("controller");
         pc.setService("service");
         pc.setServiceImpl("service.impl");
-        pc.setMapper("mapper");
-        pc.setXml("mapper.xml");
+        /*pc.setMapper("mapper");
+        pc.setXml("mapper.xml");*/
+        pc.setMapper("dao");
         pc.setEntity("entity");
         mpg.setPackageInfo(pc);
+
+        // 自定义配置
+        InjectionConfig cfg = new InjectionConfig() {
+            @Override
+            public void initMap() {
+                // to do nothing
+            }
+        };
+        // 如果模板引擎是 freemarker
+        //String templatePath = "/templates/mapper.xml.ftl";
+        // 如果模板引擎是 velocity
+        String templatePath = "/templates/mapper.xml.vm";
+        // 自定义输出配置
+        List<FileOutConfig> focList = new ArrayList<>();
+        // 自定义配置会被优先输出
+        focList.add(new FileOutConfig(templatePath) {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输出文件名
+                return properties + "/src/main/resources/mapper"
+                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+            }
+        });
+
+        cfg.setFileOutConfigList(focList);
+        mpg.setCfg(cfg);
+        TemplateConfig templateConfig = new TemplateConfig();
+        templateConfig.setXml(null);
+        mpg.setTemplate(templateConfig);
 
         //4、策略配置
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("boy","girl");//设置要映射的表名
+        strategy.setInclude("boy","girl");//设置要映射的表名,多个逗号拼接
         strategy.setNaming(NamingStrategy.underline_to_camel);//下划线转驼峰命名
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);//自动lombok

@@ -1,5 +1,6 @@
 package com.ds.config;
 
+import com.ds.utils.StringUtil;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -20,9 +21,16 @@ public class FeignConfig implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        //添加token
-        //requestTemplate.header("token", request.getHeader("token"));
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+        String token = request.getHeader("token");
+        if(StringUtil.isEmpty(token)){
+            token = request.getParameter("token");
+        }
+        if(StringUtil.isNotEmpty(token)){
+            requestTemplate.header("token", token);
+            requestTemplate.query("token", token);
+        }
+        requestTemplate.header("ip", request.getRemoteAddr());
     }
 }

@@ -1,0 +1,89 @@
+package ${package.Controller};
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import java.util.List;
+import com.zdtq.util.Result;
+
+import $!{package.Service}.$!{table.serviceName};
+import ${package.Entity}.${entity};
+
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Api(value="${table.controllerName}", tags = "")
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+
+    @Resource
+    private ${table.serviceName} ${table.entityPath}Service;
+
+    @ApiOperation(value = "查询", notes = "查询")
+    @RequestMapping(value="/query", method = RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "服务器内部错误", response = Result.class)
+    })
+    public Result<List<${entity}>> query() {
+        return Result.success(${table.entityPath}Service.list());
+    }
+
+    @ApiOperation(value = "查询（主键）", notes = "查询（主键）")
+    @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "Integer")
+    @RequestMapping(value="/queryById/{id}", method = RequestMethod.GET)
+    public Result<${entity}> queryById(@PathVariable Integer id) {
+        return Result.success(${table.entityPath}Service.getById(id));
+    }
+
+    @ApiOperation(value = "查询（分页）", notes = "查询（分页）")
+    @RequestMapping(value="/queryPage", method = RequestMethod.POST)
+    public Result<Page<${entity}>> queryPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        return Result.success(${table.entityPath}Service.page(new Page<>(pageNum, pageSize)));
+    }
+
+    @ApiOperation(value = "新增、修改", notes = "新增、修改")
+    @RequestMapping(value="/save", method = RequestMethod.POST)
+    public Result<${entity}> save(@RequestBody ${entity} ${table.entityPath}) {
+        ${table.entityPath}Service.saveOrUpdate(${table.entityPath});
+        return Result.success(${table.entityPath}Service.getById(${table.entityPath}.getId()));
+    }
+
+    @ApiOperation(value = "删除（主键）", notes = "删除（主键）")
+    @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "Integer")
+    @RequestMapping(value="/deleteById/{id}", method = RequestMethod.GET)
+    public Result<Boolean> delete(@PathVariable Integer id) {
+        return Result.success(${table.entityPath}Service.removeById(id));
+    }
+
+    @ApiOperation(value = "删除（批量）", notes = "删除（批量）")
+    @RequestMapping(value="/deleteBatch", method = RequestMethod.POST)
+    public Result<Boolean> deleteBatch(@RequestBody List<Integer> ids) {
+        return Result.success(${table.entityPath}Service.removeByIds(ids));
+    }
+
+}
+
+#end

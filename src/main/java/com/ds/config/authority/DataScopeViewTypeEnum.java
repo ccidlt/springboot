@@ -46,4 +46,13 @@ public enum DataScopeViewTypeEnum {
         }
         return null;
     }
+
+    public static String getValues(String code) {
+        for (DataScopeViewTypeEnum enums : values()) {
+            if(enums.getCode().equals(code)){
+                return enums.getName();
+            }
+        }
+        return null;
+    }
 }

@@ -1,6 +1,6 @@
-package com.ds.service.impl;
+package com.ds.aop;
 
-import com.ds.service.AspectService;
+import com.ds.annotation.AspectService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -20,11 +20,10 @@ import java.util.Arrays;
 @Aspect
 @Slf4j
 @Order(value = 1)
-@SuppressWarnings({"unused"})
 public class AspectImpl {
 
-    //@Pointcut("execution(public * com.ds.controller.*.*(..))")
-    @Pointcut("@annotation(com.ds.service.AspectService)")
+    //@Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")
+    @Pointcut("@annotation(com.ds.annotation.AspectService)")
     private void cut(){
 
     }

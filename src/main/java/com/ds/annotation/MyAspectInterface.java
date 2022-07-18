@@ -1,4 +1,4 @@
-package com.ds.service;
+package com.ds.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 
