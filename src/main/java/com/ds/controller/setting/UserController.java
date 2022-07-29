@@ -134,10 +134,12 @@ public class UserController {
             // 清空response
             response.reset();
             // 设置response的Header
+            response.setHeader("Access-Control-Allow-Origin", "*");//跨域
+            response.setHeader("Access-Control-Expose-Headers", "content-disposition" );//暴露出header
             response.addHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes()));
             response.addHeader("Content-Length", "" + file.length());
+            response.setContentType("application/octet-stream");//二进制流文件
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-            response.setContentType("application/octet-stream");
             toClient.write(buffer);
             toClient.flush();
             toClient.close();

@@ -126,4 +126,8 @@ swagger:
   url: http://xxx
   email: xxx@qq.com
 
-filePath: F:/file/
+#文件路径
+filePath: /home/file/
+
+#kafka topic
+kafka_topics: topic01,topic-new-1

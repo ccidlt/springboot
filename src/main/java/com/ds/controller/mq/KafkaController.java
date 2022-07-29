@@ -64,7 +64,8 @@ public class KafkaController implements KafkaListenerErrorHandler {
         });
     }
 
-    @KafkaListener(topics = "topic01")
+    //@KafkaListener(groupId = "topicgroupid-"+"#{T(java.util.UUID).randomUUID()}", topics = "#{'${kafka_topics}'.split(',')}")
+    @KafkaListener(id="topicid1",topics = "#{'${kafka_topics}'.split(',')}")
     public void onMessage(ConsumerRecord<String,String> record){
         System.out.println("消费者收到的消息："+record.topic()+"\t"+record.partition()+"\t"+record.offset()+"\t"+record.key()+"\t"+record.value());
     }
@@ -83,7 +84,8 @@ public class KafkaController implements KafkaListenerErrorHandler {
         }
     }
 
-    @KafkaListener(id="topic-new-1-id",groupId = "topic-new-1-group",topics = {"topic-new-1"})
+    //@KafkaListener(groupId = "topicgroupid-"+"#{T(java.util.UUID).randomUUID()}", topics = "#{'${kafka_topics}'.split(',')}")
+    @KafkaListener(id="topicid2",topics = "#{'${kafka_topics}'.split(',')}")
     public void accept(List<ConsumerRecord<String,String>> records, Acknowledgment ack){
         if(records != null && !records.isEmpty()){
             for(ConsumerRecord<String,String> record : records){
