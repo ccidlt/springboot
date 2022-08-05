@@ -4,25 +4,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 
-@ApiModel("Result")
+@ApiModel("全局统一返回结果")
 public class Result<T> {
 
-    @ApiModelProperty(value = "状态码")
+    @ApiModelProperty(value = "返回码")
     private String code;
 
-    @ApiModelProperty(value = "响应信息")
+    @ApiModelProperty(value = "返回消息")
     private String msg;
 
-    @ApiModelProperty(value = "数据")
+    @ApiModelProperty(value = "返回数据")
     private T data;
 
     public Result() {
-    }
-
-    public Result(T data) {
-        this.code = "200";
-        this.msg = "操作成功";
-        this.data = data;
     }
 
     public Result(String code, String msg) {
@@ -73,7 +67,7 @@ public class Result<T> {
     }
 
     public static<T> Result success(T data){
-        return new Result<T>(data);
+        return new Result<T>("200", "操作成功",data);
     }
 
     public static<T> Result success(String msg, T data){
