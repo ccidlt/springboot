@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -12,8 +14,10 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Configuration
@@ -95,10 +99,14 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedHeaders("*")
-                .allowedMethods("POST","GET")
+                .allowedMethods("POST","GET","PUT","DELETE","HEAD","OPTIONS")
                 .allowedOrigins("*");
     }
 
+    /**
+     *后端返回给前端时间格式字符串，也可以用@JsonFormat
+     * @param converters
+     */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         StringHttpMessageConverter converter  = new StringHttpMessageConverter(Charset.forName("UTF-8"));
@@ -115,5 +123,49 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         list.add(MediaType.APPLICATION_JSON_UTF8);
         mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
         converters.add(mappingJackson2HttpMessageConverter);
+    }
+
+    /**
+     * 前端给后端时间字符串转换成Date，也可以用@DateTimeFormat
+     * @param registry
+     */
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new Converter<String, Date>() {
+            @Override
+            public Date convert(String source) {
+                List<String> formarts = new ArrayList<String>(4){{
+                    add("yyyy-MM");
+                    add("yyyy-MM-dd");
+                    add("yyyy-MM-dd HH:mm");
+                    add("yyyy-MM-dd HH:mm:ss");
+                }};
+                String value = source.trim();
+                if ("".equals(value)) {
+                    return null;
+                }
+                if (source.matches("^\\d{4}-\\d{1,2}$")) {
+                    return parseDate(source, formarts.get(0));
+                } else if (source.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")) {
+                    return parseDate(source, formarts.get(1));
+                } else if (source.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$")) {
+                    return parseDate(source, formarts.get(2));
+                } else if (source.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$")) {
+                    return parseDate(source, formarts.get(3));
+                } else {
+                    throw new IllegalArgumentException("Invalid boolean value '" + source + "'");
+                }
+            }
+            Date parseDate(String dateStr, String format) {
+                Date date = null;
+                try {
+                    DateFormat dateFormat = new SimpleDateFormat(format);
+                    date = (Date) dateFormat.parse(dateStr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return date;
+            }
+        });
     }
 }
