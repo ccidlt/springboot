@@ -247,7 +247,43 @@
 
     </dependencies>
 
+    <!--jenkins环境打包配置-->
+    <profiles>
+        <!-- 开发环境 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profile.active>dev</profile.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!-- 生产环境-->
+        <profile>
+            <id>prd</id>
+            <properties>
+                <profile.active>prd</profile.active>
+            </properties>
+        </profile>
+        <!-- 测试环境-->
+        <profile>
+            <id>test</id>
+            <properties>
+                <profile.active>test</profile.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>qas</id>
+            <properties>
+                <profile.active>qas</profile.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
+        <!--设置最终打包的名称，jenkins部署需去除版本号-->
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
