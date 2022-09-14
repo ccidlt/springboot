@@ -1,25 +1,24 @@
-package com.ds.config;
+package com.ds.config.async;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ds.utils.RedisUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableAsync
 @EnableScheduling
 public class AsyncConfig {
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    @Resource
+    private RedisUtils redisUtils;
 
     @Bean("asyncExecutor")
     public Executor asyncExecutor(){
@@ -43,15 +42,13 @@ public class AsyncConfig {
     @Scheduled(cron = "0 0/2 * * * ?")
     @Async("asyncExecutor")
     public void a(){
-        Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent("a", true);
-        if(aBoolean){
+        if(redisUtils.acquireLock("a",10)){
             try {
-                redisTemplate.expire("a",2, TimeUnit.MINUTES);
                 System.out.println("每2分钟执行一次的任务："+Thread.currentThread().getName() + ":" + LocalDateTime.now());
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                redisTemplate.delete("a");
+                redisUtils.releaseLock("a");
             }
         }
     }

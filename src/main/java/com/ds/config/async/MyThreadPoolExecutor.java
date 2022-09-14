@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.async;
 
 import java.util.concurrent.*;
 import java.util.function.Supplier;

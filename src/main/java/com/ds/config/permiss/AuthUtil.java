@@ -1,4 +1,4 @@
-package com.ds.auth;
+package com.ds.config.permiss;
 
 import org.springframework.stereotype.Component;
 

@@ -88,7 +88,8 @@ spring:
 logging:
   level:
     root: INFO
-    com.ds: DEBUG
+    com.ds: INFO
+    com.ds dao: DEBUG
 #  file:
 #    path: log
 #  pattern:
@@ -131,3 +132,9 @@ filePath: /home/file/
 
 #kafka topic
 kafka_topics: topic01,topic-new-1
+
+#redis消息队列
+redislist:
+  mq1: mq1
+  mq2: mq2
+  mq3: mq3

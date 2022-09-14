@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.redis;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

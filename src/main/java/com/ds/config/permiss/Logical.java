@@ -1,4 +1,4 @@
-package com.ds.auth;
+package com.ds.config.permiss;
 
 /**
  * 权限注解的验证模式

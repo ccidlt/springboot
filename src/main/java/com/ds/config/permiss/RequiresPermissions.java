@@ -1,4 +1,4 @@
-package com.ds.auth;
+package com.ds.config.permiss;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

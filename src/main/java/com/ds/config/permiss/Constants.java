@@ -1,4 +1,4 @@
-package com.ds.auth;
+package com.ds.config.permiss;
 
 /**
  * 通用常量信息

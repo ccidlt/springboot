@@ -23,6 +23,7 @@ public class Boy implements Serializable {
     private int id;
 
     @ApiModelProperty("名称")
+    //@NotNull(message = "名称不能为空") //controller中可以用@Valid注解
     @NotBlank(message = "名称不能为空") //controller中可以用@Valid注解
     private String name;
 

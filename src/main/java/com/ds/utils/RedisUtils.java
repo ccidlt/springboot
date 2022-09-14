@@ -204,4 +204,68 @@ public class RedisUtils {
         ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
         return zset.rangeByScore(key, scoure, scoure1);
     }
+
+    /**
+     * 加锁并设置过期时间
+     *
+     * @param lockName
+     * @param lockExpire 过期时间 秒
+     * @return
+     */
+    public boolean acquireLock(String lockName, int lockExpire) {
+        if (redisTemplate.opsForValue().setIfAbsent(lockName, lockName)) {
+            redisTemplate.expire(lockName, lockExpire, TimeUnit.SECONDS);
+            return true;
+        }
+        if (redisTemplate.getExpire(lockName) == -1) {
+            //保证锁一定设置过期时间
+            redisTemplate.expire(lockName, lockExpire, TimeUnit.SECONDS);
+        }
+        return false;
+    }
+
+    public boolean acquireLock2(String lockName, int lockExpire) {
+        if (redisTemplate.opsForValue().setIfAbsent(lockName, lockName)) {
+            redisTemplate.expire(lockName, lockExpire, TimeUnit.MILLISECONDS);
+            return true;
+        }
+        if (redisTemplate.getExpire(lockName) == -1) {
+            //保证锁一定设置过期时间
+            redisTemplate.expire(lockName, lockExpire, TimeUnit.MILLISECONDS);
+        }
+        return false;
+    }
+
+    /**
+     * 加锁并设置过期时间
+     *
+     * @param lockName
+     * @param lockExpire 过期时间 秒
+     * @param acquireTimeout  获取锁超时时间  秒
+     * @return
+     */
+    public boolean acquireLockWithTimeout(String lockName, int lockExpire, int acquireTimeout) {
+        long end = System.currentTimeMillis() + acquireTimeout * 1000;
+        while (System.currentTimeMillis() < end) {
+
+            if (acquireLock(lockName, lockExpire)) {
+                return true;
+            }
+
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 释放锁
+     * @param lockName
+     */
+    public void releaseLock(String lockName){
+        redisTemplate.delete(lockName);
+    }
 }
