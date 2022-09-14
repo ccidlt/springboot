@@ -1,15 +1,23 @@
-package com.ds.config;
+package com.ds.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ds.annotation.PassToken;
+import com.ds.annotation.UseLoginToken;
+import com.ds.utils.StringUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
@@ -20,36 +28,51 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		/*
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
+		*/
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		return true;
-
-		/*String token = request.getHeader("token");
+		if(!(handler instanceof HandlerMethod)){
+			return true;
+		}
+		HandlerMethod handlerMethod = (HandlerMethod)handler;
+		Method method = handlerMethod.getMethod();
+		if(method.isAnnotationPresent(PassToken.class)){
+			PassToken annotation = method.getAnnotation(PassToken.class);
+			if(annotation.required()){
+				return true;
+			}
+		}
+		boolean useLoginToken = true;
+		if(method.isAnnotationPresent(UseLoginToken.class)){
+			UseLoginToken annotation = method.getAnnotation(UseLoginToken.class);
+			useLoginToken = annotation.required();
+		}
+		if(!useLoginToken){
+			return true;
+		}
+		String token = request.getHeader("token");
 		if(StringUtil.isEmpty(token)){
 			token = request.getParameter("token");
 		}
-		if(!StringUtil.isEmpty(token)){
+		if(StringUtil.isNotEmpty(token)){
 			String redisToken = StringUtil.getString(redisTemplate.opsForValue().get(token));
-			if(!StringUtil.isEmpty(redisToken)){
+			if(StringUtil.isNotEmpty(redisToken)){
 				redisTemplate.expire(token, 30, TimeUnit.MINUTES);
 				return true;
 			}
-		}*/
-
-		/*response.sendRedirect("/");
-		return false;*/
-
-		/*response.setCharacterEncoding("utf-8");
+		}
+		response.setCharacterEncoding("utf-8");
 		response.setContentType("application/json; charset=utf-8");
 		ServletOutputStream out = response.getOutputStream();
 		JSONObject result = new JSONObject();
 		result.put("code", "401");
 		result.put("msg", "请重新登录！");
 		out.write(result.toString().getBytes());
-		return false;*/
+		return false;
 	}
 
 	@Override

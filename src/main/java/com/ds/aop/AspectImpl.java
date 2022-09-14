@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Component
 @Aspect
 @Slf4j
-@Order(value = 1)
+@Order(1)
 public class AspectImpl {
 
     //@Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")

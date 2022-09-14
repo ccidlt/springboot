@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 
 @Component
 @Aspect
-@Order(value = 2)
+@Order(2)
 public class MyAspect {
 
 //    @Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")

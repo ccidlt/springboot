@@ -1,5 +1,7 @@
 package com.ds.config;
 
+import com.ds.interceptor.AuthorityInterceptor;
+import com.ds.interceptor.LoginInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,10 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     public LoginInterceptor getLoginInterceptor(){
         return new LoginInterceptor();
     }
+    @Bean
+    public AuthorityInterceptor getAuthorityInterceptor(){
+        return new AuthorityInterceptor();
+    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -36,17 +42,28 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration = registry.addInterceptor(getLoginInterceptor());
-        registration.addPathPatterns("/**");
-        registration.excludePathPatterns(
-                "/toLogin",
-                "/login",
-                "/error",
-                "/**/*.html",
-                "/**/*.js",
-                "/**/*.css",
-                "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
-        );
+        registry.addInterceptor(getLoginInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                    "/toLogin",
+                    "/login",
+                    "/error",
+                    "/**/*.html",
+                    "/**/*.js",
+                    "/**/*.css",
+                    "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
+                ).order(1);
+        registry.addInterceptor(getAuthorityInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/toLogin",
+                        "/login",
+                        "/error",
+                        "/**/*.html",
+                        "/**/*.js",
+                        "/**/*.css",
+                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
+                ).order(2);
     }
 
         /**

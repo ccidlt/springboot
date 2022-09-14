@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.filter;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.*;
