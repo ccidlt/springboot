@@ -5,16 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Aspect
@@ -38,9 +46,16 @@ public class AspectImpl {
             String url = request.getRequestURL().toString();
             String method = request.getMethod();
             String uri = request.getRequestURI();
+            String remoteAddr = request.getRemoteAddr();
             String queryString = request.getQueryString();
-            log.info("Request, url: {"+url+"}, method: {"+method+"}, uri: {"+uri+"}, params: {"+queryString+"}");
+            log.info("Request, url: {"+url+"}, method: {"+method+"}, uri: {"+uri+"}, remoteAddr: {"+remoteAddr+"}, params: {"+queryString+"}");
 
+            //获取controller名
+            String controllerFullName = joinPoint.getTarget().getClass().getName();
+            String[] controllerNames = controllerFullName.split("\\.");
+            String controllerName = controllerNames[controllerNames.length - 1];
+
+            //方法上注解
             MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
             Method methodObject = methodSignature.getMethod();
             String operationType = methodObject.getAnnotation(AspectService.class).operationType();
@@ -48,9 +63,45 @@ public class AspectImpl {
             log.info("Method Type:" + operationType);
             log.info("Method Desc:" + operationName);
 
-            String methodName = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
-            Object args[] = joinPoint.getArgs();
-            log.info("请求方法：{}, 请求参数: {}", methodName, Arrays.toString(args));
+            // 方法名
+            //String methodName = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
+            String methodName = joinPoint.getSignature().getName();
+            //请求方式
+            String methodType = request.getMethod();
+
+            Map<String, Object> paramsMap = new HashMap<>();
+            Object paramValues[] = joinPoint.getArgs();
+            log.info("请求方法：{}, 请求参数: {}", methodName, Arrays.toString(paramValues));
+            // 参数名称
+            String[] paramNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();
+            // 格式化参数信息
+            StringBuffer params = new StringBuffer("{");
+            for (int i = 0; i < paramValues.length; i++) {
+                String paramName = paramNames[i];
+                Object paramValue = paramValues[i];
+                // 过滤请求、响应、校验结果对象
+                if (paramValue instanceof BindingResult || paramValue instanceof HttpServletRequest ||
+                        paramValue instanceof HttpServletResponse) {
+                    continue;
+                }
+                // 上传文件信息特殊处理
+                if (paramValue instanceof MultipartFile) {
+                    MultipartFile file = (MultipartFile) paramValue;
+                    paramsMap.put("fileName", file.getOriginalFilename());
+                    params.append("fileName:").append(file.getOriginalFilename());
+                    continue;
+                }
+
+                String paramValueStr = String.valueOf(paramValue);
+                paramsMap.put(paramName, paramValueStr);
+                params.append(paramName).append(":").append(paramValueStr);
+            }
+            params.append("}");
+
+            String startDateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+            log.info("【{}】:接口【{}】请求方式【{}】方法【{}】参数【{}】,IP为【{}】进行了【{}】类型的【{}】操作;"
+                    , startDateStr, controllerName, methodType, methodName, params.toString().replace(" ",""), remoteAddr, operationType, operationName);
+
         }catch(Exception e){
             log.error(e.getMessage());
         }
