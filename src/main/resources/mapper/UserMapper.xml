@@ -13,7 +13,7 @@
     select com.* from (select b.*, g.name as girls, 1 as com_id from boy b left join girl g on b.id=g.boy_id) com
   </select>
 
-    <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">
+  <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">
     select * from boy where isdelete=0
   </select>
 </mapper>
