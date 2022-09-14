@@ -52,7 +52,6 @@ public class MybatisPlusConfig implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, "createTime", Date.class, new Date());
         this.strictInsertFill(metaObject, "updateTime", Date.class, new Date());
-        this.strictInsertFill(metaObject, "timestamp", Long.class, new Date().getTime());
         this.strictInsertFill(metaObject, "version", Integer.class, 1);
         this.strictInsertFill(metaObject, "isdelete", Integer.class, 0);
     }
