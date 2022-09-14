@@ -23,9 +23,22 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         if(method.isAnnotationPresent(Authentication.class)){
             Authentication annotation = method.getAnnotation(Authentication.class);
             if(annotation.required()){
-                //鉴权：是否具有角色、菜单、按钮权限
+                //此处是具体查询用户具有哪些权限的
+                //是否包含某些角色
+                //是否包含这次的请求路径的菜单
+                String path = request.getRequestURI();
             }
         }
+        /*
+        Map<String,Object> rsp = new HashMap<>(2);
+        rsp.put("code",403);
+        rsp.put("msg","无权访问");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        final PrintWriter writer = response.getWriter();
+        writer.write(JSON.toJSONString(rsp));
+        return false;
+        */
         return true;
     }
 }

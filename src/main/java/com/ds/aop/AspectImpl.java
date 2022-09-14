@@ -27,7 +27,7 @@ import java.util.Map;
 @Component
 @Aspect
 @Slf4j
-@Order(1)
+@Order(2)
 public class AspectImpl {
 
     //@Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")
