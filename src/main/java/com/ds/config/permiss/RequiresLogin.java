@@ -7,9 +7,6 @@ import java.lang.annotation.Target;
 
 /**
  * 登录认证：只有登录之后才能进入该方法
- * 
- * @author miki
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })

@@ -2,8 +2,6 @@ package com.ds.config.permiss;
 
 /**
  * 未能通过的登录认证异常
- * 
- * @author miki
  */
 public class NotLoginException extends RuntimeException
 {

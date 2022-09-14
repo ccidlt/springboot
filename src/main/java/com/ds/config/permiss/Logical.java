@@ -2,9 +2,6 @@ package com.ds.config.permiss;
 
 /**
  * 权限注解的验证模式
- * 
- * @author miki
- *
  */
 public enum Logical
 {

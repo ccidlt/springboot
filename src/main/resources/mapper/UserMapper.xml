@@ -3,14 +3,14 @@
 <mapper namespace="com.ds.dao.UserDao">
     <!--<cache-ref namespace="com.ds.dao.UserDao"></cache-ref>-->
   <select id="getBoys" resultType="com.ds.entity.Boy">
-/*    select
+    <!--select
     b.id,
     b.name,
     group_concat(g.name)
     from boy b
-    left join girl g on b.id=g.bid
-    group by b.id, b.name*/
-    select b.*, g.name as girls from boy b left join girl g on b.id=g.bid
+    left join girl g on b.id=g.boy_id
+    group by b.id, b.name-->
+    select com.* from (select b.*, g.name as girls, 1 as com_id from boy b left join girl g on b.id=g.boy_id) com
   </select>
 
     <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">

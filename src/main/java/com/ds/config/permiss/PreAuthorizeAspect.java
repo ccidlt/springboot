@@ -13,8 +13,6 @@ import java.lang.reflect.Method;
 
 /**
  * 基于 Spring Aop 的注解鉴权
- * 2022-09-05
- * @author miki
  */
 @Aspect
 @Component
@@ -35,9 +33,9 @@ public class PreAuthorizeAspect
     /**
      * 定义AOP签名 (切入所有使用鉴权注解的方法)
      */
-    public static final String POINTCUT_SIGN = " @annotation(com.ds.auth.RequiresLogin) || "
-            + "@annotation(com.ds.auth.RequiresPermissions) || "
-            + "@annotation(com.ds.auth.RequiresRoles)";
+    public static final String POINTCUT_SIGN = " @annotation(com.ds.config.permiss.RequiresLogin) || "
+            + "@annotation(com.ds.config.permiss.RequiresPermissions) || "
+            + "@annotation(com.ds.config.permiss.RequiresRoles)";
 
     /**
      * 声明AOP签名

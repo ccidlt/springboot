@@ -27,9 +27,15 @@ public class Boy implements Serializable {
     @NotBlank(message = "名称不能为空") //controller中可以用@Valid注解
     private String name;
 
+    @ApiModelProperty("girl表id")
+    private Integer girlId;
+
     @ApiModelProperty("女朋友们")
     @TableField(exist=false)
     private String girls;
+
+    @ApiModelProperty("创建人")
+    private String createUser;
 
     //自动回填创建时间
     @TableField(value="create_time", fill = FieldFill.INSERT)

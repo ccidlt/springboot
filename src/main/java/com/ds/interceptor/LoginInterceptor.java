@@ -1,9 +1,7 @@
 package com.ds.interceptor;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ds.annotation.PassToken;
 import com.ds.annotation.UseLoginToken;
-import com.ds.utils.StringUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,11 +11,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
@@ -54,6 +50,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		if(!useLoginToken){
 			return true;
 		}
+		/*
 		String token = request.getHeader("token");
 		if(StringUtil.isEmpty(token)){
 			token = request.getParameter("token");
@@ -73,6 +70,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 		result.put("msg", "请重新登录！");
 		out.write(result.toString().getBytes());
 		return false;
+		*/
+		return true;
 	}
 
 	@Override

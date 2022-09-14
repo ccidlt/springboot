@@ -2,8 +2,6 @@ package com.ds.config.permiss;
 
 /**
  * 通用常量信息
- * 
- * @author miki
  */
 public class Constants
 {

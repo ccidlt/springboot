@@ -6,8 +6,6 @@ import javax.annotation.Resource;
 
 /**
  * Token 权限验证工具类
- * 
- * @author miki
  */
 @Component
 public class AuthUtil

@@ -2,6 +2,7 @@ package com.ds.config.authority;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Service
@@ -21,7 +22,7 @@ public class UserAuthInterfaceImpl implements UserAuthInterface {
                     userAuth.setAll(Boolean.TRUE);
                     break;
                 case VIEW_COMPANY_AND_SUB:
-                    //userAuth.setIds(comIds);
+                    userAuth.setIds(new ArrayList<Integer>(3){{add(1);add(2);add(3);}});
                     break;
                 case VIEW_COMPANY:
                     break;
