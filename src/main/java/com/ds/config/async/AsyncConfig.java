@@ -9,7 +9,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -29,7 +28,7 @@ public class AsyncConfig {
     private RedisUtils redisUtils;
 
     @Bean("asyncExecutor")
-    public Executor asyncExecutor(){
+    public ThreadPoolTaskExecutor asyncExecutor(){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 核心线程数：线程池创建时候初始化的线程数
         executor.setCorePoolSize(10);

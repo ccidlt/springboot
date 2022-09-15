@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.annotation.Resource;
 import java.util.Random;
@@ -19,6 +20,8 @@ public class RedisMQConfig {
 
     @Resource
     private RedisMQEntity redisMQEntity;
+    @Resource(name="asyncExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**
      * 注入消息监听容器
@@ -36,6 +39,7 @@ public class RedisMQConfig {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
+        container.setTaskExecutor(threadPoolTaskExecutor);
         //订阅一个叫epc_01 的信道
         container.addMessageListener(listenerAdapter, new PatternTopic(redisMQEntity.getMq1()));
         //订阅一个叫epc_02 的信道
