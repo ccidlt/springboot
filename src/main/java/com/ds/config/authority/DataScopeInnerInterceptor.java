@@ -14,10 +14,10 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +25,10 @@ import java.util.Objects;
  *数据范围权限拦截器，配合@DataScope注解使用
  */
 public class DataScopeInnerInterceptor implements InnerInterceptor {
+
+    @Autowired
+    private UserAuthInterface authInterface;
+
 
     @SneakyThrows
     @Override
@@ -45,42 +49,16 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
                     continue;
                 }
                 DataScope dataScope = m.getAnnotation(DataScope.class);
-                if (Objects.isNull(dataScope)) {
+                if (Objects.isNull(dataScope) || Objects.equals("", dataScope.authKey())) {
                     //没有数据权限相关枚举，直接跳过
                     continue;
                 }
-                int auth = dataScope.auth();
-                UserAuth userAuth = new UserAuth();
-                Integer authData = auth;
-                if (!Objects.isNull(authData)) {
-                    switch (DataScopeViewTypeEnum.getByValue(authData)) {
-                        case VIEW_NONE:
-                            userAuth.setNone(Boolean.TRUE);
-                            break;
-                        case VIEW_ALL:
-                            userAuth.setAll(Boolean.TRUE);
-                            break;
-                        case VIEW_ME:
-                            //当前用户id查询出本用户数据
-                            userAuth.setIds(new ArrayList<Integer>(3){{add(1);}});
-                            break;
-                        case VIEW_COMPANY:
-                            //当前用户id查询出本部门数据
-                            userAuth.setIds(new ArrayList<Integer>(3){{add(1);}});
-                            break;
-                        case VIEW_COMPANY_AND_SUB:
-                            //当前用户id查询出本部门及子部门数据
-                            userAuth.setIds(new ArrayList<Integer>(3){{add(1);add(2);add(3);}});
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                UserAuth auth = authInterface.getUserAuth(dataScope.authKey());
                 //去除特殊字符
                 String originalSql = boundSql.getSql().replaceAll("\r|\n|`", "");
-                if (!Objects.isNull(userAuth)) {
+                if (!Objects.isNull(auth)) {
                     //根据用户权限拼接sql
-                    String newSql = getInExpressionByAuth(userAuth, dataScope, originalSql);
+                    String newSql = getInExpressionByAuth(auth, dataScope, originalSql);
                     //通过反射修改sql语句
                     Field field = boundSql.getClass().getDeclaredField("sql");
                     field.setAccessible(true);

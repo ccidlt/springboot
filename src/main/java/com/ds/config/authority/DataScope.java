@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface DataScope {
     /**
-     * 数据权限
+     * 当前功能的authKey，根据authKey去查询当前用户的具体权限值
      */
-    int auth() default 1;
+    String authKey() default "";
     /**
      * 需要加数据权限范围的表别名,单位权限
      */
