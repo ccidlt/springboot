@@ -45,6 +45,9 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
         for (Method m : methods) {
             if (Objects.equals(m.getName(), methodName)) {
                 //获取注解  来判断是不是要处理sql
+                if(!m.isAnnotationPresent(DataScope.class)){
+                    continue;
+                }
                 DataScope dataScope = m.getAnnotation(DataScope.class);
                 if (Objects.isNull(dataScope) || Objects.equals("", dataScope.authKey())) {
                     //没有数据权限相关枚举，直接跳过

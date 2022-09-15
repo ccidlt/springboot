@@ -11,8 +11,8 @@ public class UserAuthInterfaceImpl implements UserAuthInterface {
     @Override
     public UserAuth getUserAuth(String authKey) {
         UserAuth userAuth = new UserAuth();
-        //通过authKey和当前用户userId，获取到authKey对应的权限值data
-        Integer authData = 0;
+        //通过authKey和当前用户userId，获取到当前用户角色和authKey对应的权限值data(当前用户id可以从token中获取)
+        Integer authData = 1;
         if (!Objects.isNull(authData)) {
             switch (DataScopeViewTypeEnum.getByValue(authData)) {
                 case VIEW_NONE:

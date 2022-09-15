@@ -15,7 +15,7 @@ public @interface DataScope {
     /**
      * 当前功能的authKey，根据authKey去查询当前用户的具体权限值
      */
-    String authKey() default "";
+    String authKey() default "all";
     /**
      * 需要加数据权限范围的表别名,单位权限
      */
