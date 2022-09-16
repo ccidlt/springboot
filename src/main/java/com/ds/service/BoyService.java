@@ -8,7 +8,7 @@ import com.ds.entity.Boy;
 import java.util.List;
 import java.util.Map;
 
-public interface UserService extends IService<Boy> {
+public interface BoyService extends IService<Boy> {
 
     List<Boy> getBoys();
 

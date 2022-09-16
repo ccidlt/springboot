@@ -1,7 +1,7 @@
 package com.ds.service;
 
 import com.ds.entity.Boy;
-import com.ds.service.impl.UserFeignServiceImpl;
+import com.ds.service.impl.BoyFeignServiceImpl;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 
-@FeignClient(name="demo", url = "http://127.0.0.1:${server.port}", /*configuration = FeignConfig.class,*/ fallback = UserFeignServiceImpl.class)
+@FeignClient(name="demo", url = "http://127.0.0.1:${server.port}", /*configuration = FeignConfig.class,*/ fallback = BoyFeignServiceImpl.class)
 @Service
-public interface UserFeignService {
+public interface BoyFeignService {
 
     @RequestMapping(value = "/getBoys",
             method = RequestMethod.POST,

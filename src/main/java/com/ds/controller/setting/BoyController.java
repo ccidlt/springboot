@@ -1,7 +1,7 @@
 package com.ds.controller.setting;
 
 import com.ds.entity.Boy;
-import com.ds.service.UserService;
+import com.ds.service.BoyService;
 import com.ds.utils.Result;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +27,13 @@ import java.util.UUID;
 @RequestMapping("/")
 @Api(tags = "接口")
 @Slf4j
-public class UserController {
+public class BoyController {
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private Logger logger = LoggerFactory.getLogger(BoyController.class);
 
     @Autowired
     @Qualifier("userService")
-    private UserService userService;
+    private BoyService boyService;
 
     @RequestMapping(value="/getBoys",method = RequestMethod.POST, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     //@ApiOperation(value="获取Boy表所有数据", response = Boy.class)
@@ -45,7 +45,7 @@ public class UserController {
             @ApiResponse(code=500,message="后端程序报错")
     })
     public List<Boy> getBoys(){
-        List<Boy> boys = userService.getBoys();
+        List<Boy> boys = boyService.getBoys();
         logger.info("获取所有的表数据条数={}",boys != null ? boys.size() : 0);
         log.info("获取所有的表数据条数={}",boys != null ? boys.size() : 0);
         return boys;
@@ -59,7 +59,7 @@ public class UserController {
     public List<Boy> getBoysByParam(@RequestParam("id") Integer id){
         Boy boy = new Boy();
         boy.setId(id);
-        return userService.queryBoy(boy);
+        return boyService.queryBoy(boy);
     }
 
     @RequestMapping(value="/getBoysByParam",method = RequestMethod.GET)
@@ -67,7 +67,7 @@ public class UserController {
     public List<Boy> getBoysByParam(){
         Boy boy = new Boy();
         boy.setName("杨过");
-        return userService.queryBoy(boy);
+        return boyService.queryBoy(boy);
     }
 
     @RequestMapping(value="/addBoy",method = RequestMethod.POST,
@@ -78,8 +78,8 @@ public class UserController {
             @Valid
             @RequestBody(required = true) Boy boy){
         //boy中有id则为修改，没有为新增
-        userService.saveOrUpdate(boy);
-        return userService.getById(boy.getId());
+        boyService.saveOrUpdate(boy);
+        return boyService.getById(boy.getId());
     }
 
     @Value("${filePath:F:/file/}")

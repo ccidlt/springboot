@@ -39,56 +39,57 @@ public class SpringbootApplicationTests {
             put("a",5);put("b",2);put("c",3);put("d",4);put("e",1);
         }};
         map.forEach((k,v) -> System.out.println(k+"="+v));
-        User user1 = new User("1",20);
-        User user2 = new User("2",21);
-        User user3 = new User("3",22);
-        User user4= new User("4",23);
-        User user5 = new User("5",24);
+        User user1 = new User(1,"root","root","超级用户");
+        User user2 = new User(2,"user","user","普通用户");
+        User user3 = new User(3,"vip","vip","VIP用户");
         List<User> userlist = new ArrayList<>();
         userlist.add(user1);
         userlist.add(user2);
         userlist.add(user3);
-        userlist.add(user4);
-        userlist.add(user5);
-        userlist.forEach(user -> System.out.println("name="+user.getName()+"，age="+user.getAge()));
+        userlist.forEach(user -> System.out.println("account="+user.getAccount()+"，age="+user.getPassword()));
         //sort
         list.sort((v1,v2) -> v1.compareTo(v2));
         System.out.println("sort1"+list);
         list.sort((v1,v2) -> v1-v2);
         System.out.println("sort2:"+list);
-        userlist.sort(Comparator.comparing(User::getName,Comparator.reverseOrder()).thenComparing(User::getAge));
+        userlist.sort(Comparator.comparing(User::getAccount,Comparator.reverseOrder()).thenComparing(User::getUsername));
         System.out.println("sort3:"+list);
         //filter
         List<Integer> filter1 = list.stream().filter(v -> v >= 3).collect(Collectors.toList());
         System.out.println("filter:"+filter1);
+        //allMatch、anyMatch、nonMatch
+        boolean b = list.stream().anyMatch(v -> v >= 3);
+        System.out.println("anyMatch:"+b);
         //map
         List<Integer> map1 = list.stream().map(v -> v+10).collect(Collectors.toList());
         System.out.println("map1:"+list);
-        List<String> map2 = userlist.stream().map(User::getName).collect(Collectors.toList());
+        List<String> map2 = userlist.stream().map(User::getAccount).collect(Collectors.toList());
         System.out.println("map2:"+userlist);
         List<User> map3 = userlist.stream().map(user -> {
-            user.setAge(user.getAge()+10);
+            user.setId(user.getId()+10);
             return user;
         }).collect(Collectors.toList());
         System.out.println("map3:"+userlist);
         //mapToInt
-        int mapToInt = userlist.stream().mapToInt(user -> Integer.parseInt(user.getName())).sum();
+        int mapToInt = userlist.stream().mapToInt(User::getId).sum();
         System.out.println("mapToInt:"+mapToInt);
         //group
         Map<String, List<User>> group1 =
-                userlist.stream().collect(Collectors.groupingBy(User::getName, LinkedHashMap::new, Collectors.toList()));
+                userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.toList()));
         Map<String, IntSummaryStatistics> group2 =
-                userlist.stream().collect(Collectors.groupingBy(User::getName, LinkedHashMap::new, Collectors.summarizingInt(User::getAge)));
+                userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.summarizingInt(User::getId)));
+        Map<String, User> group3 =
+                userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.collectingAndThen(Collectors.toList(),v->v.get(0))));
         //toMap
         Map<String, User> toMap =
-                userlist.stream().collect(Collectors.toMap(User::getName, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+                userlist.stream().collect(Collectors.toMap(User::getAccount, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
         System.out.println("toMap:"+toMap);
         //reduce
-        Optional<User> option = userlist.stream().reduce((v1, v2) -> new User("姓名", v1.getAge() + v2.getAge()));
+        Optional<User> option = userlist.stream().reduce((v1, v2) -> new User(v1.getId() + v2.getId(),"","",""));
         System.out.println("reduce:"+option.orElse(null));
         //optional
         List<User> users = Optional.ofNullable(userlist).orElse(null);
-        String username = Optional.ofNullable(user1).map(User::getName).orElse(null);
+        String username = Optional.ofNullable(user1).map(User::getAccount).orElse(null);
     }
 
     /**
@@ -115,9 +116,9 @@ public class SpringbootApplicationTests {
         set1.removeAll(set2);
         System.out.println("差集是 " + set1);
 
-        User user1 = new User("张三",20);
-        User user2 = new User("李四",21);
-        User user3 = new User("王五",22);
+        User user1 = new User(1,"root","root","超级用户");
+        User user2 = new User(2,"user","user","普通用户");
+        User user3 = new User(3,"vip","vip","VIP用户");
         List<User> list1 = new ArrayList<User>(){{
             add(user1);add(user2);
         }};
@@ -126,12 +127,12 @@ public class SpringbootApplicationTests {
         }};
         //对象集合交集
         List<User> list3 = list1.stream().filter(item ->list2.stream()
-                .map(e -> e.getName()+"_$$_"+e.getAge()).collect(Collectors.toList()).contains(item.getName()+"_$$_"+item.getAge()))
+                .map(e -> e.getAccount()+"_$$_"+e.getUsername()).collect(Collectors.toList()).contains(item.getAccount()+"_$$_"+item.getUsername()))
                 .collect(Collectors.toList());
         System.out.println("对象集合交集是 " + list3);
         //对象集合差集
         List<User> list4 = list1.stream().filter(item ->!list2.stream()
-                .map(e -> e.getName()+"_$$_"+e.getAge()).collect(Collectors.toList()).contains(item.getName()+"_$$_"+item.getAge()))
+                .map(e -> e.getAccount()+"_$$_"+e.getUsername()).collect(Collectors.toList()).contains(item.getAccount()+"_$$_"+item.getUsername()))
                 .collect(Collectors.toList());
         System.out.println("对象集合差集是 " + list4);
         //对象集合并集

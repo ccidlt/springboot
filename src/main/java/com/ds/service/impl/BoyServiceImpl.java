@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.dao.UserDao;
 import com.ds.entity.Boy;
-import com.ds.service.UserService;
+import com.ds.service.BoyService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service("userService")
 @DS("db2")
 @CacheConfig(cacheNames = "user")
-public class UserServiceImpl extends ServiceImpl<UserDao, Boy> implements UserService {
+public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyService {
 
     @Resource
     private UserDao userDao;
