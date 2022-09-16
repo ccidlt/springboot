@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ds.dao.UserDao">
+    <sql id="base_column_list">
+        id, account, password, username
+    </sql>
+
+    <select id="findByAccount" parameterType="java.util.Map" resultType="com.ds.entity.User">
+        select
+        <include refid="base_column_list"/>
+        from user
+        <where>
+            <if test="account != null and account != ''">
+                and account = #{account}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultType="com.ds.entity.User">
+        select
+        <include refid="base_column_list"/>
+        from user
+        where id = #{id}
+    </select>
+</mapper>

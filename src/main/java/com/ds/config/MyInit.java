@@ -1,7 +1,7 @@
 package com.ds.config;
 
+import com.ds.utils.RedisUtils;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class MyInit implements CommandLineRunner {
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
     @Override
     public void run(String... args) throws Exception {
@@ -32,6 +32,7 @@ public class MyInit implements CommandLineRunner {
             Date nowDate = new Date();
             Date scheduleDate = sdfTime.parse(sdfDate.format(nowDate) + " 01:00:00");
             Calendar calendar = Calendar.getInstance();
+            calendar.setTime(scheduleDate);
             calendar.add(Calendar.DATE, 1);
             Date nextScheduleDate = calendar.getTime();
             long delay = 0;
@@ -39,9 +40,9 @@ public class MyInit implements CommandLineRunner {
             long cz = scheduleDate.getTime() - nowDate.getTime();
             delay = cz >= 0 ? (scheduleDate.getTime() - nowDate.getTime()) : (nextScheduleDate.getTime() - nowDate.getTime());
             scheduledExecutorService.scheduleAtFixedRate(() -> {
-                if(redisTemplate.opsForValue().setIfAbsent("scheduledTask",true,5, TimeUnit.MINUTES)){
+                if(redisUtils.acquireLock("scheduledTask",300)){
                     System.out.println("执行时间："+System.currentTimeMillis());
-                    redisTemplate.delete("scheduledTask");
+                    redisUtils.releaseLock("scheduledTask");
                 }
             }, delay, period, TimeUnit.MILLISECONDS);
         } catch (ParseException e) {

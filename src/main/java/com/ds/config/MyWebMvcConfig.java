@@ -1,6 +1,6 @@
 package com.ds.config;
 
-import com.ds.interceptor.AuthorityInterceptor;
+import com.ds.config.permiss.PermissionInterceptor;
 import com.ds.interceptor.LoginInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -30,8 +30,8 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         return new LoginInterceptor();
     }
     @Bean
-    public AuthorityInterceptor getAuthorityInterceptor(){
-        return new AuthorityInterceptor();
+    public PermissionInterceptor getPermissionInterceptor(){
+        return new PermissionInterceptor();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                     "/**/*.css",
                     "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
                 ).order(1);
-        registry.addInterceptor(getAuthorityInterceptor())
+        registry.addInterceptor(getPermissionInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/toLogin",

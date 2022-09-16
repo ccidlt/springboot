@@ -46,7 +46,17 @@ public class JWTUtils {
      * @param token
      */
     public static DecodedJWT verify(String token){
-        return JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
+        DecodedJWT verify = null;
+        try {
+            verify = JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
+        } catch (TokenExpiredException e) {
+            log.error(e.getMessage());
+        } catch (SignatureVerificationException e) {
+            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return verify;
     }
 
     public static void main(String[] args) {
@@ -55,18 +65,11 @@ public class JWTUtils {
         map.put("loginName","admin");
         String token = getToken(map,60);
         log.info(token);
-        DecodedJWT tokenInfo = null;
-        try {
-            tokenInfo = verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbk5hbWUiOiJhZG1pbiIsImV4cCI6MTY2MzEyMzQxMCwidXNlcklkIjoiMSJ9.vRhEhGGNPA3EJlBXpsGfW-GjEZp4txwURqhfAsRkRDU");
+        DecodedJWT tokenInfo = verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbk5hbWUiOiJhZG1pbiIsImV4cCI6MTY2MzEyMzQxMCwidXNlcklkIjoiMSJ9.vRhEhGGNPA3EJlBXpsGfW-GjEZp4txwURqhfAsRkRDU");
+        if(tokenInfo != null){
             String userId = tokenInfo.getClaim("userId").asString();
             String loginName = tokenInfo.getClaim("loginName").asString();
             log.info("userId={}, loginName={}", userId, loginName);
-        } catch (TokenExpiredException e) {
-            log.error(e.getMessage());
-        } catch (SignatureVerificationException e) {
-            log.error(e.getMessage());
-        } catch (Exception e) {
-            log.error(e.getMessage());
         }
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ds.dao.MenuDao">
+    <sql id="base_column_list">
+        id, pid, menu, desc, url, sort, perms, visible, type
+    </sql>
+
+    <select id="findByRoleId" parameterType="java.util.List" resultType="com.ds.entity.Menu">
+        select
+        menu.id, menu.pid, menu.menu, menu.desc, menu.url, menu.sort, menu.perms, menu.visible, menu.type
+        from menu, role_menu rm
+        where rm.menu_id = menu.id and rm.role_id in
+        <foreach collection="roleIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

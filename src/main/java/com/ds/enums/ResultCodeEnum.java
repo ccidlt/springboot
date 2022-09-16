@@ -9,7 +9,7 @@ public enum ResultCodeEnum {
     FAIL(201, "失败"),
     BAD_REQUEST(400, "错误的请求"),
     UNAUTHORIZED(401, "未经授权"),
-    FORBIDDEN(403, "禁止"),
+    FORBIDDEN(403, "拒绝访问"),
     NOT_FOUND(404, "没有找到"),
     INTERNAL_SERVER_ERROR(500, "内部服务器错误"),
     BAD_GATEWAY(502, "错误的网关"),
