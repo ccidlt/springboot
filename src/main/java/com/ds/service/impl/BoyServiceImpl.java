@@ -20,18 +20,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@Service("userService")
+@Service("boyService")
 @DS("db2")
-@CacheConfig(cacheNames = "user")
+@CacheConfig(cacheNames = "boy")
 public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyService {
 
     @Resource
     private BoyDao boyDao;
 
     //@Transactional
-    //@Cacheable(key = "#user.all")
+    //@Cacheable(key = "#boy.all")
     @Cacheable(keyGenerator = "keyGenerator")
-    //@CacheEvict(allEntries = true)//删除所有的user缓存
+    //@CacheEvict(allEntries = true)//删除所有的boy缓存
     public List<Boy> getBoys() {
         List<Boy> result = new ArrayList<>();
                 List<Boy> boyList = boyDao.getBoys();
@@ -111,7 +111,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     @Cacheable(keyGenerator = "keyGenerator")
     public Page<Boy> queryBoy(int pagenum, int pagesize){
         /*PageHelper.startPage(pagenum,pagesize);
-        List<Boy> boys = userDao.getBoyDataPage();
+        List<Boy> boys = boyDao.getBoyDataPage();
         PageInfo<Boy> boyPageInfo = new PageInfo<>(boys);
         return boyPageInfo.getList();*/
         Page<Boy> boyPage = new Page<>(pagenum, pagesize);

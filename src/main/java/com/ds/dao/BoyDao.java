@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-//@CacheNamespaceRef(name = "com.ds.dao.UserDao")
+//@CacheNamespaceRef(name = "com.ds.dao.boyDao")
 @CacheNamespace
 public interface BoyDao extends BaseMapper<Boy> {
 

@@ -32,7 +32,7 @@ public class BoyController {
     private Logger logger = LoggerFactory.getLogger(BoyController.class);
 
     @Autowired
-    @Qualifier("userService")
+    @Qualifier("boyService")
     private BoyService boyService;
 
     @RequestMapping(value="/getBoys",method = RequestMethod.POST, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
