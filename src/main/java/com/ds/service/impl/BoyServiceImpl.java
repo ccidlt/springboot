@@ -4,7 +4,7 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ds.dao.UserDao;
+import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.service.BoyService;
 import org.springframework.cache.annotation.CacheConfig;
@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
 @Service("userService")
 @DS("db2")
 @CacheConfig(cacheNames = "user")
-public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyService {
+public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyService {
 
     @Resource
-    private UserDao userDao;
+    private BoyDao boyDao;
 
     //@Transactional
     //@Cacheable(key = "#user.all")
@@ -34,7 +34,7 @@ public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyServ
     //@CacheEvict(allEntries = true)//删除所有的user缓存
     public List<Boy> getBoys() {
         List<Boy> result = new ArrayList<>();
-                List<Boy> boyList = userDao.getBoys();
+                List<Boy> boyList = boyDao.getBoys();
         boyList.stream().collect(Collectors.groupingBy(boy -> boy.getId()+"-"+boy.getName())).forEach((x,y) -> {
             y.stream().reduce((a,b) -> {
                return new Boy(a.getId(),a.getName(),a.getGirls()+ ","+b.getGirls());
@@ -47,22 +47,22 @@ public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyServ
     //查询
     @Cacheable(keyGenerator = "keyGenerator")
     public List<Boy> queryBoy(){
-        List<Boy> boys = userDao.selectList(null);
+        List<Boy> boys = boyDao.selectList(null);
         return boys;
     }
     @Cacheable(key = "#id")
     public Boy queryBoy(int id){
-        Boy boy = userDao.selectById(id);
+        Boy boy = boyDao.selectById(id);
         return boy;
     }
     @Cacheable(keyGenerator = "keyGenerator")
     public List<Boy> queryBoy(List<Integer> ids){
-        List<Boy> boys = userDao.selectBatchIds(ids);
+        List<Boy> boys = boyDao.selectBatchIds(ids);
         return boys;
     }
     @Cacheable(key = "#map.get('id')+','+#map.get('name')")
     public List<Boy> queryBoy(Map<String,Object> map){
-        List<Boy> boys = userDao.selectByMap(map);
+        List<Boy> boys = boyDao.selectByMap(map);
         return boys;
     }
     @Cacheable(keyGenerator = "keyGenerator")
@@ -74,7 +74,7 @@ public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyServ
         if(boy.getName() != null){
             objectQueryWrapper.like("name", boy.getName()).orderByDesc("id");
         }
-        List<Boy> boys = userDao.selectList(objectQueryWrapper);
+        List<Boy> boys = boyDao.selectList(objectQueryWrapper);
         return boys;
     }
 
@@ -84,12 +84,12 @@ public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyServ
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#boy.id+'_add_'+#boy.name", beforeInvocation = true, allEntries = true)
     public int addBoy(Boy boy){
-        return userDao.insert(boy);
+        return boyDao.insert(boy);
     }
     @Transactional
     @CacheEvict(keyGenerator = "keyGenerator",allEntries = true)
     public Boy addBoy2(Boy boy) {
-        userDao.insertBoy(boy);
+        boyDao.insertBoy(boy);
         return boy;
     }
 
@@ -97,14 +97,14 @@ public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyServ
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#boy.id+'_update_'+#boy.name", beforeInvocation = true, allEntries = true)
     public int updateBoy(Boy boy){
-        return userDao.updateById(boy);
+        return boyDao.updateById(boy);
     }
 
     //删除
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(beforeInvocation = true, allEntries = true)
     public int deleteBoy(int id){
-        return userDao.deleteById(id);
+        return boyDao.deleteById(id);
     }
 
     //分页
@@ -115,7 +115,7 @@ public class BoyServiceImpl extends ServiceImpl<UserDao, Boy> implements BoyServ
         PageInfo<Boy> boyPageInfo = new PageInfo<>(boys);
         return boyPageInfo.getList();*/
         Page<Boy> boyPage = new Page<>(pagenum, pagesize);
-        userDao.selectPage(boyPage, null);
+        boyDao.selectPage(boyPage, null);
         return boyPage;
     }
 }

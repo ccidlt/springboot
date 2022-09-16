@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 //@CacheNamespaceRef(name = "com.ds.dao.UserDao")
 @CacheNamespace
-public interface UserDao extends BaseMapper<Boy> {
+public interface BoyDao extends BaseMapper<Boy> {
 
     @DataScope
     List<Boy> getBoys();
