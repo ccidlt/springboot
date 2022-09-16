@@ -8,6 +8,7 @@ import com.ds.service.MenuService;
 import com.ds.service.PermissionService;
 import com.ds.service.RoleService;
 import com.ds.service.UserService;
+import com.ds.utils.HttpServletUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,9 +18,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -51,10 +49,8 @@ public class PermissionAspect {
     @Around("cut()")
     public Object around(ProceedingJoinPoint joinPoint)throws Throwable{
         try{
-            RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-            ServletRequestAttributes sra = (ServletRequestAttributes) ra;
-            HttpServletRequest request = sra.getRequest();
-            HttpServletResponse response = sra.getResponse();
+            HttpServletRequest request = HttpServletUtil.getRequest();
+            HttpServletResponse response = HttpServletUtil.getResponse();
             MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
             Method methodObject = methodSignature.getMethod();
             Authentication annotation = methodObject.getAnnotation(Authentication.class);
