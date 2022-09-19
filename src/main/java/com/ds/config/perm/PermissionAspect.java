@@ -1,9 +1,10 @@
 package com.ds.config.perm;
 
-import com.alibaba.fastjson.JSON;
 import com.ds.entity.Menu;
+import com.ds.entity.Result;
 import com.ds.entity.Role;
 import com.ds.entity.User;
+import com.ds.enums.ResultCodeEnum;
 import com.ds.service.MenuService;
 import com.ds.service.PermissionService;
 import com.ds.service.RoleService;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,6 +48,7 @@ public class PermissionAspect {
 
     @Around("cut()")
     public Object around(ProceedingJoinPoint joinPoint)throws Throwable{
+        Object result = null;
         try{
             HttpServletRequest request = HttpServletUtil.getRequest();
             HttpServletResponse response = HttpServletUtil.getResponse();
@@ -122,19 +123,14 @@ public class PermissionAspect {
                         break;
                 }
                 if(!isPass){
-                    Map<String,Object> rsp = new HashMap<>(2);
-                    rsp.put("code",403);
-                    rsp.put("msg","无权访问");
-                    response.setCharacterEncoding("UTF-8");
-                    response.setContentType("application/json; charset=utf-8");
-                    final PrintWriter writer = response.getWriter();
-                    writer.write(JSON.toJSONString(rsp));
+                    return Result.build(null, ResultCodeEnum.FORBIDDEN);
                 }
             }
+            result = joinPoint.proceed();
         }catch(Exception e){
             log.error(e.getMessage());
+            return Result.build(null, ResultCodeEnum.INTERNAL_SERVER_ERROR);
         }
-        Object result = joinPoint.proceed();
         return result;
     }
 }
