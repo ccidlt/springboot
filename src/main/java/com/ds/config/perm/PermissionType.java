@@ -1,4 +1,4 @@
-package com.ds.config.permiss;
+package com.ds.config.perm;
 
 /**
  * 权限注解的类型

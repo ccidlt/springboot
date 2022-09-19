@@ -9,5 +9,7 @@ public interface UserDao {
 
     User findByAccount(User user);
 
+    User findByParam(User user);
+
     User findById(@Param("id")Integer id);
 }

@@ -5,7 +5,14 @@
         id, account, password, username
     </sql>
 
-    <select id="findByAccount" parameterType="java.util.Map" resultType="com.ds.entity.User">
+    <select id="findByAccount" resultType="com.ds.entity.User">
+        select
+        <include refid="base_column_list"/>
+        from user
+        where account = #{account}
+    </select>
+
+    <select id="findByParam" resultType="com.ds.entity.User">
         select
         <include refid="base_column_list"/>
         from user

@@ -1,4 +1,4 @@
-package com.ds.config.permiss;
+package com.ds.config.perm;
 
 import java.lang.annotation.*;
 

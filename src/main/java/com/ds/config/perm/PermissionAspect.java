@@ -1,4 +1,4 @@
-package com.ds.config.permiss;
+package com.ds.config.perm;
 
 import com.alibaba.fastjson.JSON;
 import com.ds.entity.Menu;
@@ -8,10 +8,16 @@ import com.ds.service.MenuService;
 import com.ds.service.PermissionService;
 import com.ds.service.RoleService;
 import com.ds.service.UserService;
+import com.ds.utils.HttpServletUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +28,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class PermissionInterceptor implements HandlerInterceptor {
+@Aspect
+@Slf4j
+@Order(3)
+public class PermissionAspect {
 
     @Resource
     private UserService userService;
@@ -33,26 +42,29 @@ public class PermissionInterceptor implements HandlerInterceptor {
     @Resource
     private MenuService menuService;
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        if(!(handler instanceof HandlerMethod)){
-            return true;
-        }
-        HandlerMethod handlerMethod = (HandlerMethod)handler;
-        Method method = handlerMethod.getMethod();
-        if(method.isAnnotationPresent(Authentication.class)){
-            Authentication annotation = method.getAnnotation(Authentication.class);
+    @Pointcut("@annotation(com.ds.config.perm.Authentication)")
+    private void cut(){
+    }
+
+    @Around("cut()")
+    public Object around(ProceedingJoinPoint joinPoint)throws Throwable{
+        try{
+            HttpServletRequest request = HttpServletUtil.getRequest();
+            HttpServletResponse response = HttpServletUtil.getResponse();
+            MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+            Method methodObject = methodSignature.getMethod();
+            Authentication annotation = methodObject.getAnnotation(Authentication.class);
             if(annotation.required()){
+                boolean isPass = false;
                 PermissionType permissionType = annotation.permissionType();
                 String[] value = annotation.value();
                 Logical logical = annotation.logical();
                 if(value.length == 0){
-                    return true;
+                    isPass = true;
                 }
                 List<String> valueList = Arrays.stream(value).collect(Collectors.toList());
                 if(valueList.contains("admin")){
-                    return true;
+                    isPass = true;
                 }
                 String token = request.getHeader("token");
                 User user = userService.getUser(token);
@@ -65,11 +77,11 @@ public class PermissionInterceptor implements HandlerInterceptor {
                         //是否包含某些角色
                         if(logical == Logical.AND){
                             if(roleList.containsAll(valueList)){
-                                return true;
+                                isPass = true;
                             }
                         }else if(logical == Logical.OR){
                             if(valueList.stream().anyMatch(a -> roleList.contains(a))){
-                                return true;
+                                isPass = true;
                             }
                         }
                         break;
@@ -81,11 +93,11 @@ public class PermissionInterceptor implements HandlerInterceptor {
                         if(CollectionUtils.isNotEmpty(menuPermsSet)){
                             if(logical == Logical.AND) {
                                 if (menuPermsSet.containsAll(valueList)) {
-                                    return true;
+                                    isPass = true;
                                 }
                             }else if(logical == Logical.OR){
                                 if(valueList.stream().anyMatch(a -> menuPermsSet.contains(a))){
-                                    return true;
+                                    isPass = true;
                                 }
                             }
                         }
@@ -97,11 +109,11 @@ public class PermissionInterceptor implements HandlerInterceptor {
                         if(CollectionUtils.isNotEmpty(permissionSet)) {
                             if (logical == Logical.AND) {
                                 if (permissionSet.containsAll(valueList)) {
-                                    return true;
+                                    isPass = true;
                                 }
                             } else if (logical == Logical.OR) {
                                 if (valueList.stream().anyMatch(a -> permissionSet.contains(a))) {
-                                    return true;
+                                    isPass = true;
                                 }
                             }
                         }
@@ -109,16 +121,20 @@ public class PermissionInterceptor implements HandlerInterceptor {
                     default:
                         break;
                 }
-                Map<String,Object> rsp = new HashMap<>(2);
-                rsp.put("code",403);
-                rsp.put("msg","无权访问");
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("application/json; charset=utf-8");
-                final PrintWriter writer = response.getWriter();
-                writer.write(JSON.toJSONString(rsp));
-                return false;
+                if(!isPass){
+                    Map<String,Object> rsp = new HashMap<>(2);
+                    rsp.put("code",403);
+                    rsp.put("msg","无权访问");
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("application/json; charset=utf-8");
+                    final PrintWriter writer = response.getWriter();
+                    writer.write(JSON.toJSONString(rsp));
+                }
             }
+        }catch(Exception e){
+            log.error(e.getMessage());
         }
-        return true;
+        Object result = joinPoint.proceed();
+        return result;
     }
 }

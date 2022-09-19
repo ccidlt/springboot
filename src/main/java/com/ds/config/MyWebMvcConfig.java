@@ -1,6 +1,6 @@
 package com.ds.config;
 
-import com.ds.config.permiss.PermissionInterceptor;
+import com.ds.config.perm.PermissionInterceptor;
 import com.ds.interceptor.LoginInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;

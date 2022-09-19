@@ -22,6 +22,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByParam(User user) {
+        return userDao.findByParam(user);
+    }
+
+    @Override
     public User findById(Integer id) {
         return userDao.findById(id);
     }

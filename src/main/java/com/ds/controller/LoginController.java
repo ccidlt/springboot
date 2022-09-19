@@ -32,7 +32,7 @@ public class LoginController {
      */
     @RequestMapping("/login")
     public Result login(@RequestBody User user){
-        User u = userService.findByAccount(user);
+        User u = userService.findByParam(user);
         if(u == null){
             return Result.fail();
         }
