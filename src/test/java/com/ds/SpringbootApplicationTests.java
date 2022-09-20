@@ -90,6 +90,24 @@ public class SpringbootApplicationTests {
         //optional
         List<User> users = Optional.ofNullable(userlist).orElse(null);
         String username = Optional.ofNullable(user1).map(User::getAccount).orElse(null);
+        //distinct
+        List<String> distinct1 = userlist.stream().map(User::getUsername).distinct().collect(Collectors.toList());
+        //去重
+        List<User> distinct2 = userlist.stream().collect(
+                Collectors.collectingAndThen(Collectors.toCollection(() ->
+                        new TreeSet<>(Comparator.comparingInt(User::getId))
+                ), ArrayList::new));
+        //join
+        String join = userlist.stream().map(User::getUsername).collect(Collectors.joining(","));
+        //max、min
+        User max1 = userlist.stream().collect(Collectors.maxBy(Comparator.comparing(User::getId))).orElse(null);
+        User max2 = userlist.stream().max(Comparator.comparing(User::getId)).orElse(null);
+        //sum
+        long sum1 = userlist.stream().mapToInt(User::getId).sum();
+        long sum2 = userlist.stream().collect(Collectors.summingInt(User::getId));
+        //count
+        long count1 = userlist.stream().count();
+        long count2 = userlist.stream().collect(Collectors.counting());
     }
 
     /**
