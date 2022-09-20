@@ -85,11 +85,11 @@ spring:
 #    password: guest
 
 
-logging:
-  level:
-    root: INFO
-    com.ds: INFO
-    com.ds dao: DEBUG
+#logging:
+#  level:
+#    root: INFO
+#    com.ds: INFO
+#    com.ds dao: DEBUG
 #  file:
 #    path: log
 #  pattern:
@@ -102,7 +102,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true #t对应属性可驼峰命名
     cache-enabled: true #开启全局二级缓存
     call-setters-on-nulls: true #resultMap返回的是Map时，返回值为空的键值关系
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #sql语句详情打印
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #sql语句详情打印
   global-config:
     db-config:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
