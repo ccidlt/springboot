@@ -1,8 +1,8 @@
 package com.ds.controller.setting;
 
 import com.ds.entity.Boy;
+import com.ds.entity.Result;
 import com.ds.service.BoyService;
-import com.ds.utils.Result;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public class BoyController {
         HttpServletRequest request = requestAttributes.getRequest();
         MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest)request;
         MultipartFile file = multipartHttpServletRequest.getFile("file");*/
-        Result result = Result.getResult("1","文件上传成功","a");
+        Result result = Result.ok();
         String originalFilename = file.getOriginalFilename();
         String hz = originalFilename.substring(originalFilename.lastIndexOf("."));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -106,10 +106,10 @@ public class BoyController {
         String filename = UUID.randomUUID().toString().replace("-","") + hz;
         try {
             file.transferTo(new File(filedir,filename));
-            result = Result.getResult("1","文件上传成功",format+"/"+filename);
+            result = Result.ok(format+"/"+filename);
         } catch (IOException e) {
             e.printStackTrace();
-            result = Result.getResult("0","文件上传失败");
+            result = Result.fail();
         }
         return result;
     }

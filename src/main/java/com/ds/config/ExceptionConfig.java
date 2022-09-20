@@ -1,6 +1,6 @@
 package com.ds.config;
 
-import com.ds.utils.Result;
+import com.ds.entity.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -23,30 +23,30 @@ public class ExceptionConfig {
      * 捕捉其他所有异常
      * */
     @ExceptionHandler(Exception.class)
-    public Result globalException(HttpServletRequest request,Exception e) {
+    public Result globalException(HttpServletRequest request, Exception e) {
         if (e instanceof NoHandlerFoundException) {
-            return new Result(String.valueOf(HttpStatus.NOT_FOUND), "找不到资源");
+            return Result.build(HttpStatus.NOT_FOUND.value(), "找不到资源");
         }else if (e instanceof TypeMismatchException) {
             TypeMismatchException te = (TypeMismatchException)e;
             if (Double.class.equals(te.getRequiredType()) ||  Integer.class.equals(te.getRequiredType())) {
                 String res = String.format("请求错误, %s不是一个数字", te.getValue());
-                return new Result(String.valueOf(HttpStatus.BAD_REQUEST), res);
+                return Result.build(HttpStatus.BAD_REQUEST.value(), res);
             } else {
                 String res = String.format("请求错误, %s无效, 需要%s类型", te.getValue(), te.getRequiredType().getName());
-                return new Result(String.valueOf(HttpStatus.BAD_REQUEST), res);
+                return Result.build(HttpStatus.BAD_REQUEST.value(), res);
             }
         }else if (e instanceof MissingServletRequestParameterException) {
             MissingServletRequestParameterException me = (MissingServletRequestParameterException)e;
             String res = String.format("请求错误, 参数：%s是必须的, 类型：%s", me.getParameterName(), me.getParameterType());
-            return new Result(String.valueOf(HttpStatus.BAD_REQUEST), res);
+            return Result.build(HttpStatus.BAD_REQUEST.value(), res);
         }else if(e instanceof MethodArgumentNotValidException){
             MethodArgumentNotValidException me = (MethodArgumentNotValidException)e;
-            return new Result(String.valueOf(HttpStatus.BAD_REQUEST), me.getBindingResult().getFieldError().getDefaultMessage());
+            return Result.build(HttpStatus.BAD_REQUEST.value(), me.getBindingResult().getFieldError().getDefaultMessage());
         }else if(e instanceof BindException){
             BindException me = (BindException)e;
-            return new Result(String.valueOf(HttpStatus.BAD_REQUEST), me.getBindingResult().getFieldError().getDefaultMessage());
+            return Result.build(HttpStatus.BAD_REQUEST.value(), me.getBindingResult().getFieldError().getDefaultMessage());
         }else{
-            return new Result(String.valueOf(HttpStatus.SERVICE_UNAVAILABLE), this.getClass().getSimpleName()+": "+e.getMessage());
+            return Result.build(HttpStatus.SERVICE_UNAVAILABLE.value(), this.getClass().getSimpleName()+": "+e.getMessage());
         }
     }
 
