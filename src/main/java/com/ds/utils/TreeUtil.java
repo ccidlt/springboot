@@ -10,6 +10,28 @@ import java.util.Map;
 public class TreeUtil {
 
     /**
+     * 构建树节点
+     */
+    public static <T extends TreeData> List<T> build(List<T> treeNodes) {
+        List<T> result = new ArrayList<>();
+        //list转map
+        Map<Integer, T> nodeMap = new LinkedHashMap<>(treeNodes.size());
+        for(T treeNode : treeNodes){
+            nodeMap.put(treeNode.getId(), treeNode);
+        }
+        for(T node : nodeMap.values()) {
+            T parent = nodeMap.get(node.getPid());
+            if(parent != null && !(node.getId().equals(parent.getId()))){
+                parent.getChildren().add(node);
+                continue;
+            }
+
+            result.add(node);
+        }
+        return result;
+    }
+
+    /**
      * 根据pid，构建树节点
      */
     public static <T extends TreeData> List<T> build(List<T> treeNodes, Integer pid) {
@@ -34,29 +56,6 @@ public class TreeUtil {
         }
         return rootNode;
     }
-
-    /**
-     * 构建树节点
-     */
-    public static <T extends TreeData> List<T> build(List<T> treeNodes) {
-        List<T> result = new ArrayList<>();
-        //list转map
-        Map<Integer, T> nodeMap = new LinkedHashMap<>(treeNodes.size());
-        for(T treeNode : treeNodes){
-            nodeMap.put(treeNode.getId(), treeNode);
-        }
-        for(T node : nodeMap.values()) {
-            T parent = nodeMap.get(node.getPid());
-            if(parent != null && !(node.getId().equals(parent.getId()))){
-                parent.getChildren().add(node);
-                continue;
-            }
-
-            result.add(node);
-        }
-        return result;
-    }
-
 
     /**
      * 获取子节点
