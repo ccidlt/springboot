@@ -12,7 +12,7 @@
     <!--    <property name="log.path" value="D:/logs/spring" />-->
     <!--系统环境变量：LOG_PATH-->
     <!--<property name="log.path" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/}"/>-->
-    <property name="log.path" value="../logs/spring"/>
+    <property name="log.path" value="../logs/springboot"/>
 
     <!-- 彩色日志 -->
     <!-- 彩色日志依赖的渲染类 -->
@@ -49,16 +49,39 @@
         <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 每天日志归档路径以及格式 -->
-            <fileNamePattern>${log.path}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${log.path}/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <!--日志文件保留天数-->
-            <maxHistory>7</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <!-- 此日志文件只记录info级别的 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 时间滚动输出 level为 ERROR 日志 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 每天日志归档路径以及格式 -->
+            <fileNamePattern>${log.path}/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!--日志文件保留天数-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <!-- 此日志文件只记录info级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
@@ -101,7 +124,6 @@
 
     <!--开发环境:打印控制台-->
     <springProfile name="dev">
-        <!--<logger name="com.ds.dao" level="debug"/>-->
         <logger name="com.ds.dao" level="debug" additivity="false">
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="ASYNC-FILE" />
@@ -110,17 +132,18 @@
 
     <!--测试环境-->
     <springProfile name="test">
-        <logger name="com.ds.dao" level="info"/>
+        <logger name="com.ds.dao" level="info" additivity="false"/>
     </springProfile>
 
     <!--生产环境-->
     <springProfile name="prd">
-        <logger name="com.ds.dao" level="info"/>
+        <logger name="com.ds.dao" level="info" additivity="false"/>
     </springProfile>
 
     <root level="info">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="ASYNC-FILE" />
+        <appender-ref ref="ERROR_FILE" />
     </root>
 
 
