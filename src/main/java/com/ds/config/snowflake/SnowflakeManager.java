@@ -1,4 +1,4 @@
-package com.ds.entity;
+package com.ds.config.snowflake;
 
 import java.security.SecureRandom;
 

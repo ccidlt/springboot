@@ -130,3 +130,8 @@ redislist:
   mq1: mq1
   mq2: mq2
   mq3: mq3
+
+#雪花算法
+snow-flake:
+  dataCenterId: 0 #数据中心
+  machineId: 0 #机器标识

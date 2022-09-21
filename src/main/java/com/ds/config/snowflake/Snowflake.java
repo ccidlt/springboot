@@ -1,9 +1,9 @@
-package com.ds.entity;
+package com.ds.config.snowflake;
 
 /**
  * 雪花算法
  */
-public class SnowFlake {
+public class Snowflake {
     /**
      * 起始的时间戳
      */
@@ -35,7 +35,7 @@ public class SnowFlake {
     private long sequence = 0L; //序列号
     private long lastStamp = -1L;//上一次时间戳
 
-    public SnowFlake(long dataCenterId, long machineId) {
+    public Snowflake(long dataCenterId, long machineId) {
         if (dataCenterId > MAX_DATA_CENTER_NUM || dataCenterId < 0) {
             throw new IllegalArgumentException("dataCenterId can't be greater than MAX_DATA_CENTER_NUM or less than 0");
         }
@@ -90,7 +90,7 @@ public class SnowFlake {
     }
 
     public static void main(String[] args) {
-        SnowFlake snowFlake = new SnowFlake(2, 3);
+        Snowflake snowFlake = new Snowflake(2, 3);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
             System.out.println("当前生成的有序数字串："+snowFlake.nextId());
