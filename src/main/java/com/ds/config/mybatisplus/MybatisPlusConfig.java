@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;

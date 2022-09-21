@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.rabbitmq;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

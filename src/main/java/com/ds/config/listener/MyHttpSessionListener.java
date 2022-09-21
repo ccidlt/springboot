@@ -1,4 +1,4 @@
-package com.ds.listener;
+package com.ds.config.listener;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;

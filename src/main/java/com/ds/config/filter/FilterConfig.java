@@ -1,6 +1,5 @@
-package com.ds.config;
+package com.ds.config.filter;
 
-import com.ds.filter.MyFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

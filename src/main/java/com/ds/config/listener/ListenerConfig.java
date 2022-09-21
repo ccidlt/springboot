@@ -1,7 +1,5 @@
-package com.ds.config;
+package com.ds.config.listener;
 
-import com.ds.listener.MyHttpSessionListener;
-import com.ds.listener.MyServletContextListener;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.webmvc;
 
 import com.ds.entity.Result;
 import org.slf4j.Logger;

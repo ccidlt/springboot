@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

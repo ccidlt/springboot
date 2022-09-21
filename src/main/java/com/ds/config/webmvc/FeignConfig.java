@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.webmvc;
 
 import com.ds.utils.StringUtil;
 import feign.Logger;

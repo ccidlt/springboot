@@ -1,7 +1,6 @@
-package com.ds.config;
+package com.ds.config.webmvc;
 
 import com.ds.config.perm.PermissionInterceptor;
-import com.ds.interceptor.LoginInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

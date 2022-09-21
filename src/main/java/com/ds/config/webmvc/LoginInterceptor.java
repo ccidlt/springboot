@@ -1,4 +1,4 @@
-package com.ds.interceptor;
+package com.ds.config.webmvc;
 
 import com.ds.annotation.PassToken;
 import com.ds.annotation.UseLoginToken;

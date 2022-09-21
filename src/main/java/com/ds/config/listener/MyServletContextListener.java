@@ -1,4 +1,4 @@
-package com.ds.listener;
+package com.ds.config.listener;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;

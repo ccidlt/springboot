@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.kafka;
 
 import org.springframework.context.annotation.Configuration;
 

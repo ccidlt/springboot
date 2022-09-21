@@ -1,4 +1,4 @@
-package com.ds.config;
+package com.ds.config.webmvc;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

@@ -1,6 +1,5 @@
-package com.ds.service.impl;
+package com.ds.config.redis;
 
-import com.ds.service.NumberGenService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
