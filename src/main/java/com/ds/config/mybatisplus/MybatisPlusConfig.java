@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.ds.config.authority.DataScopeInnerInterceptor;
+import com.ds.config.snowflake.Snowflake;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -48,12 +50,16 @@ public class MybatisPlusConfig implements MetaObjectHandler {
         return new LogicSqlInjector();
     }*/
 
+    @Autowired
+    private Snowflake snowflake;
+
     @Override
     public void insertFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, "createTime", Date.class, new Date());
         this.strictInsertFill(metaObject, "updateTime", Date.class, new Date());
         this.strictInsertFill(metaObject, "version", Integer.class, 1);
         this.strictInsertFill(metaObject, "isdelete", Integer.class, 0);
+        this.strictInsertFill(metaObject, "id", Long.class, snowflake.nextId());
     }
 
     @Override

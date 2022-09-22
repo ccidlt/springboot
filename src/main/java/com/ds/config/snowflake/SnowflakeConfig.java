@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SnowflakeConfig {
 
+    @Bean
     @ConfigurationProperties(prefix = "snow-flake")
     public SnowflakeProperties snowflakeProperties(){
         return new SnowflakeProperties();
