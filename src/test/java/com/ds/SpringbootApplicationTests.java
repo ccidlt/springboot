@@ -1,11 +1,13 @@
 package com.ds;
 
+import com.ds.config.async.LockTest;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -15,6 +17,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -263,6 +266,31 @@ public class SpringbootApplicationTests {
             if(fas.getId() == pid){
                 ids.add(fas.getId());
                 recursionUp(fass, fas.getPid(), ids);
+            }
+        }
+    }
+
+    @Autowired
+    LockTest lockTest;
+    @Test
+    public void lockTest() throws Exception{
+        final ArrayList<Future<Boolean>> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            //阻塞调用返回值
+            final Future<Boolean> hel = lockTest.sayHello();
+            list.add(hel);
+            if (list.size() == 5) {
+                while (true) {
+                    for (int j = list.size() - 1; j >= 0; j--) {
+                        final Future<Boolean> aBoolean = list.get(j);
+                        if (aBoolean.isDone()) {
+                            list.remove(j);
+                        }
+                    }
+                    if (list.size() == 0) {
+                        break;
+                    }
+                }
             }
         }
     }
