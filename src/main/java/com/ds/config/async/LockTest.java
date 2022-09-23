@@ -1,5 +1,6 @@
 package com.ds.config.async;
 
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,7 +19,10 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class LockTest {
 
+    //线程安全
     Map<String, Object> concurrentHashMap = new ConcurrentHashMap<>();
+    Vector<ConcurrentHashMap<String,Object>> vector = new Vector<>();
+    Set<ConcurrentHashMap<String,Object>> concurrentHashSet = Sets.newConcurrentHashSet();
 
     AtomicInteger count = new AtomicInteger(30);
 
