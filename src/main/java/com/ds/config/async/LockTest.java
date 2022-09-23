@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -19,9 +20,12 @@ public class LockTest {
 
     AtomicInteger count = new AtomicInteger(30);
 
+    //锁ReentrantLock，同一对象，所有线程同步
+    ReentrantLock lock = new ReentrantLock();
     @Async("asyncExecutor")
-    public Future<Boolean> sayHello() throws Exception {
-        final ReentrantLock lock = new ReentrantLock();
+    public Future<Boolean> reentrantLockTest() throws Exception {
+        //锁ReentrantLock，不同对象，单个线程同步
+        ReentrantLock lock = new ReentrantLock();
         lock.lock();
         int temp = 0;
         for (; ; ) {
@@ -39,6 +43,21 @@ public class LockTest {
         }
         lock.unlock();
         return new AsyncResult<>(true);
+    }
+
+    @Async("asyncExecutor")
+    public void synchronizedText() throws Exception {
+//        //锁对象，因为对象为单例，同一对象，所有线程同步
+//        synchronized (this){
+//            Thread.sleep(1000);
+//            log.info(Thread.currentThread().getName()+": "+ LocalDateTime.now());
+//        }
+        //锁对象，不同对象，单个线程同步
+        byte[] byteArr = new byte[2];
+        synchronized (byteArr){
+            Thread.sleep(1000);
+            log.info(Thread.currentThread().getName()+": "+ LocalDateTime.now());
+        }
     }
 
 }

@@ -273,11 +273,11 @@ public class SpringbootApplicationTests {
     @Autowired
     LockTest lockTest;
     @Test
-    public void lockTest() throws Exception{
+    public void reentrantLockTest() throws Exception{
         final ArrayList<Future<Boolean>> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             //阻塞调用返回值
-            final Future<Boolean> hel = lockTest.sayHello();
+            final Future<Boolean> hel = lockTest.reentrantLockTest();
             list.add(hel);
             if (list.size() == 5) {
                 while (true) {
@@ -293,6 +293,14 @@ public class SpringbootApplicationTests {
                 }
             }
         }
+    }
+
+    @Test
+    public void synchronizedText1() throws Exception{
+        for(int i=0;i<10;i++){
+            lockTest.synchronizedText();
+        }
+        Thread.sleep(60*1000);
     }
 
 }
