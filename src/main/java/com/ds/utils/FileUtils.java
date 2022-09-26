@@ -17,6 +17,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public class FileUtils {
@@ -217,6 +219,35 @@ public class FileUtils {
             outputStream.write(buffer, 0, len);
         }
         inputStream.close();
+    }
+
+    /**
+     * 功能描述:  将文件打包的方法，需要传一个压缩路径，和一个文件，一次只将一个文件写入压缩包
+     * @param filePath 文件路径
+     * @param zipOut 压缩流：new ZipOutputStream(new FileOutputStream(zipFilePath));传给前端new ZipOutputStream(response.getOutputStream());
+     * @param realFileName 真实的文件名
+     * @return void
+     */
+    public static void fileToZip(String filePath, ZipOutputStream zipOut, String realFileName) throws IOException {
+        // 需要压缩的文件
+        File file = new File(filePath);
+        //创建文件输入流
+        FileInputStream fileInput = new FileInputStream(filePath);
+        // 缓冲
+        byte[] bufferArea = new byte[1024 * 10];
+        BufferedInputStream bufferStream = new BufferedInputStream(fileInput, 1024 * 10);
+        // 将当前文件作为一个zip实体写入压缩流,realFileName代表压缩文件中的文件名称
+        zipOut.putNextEntry(new ZipEntry(realFileName));
+        int length = 0;
+        // 写操作
+        while ((length = bufferStream.read(bufferArea, 0, 1024 * 10)) != -1) {
+            zipOut.write(bufferArea, 0, length);
+        }
+        //关闭流
+        fileInput.close();
+        // 需要注意的是缓冲流必须要关闭流,否则输出无效
+        bufferStream.close();
+        // 压缩流不必关闭,使用完后再关
     }
 
 }
