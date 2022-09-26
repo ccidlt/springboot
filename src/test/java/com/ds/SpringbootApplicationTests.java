@@ -49,6 +49,9 @@ public class SpringbootApplicationTests {
         userlist.add(user1);
         userlist.add(user2);
         userlist.add(user3);
+        List<User> userlist2 = new ArrayList<>();
+        userlist2.add(user1);
+        userlist2.add(user2);
         userlist.forEach(user -> System.out.println("account="+user.getAccount()+"，age="+user.getPassword()));
         //sort
         list.sort((v1,v2) -> v1.compareTo(v2));
@@ -90,6 +93,7 @@ public class SpringbootApplicationTests {
         //reduce
         Optional<User> option = userlist.stream().reduce((v1, v2) -> new User(v1.getId() + v2.getId(),"","",""));
         System.out.println("reduce:"+option.orElse(null));
+        String userNames = userlist.stream().map(User::getUsername).reduce("", (v1, v2) -> v1 + "," + v2);
         //optional
         List<User> users = Optional.ofNullable(userlist).orElse(null);
         String username = Optional.ofNullable(user1).map(User::getAccount).orElse(null);
@@ -111,6 +115,12 @@ public class SpringbootApplicationTests {
         //count
         long count1 = userlist.stream().count();
         long count2 = userlist.stream().collect(Collectors.counting());
+        //两集合交集
+        List<User> userChaList = userlist.stream()
+                .filter(a -> userlist2.stream().map(aa -> aa.getAccount() + "," + aa.getUsername())
+                        .collect(Collectors.toList()).contains(a.getAccount() + "," + a.getUsername()))
+                .collect(Collectors.toList());
+
     }
 
     /**
