@@ -1,7 +1,13 @@
 package com.ds.utils;
 
 import com.ds.entity.Result;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -16,6 +22,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -135,6 +143,7 @@ public class FileUtils {
             response.addHeader("Content-Length", "" + file.length());
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
+            response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
             outputStream.write(buffer);
             outputStream.flush();
         } catch (IOException ex) {
@@ -155,6 +164,7 @@ public class FileUtils {
         response.setContentType("application/octet-stream");
         String filename = new File(path).getName();
         response.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
+        response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
         ServletOutputStream outputStream = response.getOutputStream();
         byte[] b = new byte[1024];
         int len;
@@ -211,6 +221,7 @@ public class FileUtils {
             //纯下载方式 文件名应该编码成UTF-8
             response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
         }
+        response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
 
         byte[] buffer = new byte[1024];
         int len;
@@ -248,6 +259,93 @@ public class FileUtils {
         // 需要注意的是缓冲流必须要关闭流,否则输出无效
         bufferStream.close();
         // 压缩流不必关闭,使用完后再关
+    }
+
+    /**
+     * 表格导成pdf文件
+     * @param path 保存文件路径
+     * @param titles 表格头
+     * @param list 表格数据
+     * @param fields 表格字段
+     */
+    public static void exportPdfTable(String path, List<String> titles, List<Map<String,String>> list, List<String> fields) {
+        Document document = new Document(PageSize.A4, 5, 5, 30, 30);
+        //横向
+        Rectangle pageSize = new Rectangle(PageSize.A4.getHeight(), PageSize.A4.getWidth());
+        pageSize.rotate();
+        document.setPageSize(pageSize);
+        try {
+            File fileDir = new File(path);
+            if(!fileDir.exists()) {
+                fileDir.mkdirs();
+            }
+            String filePath = path+"/"+System.currentTimeMillis() + "_" + RandomStringUtils.random(12, true, true)+".pdf";
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            document.open();
+
+            //表格高度
+            int high = 20;
+            //表格宽度
+            int widthPercentage = 100;
+            //创建字体
+            BaseFont baseFont = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+            //字体对象,这里可以创建一个方法
+            Font size14font = new Font(baseFont, 14, Font.BOLD);  //大小为14的正常字体
+            Font size10font = new Font(baseFont, 10, Font.NORMAL); //大小为10的正常字体
+
+            Paragraph paragraph1 = new Paragraph("新工服入库台账", size14font);
+            paragraph1.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(paragraph1);
+            Paragraph paragraph2 = new Paragraph(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), size10font);
+            paragraph2.setAlignment(Paragraph.ALIGN_RIGHT);
+            document.add(paragraph2);
+            document.add( Chunk.NEWLINE );
+
+            String[] name = titles.toArray(new String[0]);
+            PdfPTable titleTable = new PdfPTable(name.length);//生成一个两列的表格
+            titleTable.setWidthPercentage(widthPercentage);
+            //该数组是每个表格的宽度
+            float[] floats = new float[name.length];
+            //循环将表头数据添加到第二行表格中
+            for (int i = 0; i < name.length; i++) {
+                titleTable.addCell(pdfTableStyle(name[i], size10font, high, true, true));
+                floats[i] = 0.1f;
+            }
+            //设置表格的宽度
+            titleTable.setTotalWidth(floats);
+            document.add(titleTable);
+
+            //将数据放入表格中
+            for (int i = 0; i < list.size(); i++) {
+                Map<String,String> map = list.get(i);
+                PdfPTable dataTable = new PdfPTable(name.length);
+                dataTable.setWidthPercentage(widthPercentage);
+                dataTable.setTotalWidth(floats);
+                //将数组中的数据按照顺序添加
+                for(int j=0;j<fields.size();j++){
+                    dataTable.addCell(pdfTableStyle(map.get(fields.get(j)), size10font, high, true, true));
+                }
+                document.add(dataTable);
+            }
+
+            document.close();
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private static PdfPCell pdfTableStyle(String content, Font font, int high, boolean isAlignCenter, boolean isAlignMidde){
+        PdfPCell pdfPCell  = new PdfPCell(new Phrase(content,font));
+        pdfPCell.setMinimumHeight(high);
+        pdfPCell.setUseAscender(true); // 设置可以居中
+        if (isAlignCenter){
+            pdfPCell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER); // 设置水平居中
+        }
+        if (isAlignMidde){
+            pdfPCell.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE); // 设置垂直居中
+        }
+        return pdfPCell;
     }
 
 }
