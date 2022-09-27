@@ -264,11 +264,12 @@ public class FileUtils {
     /**
      * 表格导成pdf文件
      * @param path 保存文件路径
+     * @param fileName 文件名
      * @param titles 表格头
      * @param list 表格数据
      * @param fields 表格字段
      */
-    public static void exportPdfTable(String path, List<String> titles, List<Map<String,String>> list, List<String> fields) {
+    public static void exportPdfTable(String path, String fileName, List<String> titles, List<Map<String,String>> list, List<String> fields) {
         Document document = new Document(PageSize.A4, 5, 5, 30, 30);
         //横向
         Rectangle pageSize = new Rectangle(PageSize.A4.getHeight(), PageSize.A4.getWidth());
@@ -293,7 +294,7 @@ public class FileUtils {
             Font size14font = new Font(baseFont, 14, Font.BOLD);  //大小为14的正常字体
             Font size10font = new Font(baseFont, 10, Font.NORMAL); //大小为10的正常字体
 
-            Paragraph paragraph1 = new Paragraph("新工服入库台账", size14font);
+            Paragraph paragraph1 = new Paragraph(fileName, size14font);
             paragraph1.setAlignment(Paragraph.ALIGN_CENTER);
             document.add(paragraph1);
             Paragraph paragraph2 = new Paragraph(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), size10font);
