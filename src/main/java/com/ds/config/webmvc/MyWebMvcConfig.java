@@ -2,6 +2,7 @@ package com.ds.config.webmvc;
 
 import com.ds.config.perm.PermissionInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -65,14 +66,16 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 ).order(2);
     }
 
-        /**
-         * 配置静态资源
-         * @param registry
-         */
+    /**
+     * 配置静态资源
+     * @param registry
+     */
+    @Value("${filePath}")
+    private String filePath;
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/mytest/**").addResourceLocations("classpath:/mytest/");
-        registry.addResourceHandler("/fileData/**").addResourceLocations("file:D:/myFile/");
+        registry.addResourceHandler("/file/**").addResourceLocations("file:"+filePath+"/");
     }
 
     /**

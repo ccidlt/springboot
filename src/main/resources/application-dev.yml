@@ -128,7 +128,7 @@ swagger:
   email: xxx@qq.com
 
 #文件路径
-filePath: /home/file/
+filePath: D:/file
 
 #kafka topic
 kafka_topics: topic01,topic-new-1
