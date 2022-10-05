@@ -2,16 +2,21 @@ server:
   port: 8078
   servlet:
     context-path: /
+  # 开启Gzip压缩，默认只压缩超过2048字节的数据
+  compression:
+    enabled: true
+    mime-types: application/json
 spring:
-  profiles:
-    active: dev
   application:
     name: springboot
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   datasource:
-    #    driver-class-name: com.mysql.cj.jdbc.Driver
-    #    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
-    #    username: root
-    #    password: 123456
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+#    username: root
+#    password: 123456
     dynamic:
       primary: master #设置默认的数据源或者数据源组,默认值即为master
       datasource:
