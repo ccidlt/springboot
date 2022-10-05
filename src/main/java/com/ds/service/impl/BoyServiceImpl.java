@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 
 @Service("boyService")
-@DS("db2")
+@DS("slave")
 @CacheConfig(cacheNames = "boy")
 public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyService {
 

@@ -13,14 +13,14 @@ spring:
     #    username: root
     #    password: 123456
     dynamic:
-      primary: db1 #设置默认的数据源或者数据源组,默认值即为master
+      primary: master #设置默认的数据源或者数据源组,默认值即为master
       datasource:
-        db1:
+        master:
           driver-class-name: com.mysql.cj.jdbc.Driver
           url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
           username: root
           password: 123456
-        db2:
+        slave:
           driver-class-name: com.mysql.cj.jdbc.Driver
           url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
           username: root
