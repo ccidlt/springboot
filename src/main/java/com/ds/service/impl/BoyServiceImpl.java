@@ -1,6 +1,5 @@
 package com.ds.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 
 
 @Service("boyService")
-@DS("slave")
 @CacheConfig(cacheNames = "boy")
 public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyService {
 

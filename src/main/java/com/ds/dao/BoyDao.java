@@ -1,5 +1,6 @@
 package com.ds.dao;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ds.config.authority.DataScope;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@DS("slave")
 //@CacheNamespaceRef(name = "com.ds.dao.boyDao")
 @CacheNamespace
 public interface BoyDao extends BaseMapper<Boy> {
