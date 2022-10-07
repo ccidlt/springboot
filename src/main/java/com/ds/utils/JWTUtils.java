@@ -2,10 +2,8 @@ package com.ds.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Calendar;
@@ -45,18 +43,24 @@ public class JWTUtils {
      * 验证token 合法性 || 获取token信息方法
      * @param token
      */
-    public static DecodedJWT verify(String token){
-        DecodedJWT verify = null;
+    public static boolean verify(String token){
         try {
-            verify = JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
-        } catch (TokenExpiredException e) {
-            log.error(e.getMessage());
-        } catch (SignatureVerificationException e) {
-            log.error(e.getMessage());
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET)).build();
+            verifier.verify(token);
+            return true;
         } catch (Exception e) {
-            log.error(e.getMessage());
+            return false;
         }
-        return verify;
+    }
+
+    public static String getClaim(String token, String name){
+        String claim = null;
+        try {
+            claim =  JWT.decode(token).getClaim(name).asString();
+        }catch (Exception e) {
+            return null;
+        }
+        return claim;
     }
 
     public static void main(String[] args) {
@@ -65,10 +69,10 @@ public class JWTUtils {
         map.put("loginName","admin");
         String token = getToken(map,60);
         log.info(token);
-        DecodedJWT tokenInfo = verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbk5hbWUiOiJhZG1pbiIsImV4cCI6MTY2MzEyMzQxMCwidXNlcklkIjoiMSJ9.vRhEhGGNPA3EJlBXpsGfW-GjEZp4txwURqhfAsRkRDU");
-        if(tokenInfo != null){
-            String userId = tokenInfo.getClaim("userId").asString();
-            String loginName = tokenInfo.getClaim("loginName").asString();
+        boolean verify = verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbk5hbWUiOiJhZG1pbiIsImV4cCI6MTY2MzEyMzQxMCwidXNlcklkIjoiMSJ9.vRhEhGGNPA3EJlBXpsGfW-GjEZp4txwURqhfAsRkRDU");
+        if(verify){
+            String userId = getClaim(token,"userId");
+            String loginName = getClaim(token,"loginName");
             log.info("userId={}, loginName={}", userId, loginName);
         }
     }

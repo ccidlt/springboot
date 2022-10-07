@@ -51,18 +51,20 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                     "/**/*.html",
                     "/**/*.js",
                     "/**/*.css",
-                    "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
+                    "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**",
+                    "/shiro/login", "/shiroToken/login"
                 ).order(1);
         registry.addInterceptor(getPermissionInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/toLogin",
-                        "/login",
-                        "/error",
-                        "/**/*.html",
-                        "/**/*.js",
-                        "/**/*.css",
-                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**"
+                    "/toLogin",
+                    "/login",
+                    "/error",
+                    "/**/*.html",
+                    "/**/*.js",
+                    "/**/*.css",
+                    "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**",
+                    "/shiro/login", "/shiroToken/login"
                 ).order(2);
     }
 

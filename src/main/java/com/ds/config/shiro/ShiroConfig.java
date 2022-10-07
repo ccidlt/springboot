@@ -43,7 +43,7 @@ public class ShiroConfig {
         // 允许匿名访问
         map.put("/shiro/login", "anon");
         //设置注销过滤器
-        map.put("/logout","logout");
+        map.put("/shiro/logout","logout");
         // 进行身份认证后才能访问
         map.put("/shiro/**", "authc");
         // 将拦截器链设置到shiro中

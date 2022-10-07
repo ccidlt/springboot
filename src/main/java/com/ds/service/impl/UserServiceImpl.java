@@ -1,6 +1,5 @@
 package com.ds.service.impl;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ds.dao.UserDao;
 import com.ds.entity.User;
 import com.ds.service.UserService;
@@ -36,9 +35,8 @@ public class UserServiceImpl implements UserService {
         if(StringUtil.isEmpty(token)){
             return null;
         }
-        DecodedJWT tokenInfo = JWTUtils.verify(token);
-        if(tokenInfo != null){
-            String userId = tokenInfo.getClaim("userId").asString();
+        if(JWTUtils.verify(token)){
+            String userId = JWTUtils.getClaim(token,"userId");
             return findById(Integer.valueOf(userId));
         }
         return null;

@@ -2,6 +2,7 @@ package com.ds.config.shirotoken;
 
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -29,19 +29,17 @@ public class ShiroTokenConfig {
      * @param defaultWebSecurityManager
      * @return
      */
-    @Bean("shiroFilterFactoryBean")
-    public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager")DefaultWebSecurityManager defaultWebSecurityManager){
+    @Bean
+    public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("getDefaultWebSecurityManager")DefaultWebSecurityManager defaultWebSecurityManager){
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         //设置安全管理器
         bean.setSecurityManager(defaultWebSecurityManager);
-        bean.setLoginUrl("/shiroToken/login");
+        //bean.setLoginUrl("/shiroToken/login");
         // 添加自定义过滤器
-        Map<String, Filter> filterMap = new HashMap<>(16);
+        Map<String, Filter> filterMap = new LinkedHashMap<>();
         filterMap.put("tokenFilter", new TokenFilter());
         bean.setFilters(filterMap);
-        /**
-         * 自定义拦截规则
-         */
+
         Map<String, String> filterRuleMap = new LinkedHashMap<>();
         filterRuleMap.put("/shiroToken/login","anon");//不需要认证，可以直接访问的
         // 其余请求都要经过BearerTokenFilter自定义拦截器
@@ -50,21 +48,17 @@ public class ShiroTokenConfig {
         return bean;
     }
 
-    @Bean("webSecurityManager")
-    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("myUserRealm") UserRealm userRealm){
-        /**
-         * 托管userrealm
-         */
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        userRealm.setAuthenticationTokenClass(JwtToken.class);//如果不进行设置就默认UsernamePasswordToken
+    @Bean
+    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("getUserRealm") UserRealm userRealm){
+        DefaultWebSecurityManager securityManager=new DefaultWebSecurityManager();
+        // 设置自定义 realm.
         securityManager.setRealm(userRealm);
-        /**
-         * 禁用session
-         */
-        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
-        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
-        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+
+        //关闭session
+        DefaultSubjectDAO subjectDAO=new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator sessionStorageEvaluator=new DefaultSessionStorageEvaluator();
+        sessionStorageEvaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(sessionStorageEvaluator);
         securityManager.setSubjectDAO(subjectDAO);
         return securityManager;
     }
@@ -73,27 +67,34 @@ public class ShiroTokenConfig {
      * 自定义realm
      * @return
      */
-    @Bean("myUserRealm")
-    public UserRealm userRealm(){
+    @Bean
+    public UserRealm getUserRealm(){
         return new UserRealm();
     }
 
 
-    //开启shiro aop注解支持  作用在方法上
-    @Bean("attributeSourceAdvisor")
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager){
-        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
-        return authorizationAttributeSourceAdvisor;
+    /**
+     * 添加注解支持，如果不加的话很有可能注解失效
+     */
+    @Bean
+    public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator(){
+
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator=new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        return defaultAdvisorAutoProxyCreator;
     }
 
-    /**
-     * 让注解权限生效(如果注解权限不生效)
-     * @return
-     */
-    @Bean("advisorAutoProxyCreator")
-    public static DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator(){
-        return new DefaultAdvisorAutoProxyCreator();
+    @Bean
+    public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(@Qualifier("getDefaultWebSecurityManager") DefaultWebSecurityManager securityManager){
+
+        AuthorizationAttributeSourceAdvisor advisor=new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
+    }
+
+    @Bean
+    public LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
     }
 
 }
