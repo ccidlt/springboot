@@ -38,6 +38,19 @@ public class JWTUtils {
                 .sign(Algorithm.HMAC256(SECRET));
         return token;
     }
+    public static String getToken(Map<String,String> map){
+        //创建jwt builder
+        JWTCreator.Builder builder = JWT.create();
+        //payload
+        map.forEach((k,v)->{
+            builder.withClaim(k,v);
+        });
+        //制定令牌过期时间
+        String token = builder
+                //sign
+                .sign(Algorithm.HMAC256(SECRET));
+        return token;
+    }
 
     /**
      * 验证token 合法性 || 获取token信息方法

@@ -50,15 +50,16 @@ public class LoginInterceptor implements HandlerInterceptor {
 		if(!useLoginToken){
 			return true;
 		}
-		/*
-		String token = request.getHeader("token");
+		/*String token = request.getHeader("token");
 		if(StringUtil.isEmpty(token)){
 			token = request.getParameter("token");
 		}
 		if(StringUtil.isNotEmpty(token)){
 			String redisToken = StringUtil.getString(redisTemplate.opsForValue().get(token));
 			if(StringUtil.isNotEmpty(redisToken)){
-				redisTemplate.expire(token, 30, TimeUnit.MINUTES);
+				if(redisTemplate.getExpire(token,TimeUnit.MINUTES) < 10){
+					redisTemplate.expire(token, 30, TimeUnit.MINUTES);
+				}
 				return true;
 			}
 		}
@@ -69,8 +70,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		result.put("code", "401");
 		result.put("msg", "请重新登录！");
 		out.write(result.toString().getBytes());
-		return false;
-		*/
+		return false;*/
 		return true;
 	}
 

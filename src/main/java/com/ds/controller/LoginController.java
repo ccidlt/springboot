@@ -38,7 +38,8 @@ public class LoginController {
         }
         Map<String, String> userMap = new HashMap<>();
         userMap.put("userId", String.valueOf(u.getId()));
-        String token = JWTUtils.getToken(userMap, 3600);
+        userMap.put("now", String.valueOf(System.currentTimeMillis()));
+        String token = JWTUtils.getToken(userMap);
         redisUtils.set(token, u, 30L, TimeUnit.MINUTES);
         return Result.ok(token);
     }
@@ -70,4 +71,20 @@ public class LoginController {
         return Result.ok(userService.getUser(token));
     }
 
+    /**
+     * 修改密码
+     * @param user
+     * @return
+     */
+    @RequestMapping("/editPassword")
+    public Result editPassword(@RequestBody User user){
+        //修改密码
+        //......
+        Map<String, String> userMap = new HashMap<>();
+        userMap.put("userId", String.valueOf(user.getId()));
+        userMap.put("now", String.valueOf(System.currentTimeMillis()));
+        String token = JWTUtils.getToken(userMap);
+        redisUtils.set(token, user, 30L, TimeUnit.MINUTES);
+        return Result.ok(token);
+    }
 }
