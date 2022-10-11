@@ -208,6 +208,16 @@ public class RedisUtils {
     }
 
     /**
+     * 加锁
+     * @param lockName
+     * @param lockValue
+     * @return
+     */
+    public boolean setIfAbsent(String lockName, Object lockValue) {
+        return redisTemplate.opsForValue().setIfAbsent(lockName, lockValue);
+    }
+
+    /**
      * 加锁并设置过期时间
      *
      * @param lockName
@@ -227,7 +237,7 @@ public class RedisUtils {
     }
 
     /**
-     * 加锁并设置过期时间
+     * 加锁并设置过期时间、超时时间
      *
      * @param lockName
      * @param lockExpire 过期时间 秒
@@ -259,83 +269,4 @@ public class RedisUtils {
         redisTemplate.delete(lockName);
     }
 
-    /**
-     * 加锁（自动重试）
-     *
-     * @param key
-     * @param lockKeyType
-     * @return
-     */
-    public boolean tryLock(String key, String lockKeyType) {
-        boolean flag = false;
-        try {
-            key = lockKeyType + key;
-            log.info("加锁请求数据，key：{}", key);
-
-            long lockTimeout = 500 * 161;
-            long sleepTimeout = 500;
-
-            for (int i = 1; i <= 160; i++) {
-                flag = this.lockOnce(key, lockTimeout);
-                if (flag) {
-                    log.info("{}加锁第{}次，成功", key, i);
-                    break;
-                } else {
-//             log.info("{}加锁第{}次，失败", key, i);
-                    Thread.sleep(sleepTimeout);
-                }
-            }
-            if (flag) {
-                log.info("{}加锁成功", key);
-            } else {
-                log.info("{}加锁失败", key);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flag;
-    }
-
-    /**
-     * 加锁
-     * @param key
-     * @param lockKeyType
-     * @return
-     */
-    public boolean lock(String key, String lockKeyType) {
-        key = lockKeyType + key;
-        log.info("加锁请求数据，key：{}", key);
-        long lockTimeout = 1 * 1000;
-        boolean flag = this.lockOnce(key, lockTimeout);
-        if (flag) {
-            log.info("{}加锁成功", key);
-        } else {
-            log.info("{}加锁失败", key);
-        }
-        return flag;
-    }
-
-    private boolean lockOnce(String key, long timeout) {
-        String value = key + "_"+System.currentTimeMillis();
-        boolean flag = redisTemplate.opsForValue().setIfAbsent(key, value,
-                timeout, TimeUnit.MILLISECONDS);
-        return flag;
-    }
-
-    /**
-     * 解锁
-     *
-     * @param key
-     * @param lockKeyType
-     */
-    public void releaseLock(String key, String lockKeyType) {
-        key = lockKeyType + key;
-        log.info("解锁请求数据，key：{}", key);
-        try {
-            redisTemplate.delete(key);
-            log.info("{}解锁成功", key);
-        } catch (Exception e) {
-            log.error("{}解锁失败，{}", key, e);
-        }
-    }
 }
