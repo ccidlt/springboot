@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //Druid连接池：需要排除掉 DruidDataSourceAutoConfigure 类，不然启动会报错找不到配置的 url
+//com.gitee.sunchenbin.mybatis.actable 根据实体类自动建表
 @SpringBootApplication(
         exclude = DruidDataSourceAutoConfigure.class,
         scanBasePackages = {"com.ds.*", "com.gitee.sunchenbin.mybatis.actable.manager.*"}
