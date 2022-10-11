@@ -3,6 +3,7 @@ package com.ds.config.mybatisplus;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -11,11 +12,33 @@ import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-public class CodeGenerator {
+public class MpCodeGenerator {
+
+    /**
+     * <p>
+     * 读取控制台内容
+     * </p>
+     */
+    public static String scanner(String tip) {
+        Scanner scanner = new Scanner(System.in);
+        StringBuilder help = new StringBuilder();
+        help.append("请输入" + tip + "：");
+        System.out.println(help.toString());
+        if (scanner.hasNext()) {
+            String ipt = scanner.next();
+            if (StringUtils.isNotEmpty(ipt)) {
+                return ipt;
+            }
+        }
+        throw  new MybatisPlusException("请输入正确的" + tip + "！");
+    }
+
     public static void main(String[] args) {
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
@@ -64,6 +87,7 @@ public class CodeGenerator {
                 // to do nothing
             }
         };
+
         // 如果模板引擎是 freemarker
         //String templatePath = "/templates/mapper.xml.ftl";
         // 如果模板引擎是 velocity
@@ -89,7 +113,7 @@ public class CodeGenerator {
         //4、策略配置
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("boy","girl");//设置要映射的表名,多个逗号拼接
+        strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));//设置要映射的表名
         strategy.setNaming(NamingStrategy.underline_to_camel);//下划线转驼峰命名
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);//自动lombok

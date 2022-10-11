@@ -12,8 +12,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //Druid连接池：需要排除掉 DruidDataSourceAutoConfigure 类，不然启动会报错找不到配置的 url
-@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
-@MapperScan("com.ds.dao")
+@SpringBootApplication(
+        exclude = DruidDataSourceAutoConfigure.class,
+        scanBasePackages = {"com.ds.*", "com.gitee.sunchenbin.mybatis.actable.manager.*"}
+)
+@MapperScan(basePackages={"com.ds.dao", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
 @EnableAsync
 @EnableScheduling
 @Slf4j

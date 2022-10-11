@@ -5,7 +5,7 @@ import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
-import com.zdtq.util.Result;
+import com.ds.entity.Result;
 
 import $!{package.Service}.$!{table.serviceName};
 import ${package.Entity}.${entity};
