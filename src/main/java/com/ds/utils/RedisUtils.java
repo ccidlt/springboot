@@ -1,5 +1,6 @@
 package com.ds.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class RedisUtils {
     @Autowired
     private RedisTemplate redisTemplate;
@@ -224,18 +226,6 @@ public class RedisUtils {
         return false;
     }
 
-    public boolean acquireLock2(String lockName, int lockExpire) {
-        if (redisTemplate.opsForValue().setIfAbsent(lockName, lockName)) {
-            redisTemplate.expire(lockName, lockExpire, TimeUnit.MILLISECONDS);
-            return true;
-        }
-        if (redisTemplate.getExpire(lockName) == -1) {
-            //保证锁一定设置过期时间
-            redisTemplate.expire(lockName, lockExpire, TimeUnit.MILLISECONDS);
-        }
-        return false;
-    }
-
     /**
      * 加锁并设置过期时间
      *
@@ -267,5 +257,85 @@ public class RedisUtils {
      */
     public void releaseLock(String lockName){
         redisTemplate.delete(lockName);
+    }
+
+    /**
+     * 加锁（自动重试）
+     *
+     * @param key
+     * @param lockKeyType
+     * @return
+     */
+    public boolean tryLock(String key, String lockKeyType) {
+        boolean flag = false;
+        try {
+            key = lockKeyType + key;
+            log.info("加锁请求数据，key：{}", key);
+
+            long lockTimeout = 500 * 161;
+            long sleepTimeout = 500;
+
+            for (int i = 1; i <= 160; i++) {
+                flag = this.lockOnce(key, lockTimeout);
+                if (flag) {
+                    log.info("{}加锁第{}次，成功", key, i);
+                    break;
+                } else {
+//             log.info("{}加锁第{}次，失败", key, i);
+                    Thread.sleep(sleepTimeout);
+                }
+            }
+            if (flag) {
+                log.info("{}加锁成功", key);
+            } else {
+                log.info("{}加锁失败", key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    /**
+     * 加锁
+     * @param key
+     * @param lockKeyType
+     * @return
+     */
+    public boolean lock(String key, String lockKeyType) {
+        key = lockKeyType + key;
+        log.info("加锁请求数据，key：{}", key);
+        long lockTimeout = 1 * 1000;
+        boolean flag = this.lockOnce(key, lockTimeout);
+        if (flag) {
+            log.info("{}加锁成功", key);
+        } else {
+            log.info("{}加锁失败", key);
+        }
+        return flag;
+    }
+
+    private boolean lockOnce(String key, long timeout) {
+        String value = key + "_"+System.currentTimeMillis();
+        boolean flag = redisTemplate.opsForValue().setIfAbsent(key, value,
+                timeout, TimeUnit.MILLISECONDS);
+        return flag;
+    }
+
+    /**
+     * 解锁
+     *
+     * @param key
+     * @param lockKeyType
+     */
+    public void releaseLock(String key, String lockKeyType) {
+        key = lockKeyType + key;
+        log.info("解锁请求数据，key：{}", key);
+        try {
+            redisTemplate.delete(key);
+            log.info("{}解锁成功", key);
+        } catch (Exception e) {
+            log.error("{}解锁失败，{}", key, e);
+        }
     }
 }
