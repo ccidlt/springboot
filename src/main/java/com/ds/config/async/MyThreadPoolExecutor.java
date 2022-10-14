@@ -13,6 +13,19 @@ public class MyThreadPoolExecutor {
 
     private MyThreadPoolExecutor(){}
     private static class ThreadPoolExecutorHolder {
+        /**
+         * corePoolSize ：线程池中核心线程数的最大值
+         * maximumPoolSize ：线程池中能拥有最多线程数
+         * keepAliveTime ：表示空闲线程的存活时间
+         * TimeUnit unit ：表示keepAliveTime的单位
+         * workQueue：用于缓存任务的阻塞队列,它决定了缓存任务的排队策略.ThreadPoolExecutor线程池推荐了三种等待队列，它们是：SynchronousQueue 、LinkedBlockingQueue 和 ArrayBlockingQueue。
+         * handler 拒绝策略：表示当 workQueue 已满，且池中的线程数达到 maximumPoolSize 时，线程池拒绝添加新任务时采取的策略。
+         *      hreadPoolExecutor.AbortPolicy()抛出RejectedExecutionException异常。默认策略
+         *      ThreadPoolExecutor.CallerRunsPolicy()由向线程池提交任务的线程来执行该任务
+         *      ThreadPoolExecutor.DiscardPolicy()抛弃当前的任务
+         *      ThreadPoolExecutor.DiscardOldestPolicy()抛弃最旧的任务（最先提交而没有得到执行的任务）
+
+         */
         private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,30, TimeUnit.MINUTES,new ArrayBlockingQueue<>(64),new ThreadPoolExecutor.DiscardPolicy());
     }
     public static final ThreadPoolExecutor getThreadPoolExecutor() {

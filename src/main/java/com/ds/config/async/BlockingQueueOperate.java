@@ -72,4 +72,22 @@ public class BlockingQueueOperate {
         }
     }
 
+    public static void main(String[] args) {
+        //创建队列
+        BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1000000,true);
+        for (int i = 0 ;i < 789; i++){
+            //存放数据
+            blockingQueue.offer(i + "test");
+        }
+        while (true) {
+            try {
+                List<String> list = new ArrayList<>();
+                Queues.drain(blockingQueue, list, 100, 1, TimeUnit.MINUTES);
+                log.info("批量消费到的数据量是：{}, 数据是: {}", list.size(), list);
+            } catch (Exception e) {
+                log.error("缓存队列批量消费异常：{}", e.getMessage());
+            }
+        }
+    }
+
 }
