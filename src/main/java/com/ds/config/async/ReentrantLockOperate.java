@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 @Slf4j
-public class LockTest {
+public class ReentrantLockOperate {
 
     /**
      * 1、作为多个线程同时使用的原子计数器。

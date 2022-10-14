@@ -1,6 +1,6 @@
 package com.ds;
 
-import com.ds.config.async.LockTest;
+import com.ds.config.async.ReentrantLockOperate;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -281,13 +281,13 @@ public class SpringbootApplicationTests {
     }
 
     @Autowired
-    LockTest lockTest;
+    ReentrantLockOperate reentrantLockOperate;
     @Test
     public void reentrantLockTest() throws Exception{
         final ArrayList<Future<Boolean>> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             //阻塞调用返回值
-            final Future<Boolean> hel = lockTest.reentrantLockTest();
+            final Future<Boolean> hel = reentrantLockOperate.reentrantLockTest();
             list.add(hel);
             if (list.size() == 5) {
                 while (true) {
@@ -308,7 +308,7 @@ public class SpringbootApplicationTests {
     @Test
     public void synchronizedText1() throws Exception{
         for(int i=0;i<10;i++){
-            lockTest.synchronizedText();
+            reentrantLockOperate.synchronizedText();
         }
         Thread.sleep(60*1000);
     }
