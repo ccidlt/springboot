@@ -46,7 +46,7 @@ public class AsyncConfig {
         return executor;
     }
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    //@Scheduled(cron = "0 0/2 * * * ?")
     @Async("asyncExecutor")
     public void a(){
         if(redisUtils.acquireLock("a",10)){
