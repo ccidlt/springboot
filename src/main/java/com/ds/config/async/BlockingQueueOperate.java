@@ -2,6 +2,9 @@ package com.ds.config.async;
 
 import com.google.common.collect.Queues;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +12,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+@Component
 @Slf4j
-public class BlockingQueueOperate {
+public class BlockingQueueOperate implements InitializingBean, DisposableBean {
     /**
      * 我们实际开发过程中经常会处理各种大批量数据入库，
      * 这个时候我们就会到队列，将数据先写入队列中，
@@ -72,6 +76,21 @@ public class BlockingQueueOperate {
         }
     }
 
+
+    @Override
+    public void destroy() throws Exception {
+
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (int i = 0 ;i < 789; i++){
+            //存放数据
+            blockingQueue.offer(i + "test");
+        }
+        consumerByBatch();
+    }
+
     public static void main(String[] args) {
         //创建队列
         BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1000000,true);
@@ -82,7 +101,7 @@ public class BlockingQueueOperate {
         while (true) {
             try {
                 List<String> list = new ArrayList<>();
-                Queues.drain(blockingQueue, list, 100, 1, TimeUnit.MINUTES);
+                Queues.drain(blockingQueue, list, 100, 1, TimeUnit.SECONDS);
                 log.info("批量消费到的数据量是：{}, 数据是: {}", list.size(), list);
             } catch (Exception e) {
                 log.error("缓存队列批量消费异常：{}", e.getMessage());
