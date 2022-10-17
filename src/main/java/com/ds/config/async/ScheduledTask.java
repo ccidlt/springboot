@@ -18,8 +18,10 @@ public class ScheduledTask {
 
     @Resource
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
-    //存储任务执行的包装类
+
+    // 用来存入线程执行情况, 方便于停止定时任务时使用
     private ConcurrentHashMap<String, ScheduledFuture<?>> scheduleMap = new ConcurrentHashMap<>();
+
     private String cronStr = "0/3 * * * * ?";
 
     /**
@@ -33,7 +35,7 @@ public class ScheduledTask {
                 scheduleMap.put(name, schedule);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
     }
 
@@ -47,22 +49,30 @@ public class ScheduledTask {
     }
 
     /**
-     * 停止任务
+     * 停止单个任务
      * @param name
      */
     public void stopTask(String name){
+        if (scheduleMap.isEmpty()) return;
         if(scheduleMap.containsKey(name)){//如果包含这个任务
             ScheduledFuture<?> scheduledFuture = scheduleMap.get(name);
             if(scheduledFuture!=null){
-                scheduledFuture.cancel(true);
-                scheduledFuture.cancel(true);
                 scheduledFuture.cancel(true);
                 boolean cancelled = scheduledFuture.isCancelled();
                 while (!cancelled) {
                     scheduledFuture.cancel(true);
                 }
+                scheduleMap.remove(name);
             }
         }
+    }
+
+    /**
+     * 停止所有任务
+     */
+    public void stopAll(){
+        if (scheduleMap.isEmpty()) return;
+        scheduleMap.values().forEach(scheduledFuture -> scheduledFuture.cancel(true) );
     }
 
     /**
