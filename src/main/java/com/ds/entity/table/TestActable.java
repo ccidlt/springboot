@@ -19,7 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "test")
-public class TestEntity extends BaseModel {
+public class TestActable extends BaseModel {
 
     @TableId(type = IdType.AUTO)//mybatis-plus主键注解
     @IsAutoIncrement   //自增
