@@ -84,11 +84,11 @@ public class BlockingQueueOperate implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        for (int i = 0 ;i < 789; i++){
+        /*for (int i = 0 ;i < 789; i++){
             //存放数据
             blockingQueue.offer(i + "test");
         }
-        consumerByBatch();
+        consumerByBatch();*/
     }
 
     public static void main(String[] args) {
