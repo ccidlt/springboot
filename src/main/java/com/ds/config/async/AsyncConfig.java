@@ -52,7 +52,6 @@ public class AsyncConfig {
     public void a(){
         if(redisUtils.acquireLock("bfsjk",10)){
             try {
-                // TODO Auto-generated method stub
                 System.out.println("执行定时任务》》》"+new Date());
                 String filePath="D:\\数据库文件\\";
                 String dbName="test";//备份的数据库名
@@ -61,13 +60,16 @@ public class AsyncConfig {
                 File uploadDir = new File(filePath);
                 if (!uploadDir.exists())
                     uploadDir.mkdirs();
-
-                String cmd =  "mysqldump -u"+ username +"  -p "+password + dbName + " -r "
-                        + filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
+                String cmd = "";
+                String osName = System.getProperty("os.name").toLowerCase();
+                if (osName.startsWith("windows")) {
+                    cmd = "cmd /c mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
+                } else if (osName.startsWith("linux")) {
+                    cmd = "/bin/sh -c mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
+                }
                 Process process = Runtime.getRuntime().exec(cmd);
                 System.out.println("备份数据库成功!!!");
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } finally {
                 redisUtils.releaseLock("bfsjk");
