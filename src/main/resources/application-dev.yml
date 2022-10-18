@@ -156,6 +156,9 @@ spring:
               # 登录用户名/密码
               login-username: root
               login-password: 123
+    schema:
+      - classpath:sql/20221018.sql
+    initialization-mode: always
   cache:
     type: redis
   redis:
