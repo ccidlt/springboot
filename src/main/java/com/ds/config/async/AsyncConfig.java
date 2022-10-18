@@ -8,7 +8,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
+import java.io.File;
+import java.util.Date;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -49,13 +50,27 @@ public class AsyncConfig {
     //@Scheduled(cron = "0 0/2 * * * ?")
     @Async("asyncExecutor")
     public void a(){
-        if(redisUtils.acquireLock("a",10)){
+        if(redisUtils.acquireLock("bfsjk",10)){
             try {
-                System.out.println("每2分钟执行一次的任务："+Thread.currentThread().getName() + ":" + LocalDateTime.now());
+                // TODO Auto-generated method stub
+                System.out.println("执行定时任务》》》"+new Date());
+                String filePath="D:\\数据库文件\\";
+                String dbName="test";//备份的数据库名
+                String username="root";//用户名
+                String password="123456";//密码
+                File uploadDir = new File(filePath);
+                if (!uploadDir.exists())
+                    uploadDir.mkdirs();
+
+                String cmd =  "mysqldump -u"+ username +"  -p "+password + dbName + " -r "
+                        + filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
+                Process process = Runtime.getRuntime().exec(cmd);
+                System.out.println("备份数据库成功!!!");
             } catch (Exception e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             } finally {
-                redisUtils.releaseLock("a");
+                redisUtils.releaseLock("bfsjk");
             }
         }
     }
