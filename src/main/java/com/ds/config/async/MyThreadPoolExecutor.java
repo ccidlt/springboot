@@ -57,6 +57,8 @@ public class MyThreadPoolExecutor {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
         return t;
     }
