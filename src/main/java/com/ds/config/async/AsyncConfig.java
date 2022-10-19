@@ -1,6 +1,7 @@
 package com.ds.config.async;
 
 import com.ds.utils.RedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.*;
@@ -16,6 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @EnableAsync
 @EnableScheduling
+@Slf4j
 public class AsyncConfig {
 
     @Bean
@@ -52,7 +54,7 @@ public class AsyncConfig {
     public void a(){
         if(redisUtils.acquireLock("bfsjk",10)){
             try {
-                System.out.println("执行定时任务》》》"+new Date());
+                log.info("执行定时任务》》》"+new Date());
                 String filePath="D:\\数据库文件\\";
                 String dbName="test";//备份的数据库名
                 String username="root";//用户名
@@ -69,9 +71,9 @@ public class AsyncConfig {
                     command = new String[]{"/bin/sh", "-c", cmd};
                 }
                 Process process = Runtime.getRuntime().exec(command);
-                System.out.println("备份数据库成功!!!");
+                log.info("备份数据库成功!!!");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 redisUtils.releaseLock("bfsjk");
             }
