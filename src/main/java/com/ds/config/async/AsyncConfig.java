@@ -58,7 +58,11 @@ public class AsyncConfig {
         if(redisUtils.acquireLock("bfsjk",10)){
             try {
                 log.info("执行定时任务》》》"+new Date());
-                String filePath="D:\\数据库文件\\";
+                //String filePath=this.getClass().getResource("/sql").getPath();
+                String filePath=this.getClass().getClassLoader().getResource("sql").getPath();
+                if(filePath.startsWith("/")){
+                    filePath = filePath.substring(1);
+                }
                 String dbName="test";//备份的数据库名
                 String username="root";//用户名
                 String password="123456";//密码
