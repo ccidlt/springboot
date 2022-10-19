@@ -47,7 +47,7 @@ public class AsyncConfig {
         return executor;
     }
 
-    //@Scheduled(cron = "0 0/2 * * * ?")
+    //@Scheduled(cron = "0 0 1 * * ?")
     @Async("asyncExecutor")
     public void a(){
         if(redisUtils.acquireLock("bfsjk",10)){
@@ -60,14 +60,15 @@ public class AsyncConfig {
                 File uploadDir = new File(filePath);
                 if (!uploadDir.exists())
                     uploadDir.mkdirs();
-                String cmd = "";
+                String cmd = "mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
                 String osName = System.getProperty("os.name").toLowerCase();
+                String[] command = new String[0];
                 if (osName.startsWith("windows")) {
-                    cmd = "cmd /c mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
+                    command = new String[]{"cmd", "/c", cmd};
                 } else if (osName.startsWith("linux")) {
-                    cmd = "/bin/sh -c mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
+                    command = new String[]{"/bin/sh", "-c", cmd};
                 }
-                Process process = Runtime.getRuntime().exec(cmd);
+                Process process = Runtime.getRuntime().exec(command);
                 System.out.println("备份数据库成功!!!");
             } catch (Exception e) {
                 e.printStackTrace();
