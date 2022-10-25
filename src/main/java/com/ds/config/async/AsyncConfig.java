@@ -10,6 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -58,32 +59,69 @@ public class AsyncConfig {
         if(redisUtils.acquireLock("bfsjk",10)){
             try {
                 log.info("执行定时任务》》》"+new Date());
-                //String filePath=this.getClass().getResource("/sql").getPath();
-                String filePath=this.getClass().getClassLoader().getResource("sql").getPath();
-                if(filePath.startsWith("/")){
-                    filePath = filePath.substring(1);
-                }
-                String dbName="test";//备份的数据库名
-                String username="root";//用户名
-                String password="123456";//密码
-                File uploadDir = new File(filePath);
-                if (!uploadDir.exists())
-                    uploadDir.mkdirs();
-                String cmd = "mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new java.util.Date().getTime()+ ".sql";
-                String osName = System.getProperty("os.name").toLowerCase();
-                String[] command = new String[0];
-                if (osName.startsWith("windows")) {
-                    command = new String[]{"cmd", "/c", cmd};
-                } else if (osName.startsWith("linux")) {
-                    command = new String[]{"/bin/sh", "-c", cmd};
-                }
-                Process process = Runtime.getRuntime().exec(command);
+                backupDataSource();
                 log.info("备份数据库成功!!!");
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             } finally {
                 redisUtils.releaseLock("bfsjk");
             }
+        }
+    }
+
+    //备份数据库
+    public void backupDataSource(){
+        try {
+            //String filePath=this.getClass().getResource("/sql").getPath();
+            String filePath=this.getClass().getClassLoader().getResource("sql").getPath();
+            if(filePath.startsWith("/")){
+                filePath = filePath.substring(1);
+            }
+            String dbName="test";//备份的数据库名
+            String username="root";//用户名
+            String password="123456";//密码
+            File uploadDir = new File(filePath);
+            if (!uploadDir.exists())
+                uploadDir.mkdirs();
+            String cmd = "mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new Date().getTime()+ ".sql";
+            String osName = System.getProperty("os.name").toLowerCase();
+            String[] command = new String[0];
+            if (osName.startsWith("windows")) {
+                command = new String[]{"cmd", "/c", cmd};
+            } else if (osName.startsWith("linux")) {
+                command = new String[]{"/bin/sh", "-c", cmd};
+            }
+            Process process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    //还原数据库
+    public void restoreDataSource(){
+        try {
+            //String filePath=this.getClass().getResource("/sql").getPath();
+            String filePath=this.getClass().getClassLoader().getResource("sql").getPath();
+            if(filePath.startsWith("/")){
+                filePath = filePath.substring(1);
+            }
+            String dbName="test";//备份的数据库名
+            String username="root";//用户名
+            String password="123456";//密码
+            File uploadDir = new File(filePath);
+            if (!uploadDir.exists())
+                uploadDir.mkdirs();
+            String cmd = "mysqldump -u"+username+" -p"+password+" "+dbName+" < "+ filePath + "/" + dbName+new Date().getTime()+ ".sql";
+            String osName = System.getProperty("os.name").toLowerCase();
+            String[] command = new String[0];
+            if (osName.startsWith("windows")) {
+                command = new String[]{"cmd", "/c", cmd};
+            } else if (osName.startsWith("linux")) {
+                command = new String[]{"/bin/sh", "-c", cmd};
+            }
+            Process process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
         }
     }
 
