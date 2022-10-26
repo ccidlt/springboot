@@ -68,7 +68,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
                                 return true;
                             }
                         }else if(logical == Logical.OR){
-                            if(valueList.stream().anyMatch(a -> roleList.contains(a))){
+                            if(valueList.stream().anyMatch(roleList::contains)){
                                 return true;
                             }
                         }
@@ -84,7 +84,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
                                     return true;
                                 }
                             }else if(logical == Logical.OR){
-                                if(valueList.stream().anyMatch(a -> menuPermsSet.contains(a))){
+                                if(valueList.stream().anyMatch(menuPermsSet::contains)){
                                     return true;
                                 }
                             }
