@@ -100,7 +100,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
                                     return true;
                                 }
                             } else if (logical == Logical.OR) {
-                                if (valueList.stream().anyMatch(a -> permissionSet.contains(a))) {
+                                if (valueList.stream().anyMatch(permissionSet::contains)) {
                                     return true;
                                 }
                             }
