@@ -59,6 +59,9 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
                 if (!Objects.isNull(auth)) {
                     //根据用户权限拼接sql
                     String newSql = getInExpressionByAuth(auth, dataScope, originalSql);
+                    if(newSql == null){
+                        continue;
+                    }
                     //通过反射修改sql语句
                     Field field = boundSql.getClass().getDeclaredField("sql");
                     field.setAccessible(true);
