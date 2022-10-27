@@ -121,6 +121,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedHeaders("*")
                 .allowedMethods("POST","GET","PUT","DELETE","HEAD","OPTIONS")
+                .allowCredentials(true)
                 .allowedOrigins("*");
     }
 

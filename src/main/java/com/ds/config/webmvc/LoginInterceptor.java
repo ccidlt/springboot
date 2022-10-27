@@ -28,7 +28,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
 		response.setHeader("Access-Control-Max-Age", "3600");
-		response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With");
+		response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With, Access-Token, token");
+		response.setHeader("Access-Control-Allow-Credentials", "true");
 		*/
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		if(!(handler instanceof HandlerMethod)){

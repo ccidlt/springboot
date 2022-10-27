@@ -21,7 +21,7 @@ public class MyFilter implements Filter {
 		httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");//允许跨域访问的域，可以是通配符”*”
 		httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET");
 		httpServletResponse.setHeader("Access-Control-Max-Age", "1800");
-		httpServletResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		httpServletResponse.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With, Access-Token, token");
 		httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
 		chain.doFilter(request, response);
 	}
