@@ -56,6 +56,8 @@ public class ScannerCodeGenerator {
         gc.setIdType(IdType.AUTO);//id生成策略
         gc.setDateType(DateType.ONLY_DATE);
         gc.setSwagger2(true);
+        gc.setBaseResultMap(true);
+        gc.setBaseColumnList(true);
         mpg.setGlobalConfig(gc);
 
         //2、数据源
