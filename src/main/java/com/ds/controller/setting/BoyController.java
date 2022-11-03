@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -75,7 +75,7 @@ public class BoyController {
     @ApiOperation("新增/修改")
     public Boy addBoy(
             @ApiParam(name="boy", value="Boy", required = true)
-            @Valid
+            @Validated
             @RequestBody(required = true) Boy boy){
         //boy中有id则为修改，没有为新增
         boyService.saveOrUpdate(boy);
