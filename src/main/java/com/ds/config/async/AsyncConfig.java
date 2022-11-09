@@ -77,13 +77,15 @@ public class AsyncConfig {
             if(filePath.startsWith("/")){
                 filePath = filePath.substring(1);
             }
+            String ip="127.0.0.1";
+            String port="3306";
             String dbName="test";//备份的数据库名
             String username="root";//用户名
             String password="123456";//密码
             File uploadDir = new File(filePath);
             if (!uploadDir.exists())
                 uploadDir.mkdirs();
-            String cmd = "mysqldump -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new Date().getTime()+ ".sql";
+            String cmd = "mysqldump -h"+ip+" -P"+port+" -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new Date().getTime()+ ".sql";
             String osName = System.getProperty("os.name").toLowerCase();
             String[] command = new String[0];
             if (osName.startsWith("windows")) {
