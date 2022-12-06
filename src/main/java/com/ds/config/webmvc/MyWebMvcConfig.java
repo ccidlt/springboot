@@ -2,6 +2,8 @@ package com.ds.config.webmvc;
 
 import com.ds.config.perm.PermissionInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -139,12 +141,16 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleDateFormat smt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         objectMapper.setDateFormat(smt);
+        SimpleModule simpleModule = new SimpleModule();
+        // Json Long --> String
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
         mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
         //设置中文编码格式
         List<MediaType> list = new ArrayList<>();
         list.add(MediaType.APPLICATION_JSON_UTF8);
         mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
-        converters.add(mappingJackson2HttpMessageConverter);
+        converters.add(0,mappingJackson2HttpMessageConverter);
     }
 
     /**
