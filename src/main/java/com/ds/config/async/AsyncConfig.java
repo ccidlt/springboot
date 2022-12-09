@@ -4,7 +4,11 @@ import com.ds.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.*;
+import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -24,7 +28,8 @@ public class AsyncConfig {
     //获取当前机器的核数
     public static final int cpuNum = Runtime.getRuntime().availableProcessors();
 
-    @Bean
+    @Bean("tptScheduler")
+    @Primary
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
         executor.setPoolSize(cpuNum * 2);
@@ -34,8 +39,9 @@ public class AsyncConfig {
     @Resource
     private RedisUtils redisUtils;
 
-    @Bean("asyncExecutor")
-    public ThreadPoolTaskExecutor asyncExecutor(){
+    @Bean("tptExecutor")
+    @Primary
+    public ThreadPoolTaskExecutor tptExecutor(){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 核心线程数：线程池创建时候初始化的线程数
         executor.setCorePoolSize(cpuNum * 2);
@@ -54,7 +60,7 @@ public class AsyncConfig {
     }
 
     //@Scheduled(cron = "0 0 1 * * ?")
-    @Async("asyncExecutor")
+    @Async("tptExecutor")
     public void a(){
         if(redisUtils.acquireLock("bfsjk",10)){
             try {
@@ -127,7 +133,7 @@ public class AsyncConfig {
         }
     }
 
-    @Async("asyncExecutor")
+    @Async("tptExecutor")
     public Future<String> b(){
         return new AsyncResult<>("返回值："+Thread.currentThread().getName());
     }

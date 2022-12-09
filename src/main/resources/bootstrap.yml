@@ -1,0 +1,38 @@
+# Tomcat
+server:
+  port: 8078
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: '@project.artifactId@'
+  profiles:
+    # 环境配置
+    active: '@profile.active@'
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${nacos_host:@nacos.ip@}:${nacos_port:@nacos.port@}
+        # 命名空间，默认：public
+        namespace: ${nacos_namespace:@nacos.namespace@}
+        service: ${spring.application.name}
+        username: ${nacos_username:@nacos.username@}
+        password: ${nacos_password:@nacos.password@}
+        metadata:
+          # 灰度发布版本号
+          gray_version: v3.6.0
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+        file-extension: yml
+        # 扩展配置
+        extension-configs:
+          - data-id: datasource.yml
+            refresh: true
+        # 共享配置
+        shared-configs:
+          - dataId: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            refresh: true
+          - dataId: other.yml
+            refresh: true

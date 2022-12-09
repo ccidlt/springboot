@@ -8,10 +8,49 @@ import java.util.function.Supplier;
  */
 public class MyThreadPoolExecutor {
 
-    //饿汉式单例（随着类加载实例化）
-    //private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,30, TimeUnit.MINUTES,new ArrayBlockingQueue<>(64),new ThreadPoolExecutor.DiscardPolicy());
 
     private MyThreadPoolExecutor(){}
+
+    /**
+     * 单例模式的创建
+     *
+     * 饿汉式：线程安全，内存空间浪费
+     *
+     * 1.创建一个类 然后对类里面的构造器进行私有化 目的：防止外面调用该类创建对象 无法实现单例
+     * 2.一开始先创建一个静态对象 目的：这个对象就是单例
+     * 3.创建一个pubilc静态方法来返回对象,供外面调用该对象
+     */
+//    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,30, TimeUnit.MINUTES,new ArrayBlockingQueue<>(64),new ThreadPoolExecutor.DiscardPolicy());
+//    public static ThreadPoolExecutor getThreadPoolExecutor() {
+//        return threadPoolExecutor;
+//    }
+
+    /**
+     * 单例模式的创建
+     *
+     * 懒汉式：线程不安全，避免了内存空间浪费
+     *
+     * 1.创建一个类 并将构造器设置为私有的 目的：防止外面的对象去调用 无法弄成单例模式
+     * 2.声明一个静态对象 但是没有初始化  等到要使用的时候再去初始化对象 避免占用内存空间
+     * 3.提供一个public static 方法供外面调用
+     */
+//    private volatile static ScheduledExecutorService scheduledExecutorService = null;
+//    public static ScheduledExecutorService getScheduledExecutorService() {
+//        if(scheduledExecutorService == null){
+//            synchronized (MyThreadPoolExecutor.class){
+//                if(scheduledExecutorService == null){
+//                    scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
+//                }
+//            }
+//        }
+//        return scheduledExecutorService;
+//    }
+
+    /**
+     * 静态内部类的方式：
+     *
+     * 静态内部类结合了懒汉式和饿汉式的优点既保证了线程安全，又节省空间
+     */
     private static class ThreadPoolExecutorHolder {
         /**
          * corePoolSize ：线程池中核心线程数的最大值
@@ -26,22 +65,19 @@ public class MyThreadPoolExecutor {
          *      ThreadPoolExecutor.DiscardOldestPolicy()抛弃最旧的任务（最先提交而没有得到执行的任务）
 
          */
-        private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,30, TimeUnit.MINUTES,new ArrayBlockingQueue<>(64),new ThreadPoolExecutor.DiscardPolicy());
+        private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,30, TimeUnit.MINUTES,new ArrayBlockingQueue<>(64),new ThreadPoolExecutor.DiscardPolicy());
     }
-    public static final ThreadPoolExecutor getThreadPoolExecutor() {
+    public static ThreadPoolExecutor getThreadPoolExecutor() {
         return ThreadPoolExecutorHolder.threadPoolExecutor;
     }
 
-    //private static final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
 
     private static class ScheduledExecutorServiceHolder {
-        private static final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
+        private static ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
     }
-    public static final ScheduledExecutorService getScheduledExecutorService() {
+    public static ScheduledExecutorService getScheduledExecutorService() {
         return ScheduledExecutorServiceHolder.scheduledExecutorService;
     }
-
-    //懒汉式
 
 
     public static void submit(Runnable runnable){
@@ -53,10 +89,6 @@ public class MyThreadPoolExecutor {
         T t = null;
         try {
             t = future.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -76,13 +108,10 @@ public class MyThreadPoolExecutor {
         T t = null;
         try {
             t = future.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
         }
         return t;
     }
+
 }

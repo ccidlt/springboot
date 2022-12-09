@@ -20,7 +20,7 @@ public class RedisMQConfig {
 
     @Resource
     private RedisMQEntity redisMQEntity;
-    @Resource(name="asyncExecutor")
+    @Resource(name="tptExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**

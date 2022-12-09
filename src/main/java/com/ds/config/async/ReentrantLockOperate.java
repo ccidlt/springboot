@@ -45,7 +45,7 @@ public class ReentrantLockOperate {
     //锁ReentrantLock，同一对象，所有线程同步
     ReentrantLock lock = new ReentrantLock();
 
-    @Async("asyncExecutor")
+    @Async("tptExecutor")
     public Future<Boolean> reentrantLockTest() throws Exception {
         //锁ReentrantLock，不同对象，单个线程同步
         ReentrantLock lock = new ReentrantLock();
@@ -68,7 +68,7 @@ public class ReentrantLockOperate {
         return new AsyncResult<>(true);
     }
 
-    @Async("asyncExecutor")
+    @Async("tptExecutor")
     public void synchronizedText() throws Exception {
 //        //锁对象，因为对象为单例，同一对象，所有线程同步
 //        synchronized (this){

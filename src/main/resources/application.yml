@@ -1,11 +1,11 @@
-server:
-  port: 8077
-  servlet:
-    context-path: /
-  compression:
-    enabled: true
-    mime-types: application/json
-
-spring:
-  profiles:
-    active: '@profile.active@'
+#server:
+#  port: 8077
+#  servlet:
+#    context-path: /
+#  compression:
+#    enabled: true
+#    mime-types: application/json
+#
+#spring:
+#  profiles:
+#    active: '@profile.active@'

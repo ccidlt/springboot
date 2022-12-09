@@ -16,7 +16,7 @@ public class ScheduledTask {
 
     private Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
 
-    @Resource
+    @Resource(name = "tptScheduler")
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     // 用来存入线程执行情况, 方便于停止定时任务时使用
