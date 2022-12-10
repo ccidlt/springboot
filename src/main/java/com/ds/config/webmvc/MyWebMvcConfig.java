@@ -1,6 +1,7 @@
 package com.ds.config.webmvc;
 
 import com.ds.config.perm.PermissionInterceptor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -18,10 +18,7 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Configuration
@@ -139,8 +136,8 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
         //设置日期格式
         ObjectMapper objectMapper = new ObjectMapper();
-        SimpleDateFormat smt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        objectMapper.setDateFormat(smt);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setDateFormat(GlobalJsonDateConvert.instance);
         SimpleModule simpleModule = new SimpleModule();
         // Json Long --> String
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
@@ -159,41 +156,6 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new Converter<String, Date>() {
-            @Override
-            public Date convert(String source) {
-                List<String> formarts = new ArrayList<String>(4){{
-                    add("yyyy-MM");
-                    add("yyyy-MM-dd");
-                    add("yyyy-MM-dd HH:mm");
-                    add("yyyy-MM-dd HH:mm:ss");
-                }};
-                String value = source.trim();
-                if ("".equals(value)) {
-                    return null;
-                }
-                if (source.matches("^\\d{4}-\\d{1,2}$")) {
-                    return parseDate(source, formarts.get(0));
-                } else if (source.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")) {
-                    return parseDate(source, formarts.get(1));
-                } else if (source.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$")) {
-                    return parseDate(source, formarts.get(2));
-                } else if (source.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$")) {
-                    return parseDate(source, formarts.get(3));
-                } else {
-                    throw new IllegalArgumentException("Invalid boolean value '" + source + "'");
-                }
-            }
-            Date parseDate(String dateStr, String format) {
-                Date date = null;
-                try {
-                    DateFormat dateFormat = new SimpleDateFormat(format);
-                    date = (Date) dateFormat.parse(dateStr);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return date;
-            }
-        });
+        registry.addConverter(new GlobalFormDateConvert());
     }
 }
