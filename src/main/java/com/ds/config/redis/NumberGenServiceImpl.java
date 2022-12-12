@@ -20,15 +20,15 @@ public class NumberGenServiceImpl implements NumberGenService {
 
     private static final String DAY_FORMAT = "yyyyMMdd";
 
-    public String generateNumber (String code) {
+    public String generateNumber(String code) {
         return getNumber(code, "");
     }
 
-    public String generateNumberByMonth (String code) {
+    public String generateNumberByMonth(String code) {
         return getNumber(code, new SimpleDateFormat(MONTH_FORMAT).format(new Date()));
     }
 
-    public String generateNumberByDay (String code) {
+    public String generateNumberByDay(String code) {
         return getNumber(code, new SimpleDateFormat(DAY_FORMAT).format(new Date()));
     }
 

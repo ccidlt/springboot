@@ -20,15 +20,16 @@ public class RedisMQConfig {
 
     @Resource
     private RedisMQEntity redisMQEntity;
-    @Resource(name="tptExecutor")
+    @Resource(name = "tptExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**
      * 注入消息监听容器
+     *
      * @param connectionFactory 连接工厂
      * @param listenerAdapter   监听处理器1
-     * @param listenerAdapter2   监听处理器2
-     * (参数名称需和监听处理器的方法名称一致，因为@Bean注解默认注入的id就是方法名称)
+     * @param listenerAdapter2  监听处理器2
+     *                          (参数名称需和监听处理器的方法名称一致，因为@Bean注解默认注入的id就是方法名称)
      * @return
      */
     @Bean
@@ -52,6 +53,7 @@ public class RedisMQConfig {
 
     /**
      * 消息监听处理器1
+     *
      * @param receiver 处理器类
      * @return
      */
@@ -63,6 +65,7 @@ public class RedisMQConfig {
 
     /**
      * 消息监听处理器2
+     *
      * @param receiver 处理器类
      * @return
      */
@@ -73,6 +76,7 @@ public class RedisMQConfig {
 
     /**
      * 消息监听处理器3
+     *
      * @param receiver 处理器类
      * @return
      */
@@ -87,11 +91,11 @@ public class RedisMQConfig {
     }
 
     public static void main(String[] args) {
-        ApplicationContext ctx =  SpringApplication.run(SpringbootApplication.class, args);
+        ApplicationContext ctx = SpringApplication.run(SpringbootApplication.class, args);
         StringRedisTemplate template = ctx.getBean(StringRedisTemplate.class);
         Random random = new Random(2);
-        int i = random.nextInt(2)+1;
-        template.convertAndSend("epc_0"+i, "Hello From Redis"+i+"!");
+        int i = random.nextInt(2) + 1;
+        template.convertAndSend("epc_0" + i, "Hello From Redis" + i + "!");
     }
 
 }

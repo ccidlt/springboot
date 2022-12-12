@@ -27,13 +27,14 @@ public class LoginController {
 
     /**
      * 登录
+     *
      * @param user
      * @return
      */
     @RequestMapping("/login")
-    public Result login(@RequestBody User user){
+    public Result login(@RequestBody User user) {
         User u = userService.findByParam(user);
-        if(u == null){
+        if (u == null) {
             return Result.fail();
         }
         Map<String, String> userMap = new HashMap<>();
@@ -46,14 +47,15 @@ public class LoginController {
 
     /**
      * 退出
+     *
      * @param request
      * @return
      */
     @RequestMapping("/logout")
-    public Result logout(HttpServletRequest request){
+    public Result logout(HttpServletRequest request) {
         String token = request.getHeader("token");
-        if(StringUtil.isNotEmpty(token)){
-            if(redisUtils.exists(token)){
+        if (StringUtil.isNotEmpty(token)) {
+            if (redisUtils.exists(token)) {
                 redisUtils.remove(token);
             }
         }
@@ -62,22 +64,24 @@ public class LoginController {
 
     /**
      * 获取当前用户信息
+     *
      * @param request
      * @return
      */
     @RequestMapping("/getUser")
-    public Result getUser(HttpServletRequest request){
+    public Result getUser(HttpServletRequest request) {
         String token = request.getHeader("token");
         return Result.ok(userService.getUser(token));
     }
 
     /**
      * 修改密码
+     *
      * @param user
      * @return
      */
     @RequestMapping("/editPassword")
-    public Result editPassword(@RequestBody User user){
+    public Result editPassword(@RequestBody User user) {
         //修改密码
         //......
         Map<String, String> userMap = new HashMap<>();

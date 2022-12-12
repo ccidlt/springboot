@@ -32,11 +32,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(String token) {
-        if(StringUtil.isEmpty(token)){
+        if (StringUtil.isEmpty(token)) {
             return null;
         }
-        if(JWTUtils.verify(token)){
-            String userId = JWTUtils.getClaim(token,"userId");
+        if (JWTUtils.verify(token)) {
+            String userId = JWTUtils.getClaim(token, "userId");
             return findById(Integer.valueOf(userId));
         }
         return null;

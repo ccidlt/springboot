@@ -25,11 +25,11 @@ public class Girl implements Serializable {
     private String boyId;
 
     //自动回填创建时间
-    @TableField(value="create_time", fill = FieldFill.INSERT)
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     //自动回填修改时间
-    @TableField(value="update_time",fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     //乐观锁

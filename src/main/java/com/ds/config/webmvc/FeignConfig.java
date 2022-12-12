@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 public class FeignConfig implements RequestInterceptor {
 
     @Bean
-    Logger.Level feignLevel(){
+    Logger.Level feignLevel() {
         return Logger.Level.FULL;
     }
 
@@ -24,10 +24,10 @@ public class FeignConfig implements RequestInterceptor {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = servletRequestAttributes.getRequest();
         String token = request.getHeader("token");
-        if(StringUtil.isEmpty(token)){
+        if (StringUtil.isEmpty(token)) {
             token = request.getParameter("token");
         }
-        if(StringUtil.isNotEmpty(token)){
+        if (StringUtil.isNotEmpty(token)) {
             requestTemplate.header("token", token);
             requestTemplate.query("token", token);
         }

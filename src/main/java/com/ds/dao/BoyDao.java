@@ -21,7 +21,7 @@ public interface BoyDao extends BaseMapper<Boy> {
     List<Boy> getBoys();
 
     @Insert("insert into boy (id,name,create_time,update_time) values (#{id},#{name},#{createTime},#{updateTime})")
-    @Options(useGeneratedKeys=true, keyProperty = "id", keyColumn = "id")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertBoy(Boy boy);
 
     List<Boy> getBoyDataPage();

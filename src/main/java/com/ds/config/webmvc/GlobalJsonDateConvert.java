@@ -49,7 +49,7 @@ public class GlobalJsonDateConvert extends StdDateFormat {
     }
 
     @Override
-    public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition){
+    public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date, toAppendTo, fieldPosition);
     }

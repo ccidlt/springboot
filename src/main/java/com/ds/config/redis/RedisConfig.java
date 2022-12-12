@@ -29,24 +29,23 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @description redis配置  配置序列化方式以及缓存管理器 
-首先使用@EnableCaching开启以注解方式使用缓存。
-然后配置redis相关的bean
-RedisTemplate - 访问redis的bean，用于手动访问redis服务器
-缓存管理器 - 注解方式使用缓存的配置
-KeyGenerator - 自定义缓存key的生成
-Json序列化 - Json对象被缓存时的序列化
-
-@Cacheable - 表明对应方法的返回结果可以被缓存，首次调用后，下次就从缓存中读取结果，方法不会再被执行了。
-@CachePut - 更新缓存，方法每次都会执行
-@CacheEvict - 清除缓存，方法每次都会执行
-例如：@Cacheable(value = "user", key= "#userId") 不写key可以使用KeyGenerator="keyGenerator"定义的键
+ * @description redis配置  配置序列化方式以及缓存管理器
+ * 首先使用@EnableCaching开启以注解方式使用缓存。
+ * 然后配置redis相关的bean
+ * RedisTemplate - 访问redis的bean，用于手动访问redis服务器
+ * 缓存管理器 - 注解方式使用缓存的配置
+ * KeyGenerator - 自定义缓存key的生成
+ * Json序列化 - Json对象被缓存时的序列化
+ * @Cacheable - 表明对应方法的返回结果可以被缓存，首次调用后，下次就从缓存中读取结果，方法不会再被执行了。
+ * @CachePut - 更新缓存，方法每次都会执行
+ * @CacheEvict - 清除缓存，方法每次都会执行
+ * 例如：@Cacheable(value = "user", key= "#userId") 不写key可以使用KeyGenerator="keyGenerator"定义的键
  */
 @Configuration
 @EnableCaching
-public class RedisConfig extends CachingConfigurerSupport{
+public class RedisConfig extends CachingConfigurerSupport {
 
-	/**
+    /**
      * 配置自定义redisTemplate
      *
      * @param connectionFactory
@@ -80,9 +79,10 @@ public class RedisConfig extends CachingConfigurerSupport{
 
     /**
      * json序列化
+     *
      * @return
      */
-	@Bean
+    @Bean
     public RedisSerializer<Object> jackson2JsonRedisSerializer() {
         //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
@@ -95,6 +95,7 @@ public class RedisConfig extends CachingConfigurerSupport{
 
     /**
      * 配置缓存管理器
+     *
      * @param redisConnectionFactory
      * @return
      */
@@ -145,7 +146,6 @@ public class RedisConfig extends CachingConfigurerSupport{
             return sb.toString();
         };
     }*/
-
     @Bean
     public KeyGenerator keyGenerator() {
         return new KeyGenerator() {

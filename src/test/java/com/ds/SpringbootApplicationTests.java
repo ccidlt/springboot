@@ -32,19 +32,27 @@ public class SpringbootApplicationTests {
      * lambda表达式
      */
     @Test
-    public void lambda(){
+    public void lambda() {
         //forEach
-        List<Integer> list = new ArrayList<Integer>(){{
-           add(5);add(2);add(3);add(4);add(1);
+        List<Integer> list = new ArrayList<Integer>() {{
+            add(5);
+            add(2);
+            add(3);
+            add(4);
+            add(1);
         }};
-        list.forEach(System.out :: println);
-        HashMap<String, Integer> map = new HashMap<String, Integer>(){{
-            put("a",5);put("b",2);put("c",3);put("d",4);put("e",1);
+        list.forEach(System.out::println);
+        HashMap<String, Integer> map = new HashMap<String, Integer>() {{
+            put("a", 5);
+            put("b", 2);
+            put("c", 3);
+            put("d", 4);
+            put("e", 1);
         }};
-        map.forEach((k,v) -> System.out.println(k+"="+v));
-        User user1 = new User(1,"root","root","超级用户");
-        User user2 = new User(2,"user","user","普通用户");
-        User user3 = new User(3,"vip","vip","VIP用户");
+        map.forEach((k, v) -> System.out.println(k + "=" + v));
+        User user1 = new User(1, "root", "root", "超级用户");
+        User user2 = new User(2, "user", "user", "普通用户");
+        User user3 = new User(3, "vip", "vip", "VIP用户");
         List<User> userlist = new ArrayList<>();
         userlist.add(user1);
         userlist.add(user2);
@@ -52,47 +60,47 @@ public class SpringbootApplicationTests {
         List<User> userlist2 = new ArrayList<>();
         userlist2.add(user1);
         userlist2.add(user2);
-        userlist.forEach(user -> System.out.println("account="+user.getAccount()+"，age="+user.getPassword()));
+        userlist.forEach(user -> System.out.println("account=" + user.getAccount() + "，age=" + user.getPassword()));
         //sort
-        list.sort((v1,v2) -> v1.compareTo(v2));
-        System.out.println("sort1"+list);
-        list.sort((v1,v2) -> v1-v2);
-        System.out.println("sort2:"+list);
-        userlist.sort(Comparator.comparing(User::getAccount,Comparator.reverseOrder()).thenComparing(User::getUsername));
-        System.out.println("sort3:"+list);
+        list.sort((v1, v2) -> v1.compareTo(v2));
+        System.out.println("sort1" + list);
+        list.sort((v1, v2) -> v1 - v2);
+        System.out.println("sort2:" + list);
+        userlist.sort(Comparator.comparing(User::getAccount, Comparator.reverseOrder()).thenComparing(User::getUsername));
+        System.out.println("sort3:" + list);
         //filter
         List<Integer> filter1 = list.stream().filter(v -> v >= 3).collect(Collectors.toList());
-        System.out.println("filter:"+filter1);
+        System.out.println("filter:" + filter1);
         //allMatch、anyMatch、nonMatch
         boolean b = list.stream().anyMatch(v -> v >= 3);
-        System.out.println("anyMatch:"+b);
+        System.out.println("anyMatch:" + b);
         //map
-        List<Integer> map1 = list.stream().map(v -> v+10).collect(Collectors.toList());
-        System.out.println("map1:"+list);
+        List<Integer> map1 = list.stream().map(v -> v + 10).collect(Collectors.toList());
+        System.out.println("map1:" + list);
         List<String> map2 = userlist.stream().map(User::getAccount).collect(Collectors.toList());
-        System.out.println("map2:"+userlist);
+        System.out.println("map2:" + userlist);
         List<User> map3 = userlist.stream().map(user -> {
-            user.setId(user.getId()+10);
+            user.setId(user.getId() + 10);
             return user;
         }).collect(Collectors.toList());
-        System.out.println("map3:"+userlist);
+        System.out.println("map3:" + userlist);
         //mapToInt
         int mapToInt = userlist.stream().mapToInt(User::getId).sum();
-        System.out.println("mapToInt:"+mapToInt);
+        System.out.println("mapToInt:" + mapToInt);
         //group
         Map<String, List<User>> group1 =
                 userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.toList()));
         Map<String, IntSummaryStatistics> group2 =
                 userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.summarizingInt(User::getId)));
         Map<String, User> group3 =
-                userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.collectingAndThen(Collectors.toList(),v->v.get(0))));
+                userlist.stream().collect(Collectors.groupingBy(User::getAccount, LinkedHashMap::new, Collectors.collectingAndThen(Collectors.toList(), v -> v.get(0))));
         //toMap
         Map<String, User> toMap =
                 userlist.stream().collect(Collectors.toMap(User::getAccount, Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
-        System.out.println("toMap:"+toMap);
+        System.out.println("toMap:" + toMap);
         //reduce
-        Optional<User> option = userlist.stream().reduce((v1, v2) -> new User(v1.getId() + v2.getId(),"","",""));
-        System.out.println("reduce:"+option.orElse(null));
+        Optional<User> option = userlist.stream().reduce((v1, v2) -> new User(v1.getId() + v2.getId(), "", "", ""));
+        System.out.println("reduce:" + option.orElse(null));
         String userNames = userlist.stream().map(User::getUsername).reduce("", (v1, v2) -> v1 + "," + v2);
         //optional
         List<User> users = Optional.ofNullable(userlist).orElse(null);
@@ -127,7 +135,7 @@ public class SpringbootApplicationTests {
      * 交集并集差集
      */
     @Test
-    public void union(){
+    public void union() {
         Set<String> set1 = new HashSet<>();
         Set<String> set2 = new HashSet<>();
         set1.add("a");
@@ -147,23 +155,25 @@ public class SpringbootApplicationTests {
         set1.removeAll(set2);
         System.out.println("差集是 " + set1);
 
-        User user1 = new User(1,"root","root","超级用户");
-        User user2 = new User(2,"user","user","普通用户");
-        User user3 = new User(3,"vip","vip","VIP用户");
-        List<User> list1 = new ArrayList<User>(){{
-            add(user1);add(user2);
+        User user1 = new User(1, "root", "root", "超级用户");
+        User user2 = new User(2, "user", "user", "普通用户");
+        User user3 = new User(3, "vip", "vip", "VIP用户");
+        List<User> list1 = new ArrayList<User>() {{
+            add(user1);
+            add(user2);
         }};
-        List<User> list2 = new ArrayList<User>(){{
-            add(user1);add(user3);
+        List<User> list2 = new ArrayList<User>() {{
+            add(user1);
+            add(user3);
         }};
         //对象集合交集
-        List<User> list3 = list1.stream().filter(item ->list2.stream()
-                .map(e -> e.getAccount()+"_$$_"+e.getUsername()).collect(Collectors.toList()).contains(item.getAccount()+"_$$_"+item.getUsername()))
+        List<User> list3 = list1.stream().filter(item -> list2.stream()
+                .map(e -> e.getAccount() + "_$$_" + e.getUsername()).collect(Collectors.toList()).contains(item.getAccount() + "_$$_" + item.getUsername()))
                 .collect(Collectors.toList());
         System.out.println("对象集合交集是 " + list3);
         //对象集合差集
-        List<User> list4 = list1.stream().filter(item ->!list2.stream()
-                .map(e -> e.getAccount()+"_$$_"+e.getUsername()).collect(Collectors.toList()).contains(item.getAccount()+"_$$_"+item.getUsername()))
+        List<User> list4 = list1.stream().filter(item -> !list2.stream()
+                .map(e -> e.getAccount() + "_$$_" + e.getUsername()).collect(Collectors.toList()).contains(item.getAccount() + "_$$_" + item.getUsername()))
                 .collect(Collectors.toList());
         System.out.println("对象集合差集是 " + list4);
         //对象集合并集
@@ -181,19 +191,19 @@ public class SpringbootApplicationTests {
         Date date2 = sdf.parse("2022-03-10");
         //相差天数
         long days = (date2.getTime() - date1.getTime()) / (24 * 60 * 60 * 1000);
-        System.out.println("相差天数:"+days);
+        System.out.println("相差天数:" + days);
         //计算10天前日期
         Calendar instance = Calendar.getInstance();
         instance.setTime(date2);
         instance.add(Calendar.DAY_OF_YEAR, -10);
-        System.out.println("10天前:"+sdf.format(instance.getTime()));
+        System.out.println("10天前:" + sdf.format(instance.getTime()));
     }
 
     /**
      * 数字操作
      */
     @Test
-    public void number(){
+    public void number() {
         //保留2位小数
         NumberFormat numberFormat = NumberFormat.getInstance();
         numberFormat.setMaximumFractionDigits(2);
@@ -212,7 +222,7 @@ public class SpringbootApplicationTests {
         Pattern p = Pattern.compile("\\d+");
         Matcher m = p.matcher("22bb23");
         boolean matches = m.matches();//返回false,因为bb不能被\d+匹配,导致整个字符串匹配未成功.
-        if(matches){
+        if (matches) {
             String group = m.group();
         }
     }
@@ -221,7 +231,7 @@ public class SpringbootApplicationTests {
      * 递归
      */
     @Test
-    public void recursion(){
+    public void recursion() {
         FatherAndSon fas1 = new FatherAndSon(1, "张三", 0);
         FatherAndSon fas2 = new FatherAndSon(2, "李四", 0);
         FatherAndSon fas3 = new FatherAndSon(3, "王五", 0);
@@ -238,7 +248,7 @@ public class SpringbootApplicationTests {
         fass.add(fas6);
         fass.add(fas7);
         List<FatherAndSon> first = fass.stream().filter(item -> item.getPid() == 0).collect(Collectors.toList());
-        for(FatherAndSon fas : first){
+        for (FatherAndSon fas : first) {
             fas.setFass(recursionDown(fass, fas.getId()));
         }
         System.out.println(first);
@@ -250,21 +260,23 @@ public class SpringbootApplicationTests {
         List<Integer> ids2 = new ArrayList<>();
         ids2.add(7);
         recursionUp(fass, 5, ids2);
-        System.out.println(StringUtils.join(ids2.toArray(),","));
+        System.out.println(StringUtils.join(ids2.toArray(), ","));
     }
+
     public List<FatherAndSon> recursionDown(List<FatherAndSon> fass, int id) {
         List<FatherAndSon> newfass = new ArrayList<>();
-        for(FatherAndSon fas : fass){
-            if(fas.getPid() == id){
+        for (FatherAndSon fas : fass) {
+            if (fas.getPid() == id) {
                 fas.setFass(recursionDown(fass, fas.getId()));
                 newfass.add(fas);
             }
         }
         return newfass;
     }
+
     public void recursionDown2(List<FatherAndSon> fass, int id, List<Integer> ids) {
-        for(FatherAndSon fas : fass){
-            if(fas.getPid() == id){
+        for (FatherAndSon fas : fass) {
+            if (fas.getPid() == id) {
                 ids.add(fas.getId());
                 recursionDown2(fass, fas.getId(), ids);
             }
@@ -272,8 +284,8 @@ public class SpringbootApplicationTests {
     }
 
     public void recursionUp(List<FatherAndSon> fass, int pid, List<Integer> ids) {
-        for(FatherAndSon fas : fass){
-            if(fas.getId() == pid){
+        for (FatherAndSon fas : fass) {
+            if (fas.getId() == pid) {
                 ids.add(fas.getId());
                 recursionUp(fass, fas.getPid(), ids);
             }
@@ -282,8 +294,9 @@ public class SpringbootApplicationTests {
 
     @Autowired
     ReentrantLockOperate reentrantLockOperate;
+
     @Test
-    public void reentrantLockTest() throws Exception{
+    public void reentrantLockTest() throws Exception {
         final ArrayList<Future<Boolean>> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             //阻塞调用返回值
@@ -306,11 +319,11 @@ public class SpringbootApplicationTests {
     }
 
     @Test
-    public void synchronizedText1() throws Exception{
-        for(int i=0;i<10;i++){
+    public void synchronizedText1() throws Exception {
+        for (int i = 0; i < 10; i++) {
             reentrantLockOperate.synchronizedText();
         }
-        Thread.sleep(60*1000);
+        Thread.sleep(60 * 1000);
     }
 
 }

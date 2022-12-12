@@ -25,11 +25,12 @@ import java.util.List;
 public class MyWebMvcConfig implements WebMvcConfigurer {
 
     @Bean
-    public LoginInterceptor getLoginInterceptor(){
+    public LoginInterceptor getLoginInterceptor() {
         return new LoginInterceptor();
     }
+
     @Bean
-    public PermissionInterceptor getPermissionInterceptor(){
+    public PermissionInterceptor getPermissionInterceptor() {
         return new PermissionInterceptor();
     }
 
@@ -44,43 +45,46 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(getLoginInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                    "/toLogin",
-                    "/login",
-                    "/error",
-                    "/**/*.html",
-                    "/**/*.js",
-                    "/**/*.css",
-                    "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**",
-                    "/shiro/login", "/shiroToken/login"
+                        "/toLogin",
+                        "/login",
+                        "/error",
+                        "/**/*.html",
+                        "/**/*.js",
+                        "/**/*.css",
+                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**",
+                        "/shiro/login", "/shiroToken/login"
                 ).order(1);
         registry.addInterceptor(getPermissionInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                    "/toLogin",
-                    "/login",
-                    "/error",
-                    "/**/*.html",
-                    "/**/*.js",
-                    "/**/*.css",
-                    "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**","/doc.html/**",
-                    "/shiro/login", "/shiroToken/login"
+                        "/toLogin",
+                        "/login",
+                        "/error",
+                        "/**/*.html",
+                        "/**/*.js",
+                        "/**/*.css",
+                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**",
+                        "/shiro/login", "/shiroToken/login"
                 ).order(2);
     }
 
     /**
      * 配置静态资源
+     *
      * @param registry
      */
     @Value("${filePath}")
     private String filePath;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/mytest/**").addResourceLocations("classpath:/mytest/");
-        registry.addResourceHandler("/file/**").addResourceLocations("file:"+filePath+"/");
+        registry.addResourceHandler("/file/**").addResourceLocations("file:" + filePath + "/");
     }
 
     /**
      * 配置请求视图映射
+     *
      * @return
      */
     @Bean
@@ -102,8 +106,10 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         internalResourceViewResolver.setSuffix(".html");
         return internalResourceViewResolver;
     }
+
     /**
      * 配置试图
+     *
      * @param registry
      */
     @Override
@@ -113,24 +119,26 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
 
     /**
      * 跨域
+     *
      * @param registry
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedHeaders("*")
-                .allowedMethods("POST","GET","PUT","DELETE","HEAD","OPTIONS")
+                .allowedMethods("POST", "GET", "PUT", "DELETE", "HEAD", "OPTIONS")
                 .allowCredentials(true)
                 .allowedOrigins("*");
     }
 
     /**
-     *后端返回给前端时间格式字符串，也可以用@JsonFormat
+     * 后端返回给前端时间格式字符串，也可以用@JsonFormat
+     *
      * @param converters
      */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        StringHttpMessageConverter converter  = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
         converters.add(converter);
 
         MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
@@ -147,11 +155,12 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         List<MediaType> list = new ArrayList<>();
         list.add(MediaType.APPLICATION_JSON_UTF8);
         mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
-        converters.add(0,mappingJackson2HttpMessageConverter);
+        converters.add(0, mappingJackson2HttpMessageConverter);
     }
 
     /**
      * 前端给后端时间字符串转换成Date，也可以用@DateTimeFormat
+     *
      * @param registry
      */
     @Override

@@ -29,13 +29,14 @@ public class BlockingQueueOperate implements InitializingBean, DisposableBean {
      * Collection<? extends E> c
      * 该参数是一个集合，表示将一个集合的数据存入该阻塞队列，相当于给该队列一个初始数据
      */
-    BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1000000,true);
+    BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1000000, true);
 
     /**
      * 向队列中存放数据
+     *
      * @param message
      */
-    public void saveQueueData(String message){
+    public void saveQueueData(String message) {
         //存放数据
         blockingQueue.offer("test");
     }
@@ -56,7 +57,7 @@ public class BlockingQueueOperate implements InitializingBean, DisposableBean {
 
     /**
      * 从队列中批量消费数据
-     *
+     * <p>
      * Queues.drain(blockingQueue, list, 100, 1, TimeUnit.MINUTES);这个方法一共有5个参数
      * 第一个：传入你需要批量消费的队列
      * 第二个：传入一个用来接收批量消费到的数据
@@ -89,8 +90,8 @@ public class BlockingQueueOperate implements InitializingBean, DisposableBean {
 
     public static void main(String[] args) {
         //创建队列
-        BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1000000,true);
-        for (int i = 0 ;i < 789; i++){
+        BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1000000, true);
+        for (int i = 0; i < 789; i++) {
             //存放数据
             blockingQueue.offer(i + "test");
         }

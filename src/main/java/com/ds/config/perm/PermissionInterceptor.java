@@ -36,22 +36,22 @@ public class PermissionInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        if(!(handler instanceof HandlerMethod)){
+        if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-        HandlerMethod handlerMethod = (HandlerMethod)handler;
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        if(method.isAnnotationPresent(Authentication.class)){
+        if (method.isAnnotationPresent(Authentication.class)) {
             Authentication annotation = method.getAnnotation(Authentication.class);
-            if(annotation.required()){
+            if (annotation.required()) {
                 PermissionType permissionType = annotation.permissionType();
                 String[] value = annotation.value();
                 Logical logical = annotation.logical();
-                if(value.length == 0){
+                if (value.length == 0) {
                     return true;
                 }
                 List<String> valueList = Arrays.stream(value).collect(Collectors.toList());
-                if(valueList.contains("admin")){
+                if (valueList.contains("admin")) {
                     return true;
                 }
                 String token = request.getHeader("token");
@@ -60,15 +60,15 @@ public class PermissionInterceptor implements HandlerInterceptor {
                 List<String> roleList = roles.stream().map(Role::getRole).collect(Collectors.toList());
                 List<Integer> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
                 //是否包含某些角色
-                switch (permissionType){
+                switch (permissionType) {
                     case ROLE:
                         //是否包含某些角色
-                        if(logical == Logical.AND){
-                            if(roleList.containsAll(valueList)){
+                        if (logical == Logical.AND) {
+                            if (roleList.containsAll(valueList)) {
                                 return true;
                             }
-                        }else if(logical == Logical.OR){
-                            if(valueList.stream().anyMatch(roleList::contains)){
+                        } else if (logical == Logical.OR) {
+                            if (valueList.stream().anyMatch(roleList::contains)) {
                                 return true;
                             }
                         }
@@ -78,13 +78,13 @@ public class PermissionInterceptor implements HandlerInterceptor {
                         //String path = request.getRequestURI();
                         List<Menu> menuList = menuService.findByRoleId(roleIds);
                         Set<String> menuPermsSet = menuList.stream().map(Menu::getPerms).collect(Collectors.toSet());
-                        if(CollectionUtils.isNotEmpty(menuPermsSet)){
-                            if(logical == Logical.AND) {
+                        if (CollectionUtils.isNotEmpty(menuPermsSet)) {
+                            if (logical == Logical.AND) {
                                 if (menuPermsSet.containsAll(valueList)) {
                                     return true;
                                 }
-                            }else if(logical == Logical.OR){
-                                if(valueList.stream().anyMatch(menuPermsSet::contains)){
+                            } else if (logical == Logical.OR) {
+                                if (valueList.stream().anyMatch(menuPermsSet::contains)) {
                                     return true;
                                 }
                             }
@@ -94,7 +94,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
                         //是否包含权限
                         List<String> permissionList = permissionService.findByRoleId(roleIds);
                         Set<Object> permissionSet = new HashSet<>(permissionList);
-                        if(CollectionUtils.isNotEmpty(permissionSet)) {
+                        if (CollectionUtils.isNotEmpty(permissionSet)) {
                             if (logical == Logical.AND) {
                                 if (permissionSet.containsAll(valueList)) {
                                     return true;
@@ -109,9 +109,9 @@ public class PermissionInterceptor implements HandlerInterceptor {
                     default:
                         break;
                 }
-                Map<String,Object> rsp = new HashMap<>(2);
-                rsp.put("code",403);
-                rsp.put("msg","无权访问");
+                Map<String, Object> rsp = new HashMap<>(2);
+                rsp.put("code", 403);
+                rsp.put("msg", "无权访问");
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/json; charset=utf-8");
                 final PrintWriter writer = response.getWriter();

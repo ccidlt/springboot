@@ -12,7 +12,7 @@ public class GlobalFormDateConvert implements Converter<String, Date> {
 
     @Override
     public Date convert(String source) {
-        List<String> formarts = new ArrayList<String>(4){{
+        List<String> formarts = new ArrayList<String>(4) {{
             add("yyyy-MM");
             add("yyyy-MM-dd");
             add("yyyy-MM-dd HH:mm");
@@ -34,6 +34,7 @@ public class GlobalFormDateConvert implements Converter<String, Date> {
             throw new IllegalArgumentException("Invalid boolean value '" + source + "'");
         }
     }
+
     Date parseDate(String dateStr, String format) {
         Date date = null;
         try {

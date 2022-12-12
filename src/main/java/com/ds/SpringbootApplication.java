@@ -17,11 +17,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
         exclude = DruidDataSourceAutoConfigure.class,
         scanBasePackages = {"com.ds.*", "com.gitee.sunchenbin.mybatis.actable.manager.*"}
 )
-@MapperScan(basePackages={"com.ds.dao", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
+@MapperScan(basePackages = {"com.ds.dao", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
 @EnableAsync
 @EnableScheduling
 @Slf4j
-@EnableFeignClients(basePackages={"com.ds.service"})
+@EnableFeignClients(basePackages = {"com.ds.service"})
 @ServletComponentScan//检索@WebFilter、@WebListener
 @EnableSwagger2
 public class SpringbootApplication {

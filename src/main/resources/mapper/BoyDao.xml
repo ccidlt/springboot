@@ -2,18 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ds.dao.BoyDao">
     <!--<cache-ref namespace="com.ds.dao.BoyDao"></cache-ref>-->
-  <select id="getBoys" resultType="com.ds.entity.Boy">
-    <!--select
-    b.id,
-    b.name,
-    group_concat(g.name)
-    from boy b
-    left join girl g on b.id=g.boy_id
-    group by b.id, b.name-->
-    select com.* from (select b.*, g.name as girls, 1 as com_id from boy b left join girl g on b.id=g.boy_id) com
-  </select>
+    <select id="getBoys" resultType="com.ds.entity.Boy">
+        <!--select
+        b.id,
+        b.name,
+        group_concat(g.name)
+        from boy b
+        left join girl g on b.id=g.boy_id
+        group by b.id, b.name-->
+        select com.* from (select b.*, g.name as girls, 1 as com_id from boy b left join girl g on b.id=g.boy_id) com
+    </select>
 
-  <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">
+    <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">
     select * from boy where isdelete=0
   </select>
 </mapper>

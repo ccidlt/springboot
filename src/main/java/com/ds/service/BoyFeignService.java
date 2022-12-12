@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 
-@FeignClient(name="demo", url = "http://127.0.0.1:${server.port}", /*configuration = FeignConfig.class,*/ fallback = BoyFeignServiceImpl.class)
+@FeignClient(name = "demo", url = "http://127.0.0.1:${server.port}", /*configuration = FeignConfig.class,*/ fallback = BoyFeignServiceImpl.class)
 @Service
 public interface BoyFeignService {
 

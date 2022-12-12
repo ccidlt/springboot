@@ -21,16 +21,17 @@ public class ShiroTokenConfig {
     /**
      * Shiro内置过滤器，可以实现权限相关的拦截器
      * 常用的过滤器：
-     *    non: 无需认证（登录）可以访问
-     *    authc: 必须认证才可以访问
-     *    user: 如果使用rememberMe的功能可以直接访问
-     *    perms： 该资源必须得到资源权限才可以访问 perms[user:add] perms[user:update]
-     *    role: 该资源必须得到角色权限才可以访问
+     * non: 无需认证（登录）可以访问
+     * authc: 必须认证才可以访问
+     * user: 如果使用rememberMe的功能可以直接访问
+     * perms： 该资源必须得到资源权限才可以访问 perms[user:add] perms[user:update]
+     * role: 该资源必须得到角色权限才可以访问
+     *
      * @param defaultWebSecurityManager
      * @return
      */
     @Bean
-    public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("getDefaultWebSecurityManager")DefaultWebSecurityManager defaultWebSecurityManager){
+    public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("getDefaultWebSecurityManager") DefaultWebSecurityManager defaultWebSecurityManager) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         //设置安全管理器
         bean.setSecurityManager(defaultWebSecurityManager);
@@ -41,7 +42,7 @@ public class ShiroTokenConfig {
         bean.setFilters(filterMap);
 
         Map<String, String> filterRuleMap = new LinkedHashMap<>();
-        filterRuleMap.put("/shiroToken/login","anon");//不需要认证，可以直接访问的
+        filterRuleMap.put("/shiroToken/login", "anon");//不需要认证，可以直接访问的
         // 其余请求都要经过BearerTokenFilter自定义拦截器
         filterRuleMap.put("/shiroToken/**", "tokenFilter");
         bean.setFilterChainDefinitionMap(filterRuleMap);
@@ -49,14 +50,14 @@ public class ShiroTokenConfig {
     }
 
     @Bean
-    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("getUserRealm") UserRealm userRealm){
-        DefaultWebSecurityManager securityManager=new DefaultWebSecurityManager();
+    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("getUserRealm") UserRealm userRealm) {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 设置自定义 realm.
         securityManager.setRealm(userRealm);
 
         //关闭session
-        DefaultSubjectDAO subjectDAO=new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator sessionStorageEvaluator=new DefaultSessionStorageEvaluator();
+        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         sessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(sessionStorageEvaluator);
         securityManager.setSubjectDAO(subjectDAO);
@@ -65,10 +66,11 @@ public class ShiroTokenConfig {
 
     /**
      * 自定义realm
+     *
      * @return
      */
     @Bean
-    public UserRealm getUserRealm(){
+    public UserRealm getUserRealm() {
         return new UserRealm();
     }
 
@@ -77,17 +79,17 @@ public class ShiroTokenConfig {
      * 添加注解支持，如果不加的话很有可能注解失效
      */
     @Bean
-    public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator(){
+    public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator() {
 
-        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator=new DefaultAdvisorAutoProxyCreator();
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
         defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
         return defaultAdvisorAutoProxyCreator;
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(@Qualifier("getDefaultWebSecurityManager") DefaultWebSecurityManager securityManager){
+    public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(@Qualifier("getDefaultWebSecurityManager") DefaultWebSecurityManager securityManager) {
 
-        AuthorizationAttributeSourceAdvisor advisor=new AuthorizationAttributeSourceAdvisor();
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);
         return advisor;
     }

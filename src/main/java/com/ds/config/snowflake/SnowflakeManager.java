@@ -41,12 +41,12 @@ public class SnowflakeManager {
         }
         //SecureRandom secureRandom = SecureRandom.getInstanceStrong();
         long currentTimeMillis = this.currentTimeMillis();
-        if(currentTimeMillis < this.lastTimestamp) {
-            throw new Exception(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", (this.lastTimestamp-currentTimeMillis)));
+        if (currentTimeMillis < this.lastTimestamp) {
+            throw new Exception(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", (this.lastTimestamp - currentTimeMillis)));
         }
 
-        if(this.lastTimestamp == currentTimeMillis) {
-            this.sequence = (this.sequence+1) & MAX_SEQUENCE_NUM;
+        if (this.lastTimestamp == currentTimeMillis) {
+            this.sequence = (this.sequence + 1) & MAX_SEQUENCE_NUM;
             if (this.sequence == 0) {
                 this.sequence = secureRandom.nextInt(Long.valueOf(SEQUENCE_BIT).intValue());
                 currentTimeMillis = this.tilNextMillis(this.lastTimestamp);
@@ -57,7 +57,7 @@ public class SnowflakeManager {
         this.lastTimestamp = currentTimeMillis;
 
         // 64 Bit ID (42(Millis)+5(Data Center ID)+5(Machine ID)+12(Repeat Sequence Summation))
-        long nextId = ((currentTimeMillis-EPOCH_STAMP) << TIMESTAMP_LEFT)
+        long nextId = ((currentTimeMillis - EPOCH_STAMP) << TIMESTAMP_LEFT)
                 | (this.dataCenterId << DATA_CENTER_LEFT)
                 | (this.machineId << MACHINE_LEFT)
                 | this.sequence;
@@ -78,9 +78,9 @@ public class SnowflakeManager {
     }
 
     public static void main(String[] args) throws Exception {
-        SnowflakeManager snowflakeManager = new SnowflakeManager(0L,0L);
+        SnowflakeManager snowflakeManager = new SnowflakeManager(0L, 0L);
         for (int i = 0; i < 100; i++) {
-            System.out.println("当前生成的有序数字串："+snowflakeManager.nextValue());
+            System.out.println("当前生成的有序数字串：" + snowflakeManager.nextValue());
         }
     }
 }

@@ -24,7 +24,7 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         //String properties = System.getProperty("user.dir");
         String properties = "D:/JAVA/IDEA/IdeaProjects/springboot";
-        gc.setOutputDir(properties+"/src/main/java");
+        gc.setOutputDir(properties + "/src/main/java");
         gc.setAuthor("lt");
         gc.setOpen(false);
         gc.setFileOverride(false);//是否覆盖
@@ -91,7 +91,7 @@ public class CodeGenerator {
         //4、策略配置
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("boy","girl");//设置要映射的表名,多个逗号拼接
+        strategy.setInclude("boy", "girl");//设置要映射的表名,多个逗号拼接
         strategy.setNaming(NamingStrategy.underline_to_camel);//下划线转驼峰命名
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);//自动lombok

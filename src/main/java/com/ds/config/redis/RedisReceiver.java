@@ -16,14 +16,14 @@ public class RedisReceiver {
     /**
      * 消息队列1
      **/
-    public void receiveMessage(String message){
+    public void receiveMessage(String message) {
 
     }
 
     /**
      * 消息队列2
      **/
-    public void receiveMessage2(String message){
+    public void receiveMessage2(String message) {
 
     }
 
@@ -31,7 +31,7 @@ public class RedisReceiver {
      * 消息队列3
      **/
 
-    public void receiveMessage3(String message){
+    public void receiveMessage3(String message) {
 
     }
 

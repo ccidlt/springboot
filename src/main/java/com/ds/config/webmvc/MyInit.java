@@ -40,8 +40,8 @@ public class MyInit implements CommandLineRunner {
             long cz = scheduleDate.getTime() - nowDate.getTime();
             delay = cz >= 0 ? (scheduleDate.getTime() - nowDate.getTime()) : (nextScheduleDate.getTime() - nowDate.getTime());
             scheduledExecutorService.scheduleAtFixedRate(() -> {
-                if(redisUtils.acquireLock("scheduledTask",300)){
-                    System.out.println("执行时间："+System.currentTimeMillis());
+                if (redisUtils.acquireLock("scheduledTask", 300)) {
+                    System.out.println("执行时间：" + System.currentTimeMillis());
                     redisUtils.releaseLock("scheduledTask");
                 }
             }, delay, period, TimeUnit.MILLISECONDS);

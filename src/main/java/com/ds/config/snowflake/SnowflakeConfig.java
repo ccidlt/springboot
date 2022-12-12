@@ -9,20 +9,20 @@ public class SnowflakeConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "snow-flake")
-    public SnowflakeProperties snowflakeProperties(){
+    public SnowflakeProperties snowflakeProperties() {
         return new SnowflakeProperties();
     }
 
     @Bean
-    public Snowflake snowFlake(){
+    public Snowflake snowFlake() {
         SnowflakeProperties snowflakeProperties = snowflakeProperties();
-        return new Snowflake(snowflakeProperties.getDataCenterId(),snowflakeProperties.getMachineId());
+        return new Snowflake(snowflakeProperties.getDataCenterId(), snowflakeProperties.getMachineId());
     }
 
     @Bean
-    public SnowflakeManager snowflakeManager(){
+    public SnowflakeManager snowflakeManager() {
         SnowflakeProperties snowflakeProperties = snowflakeProperties();
-        return new SnowflakeManager(snowflakeProperties.getMachineId(),snowflakeProperties.getDataCenterId());
+        return new SnowflakeManager(snowflakeProperties.getMachineId(), snowflakeProperties.getDataCenterId());
     }
 
 }

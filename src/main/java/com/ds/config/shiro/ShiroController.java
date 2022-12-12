@@ -55,19 +55,19 @@ public class ShiroController {
 
     @GetMapping("/auth")
     public String auth() {
-        return"已成功登录";
+        return "已成功登录";
     }
 
     @GetMapping("/role")
     @RequiresRoles("vip")
     public String role() {
-        return"测试Vip角色";
+        return "测试Vip角色";
     }
 
     @GetMapping("/permission")
     @RequiresPermissions(value = {"add", "update"}, logical = Logical.AND)
     public String permission() {
-        return"测试Add和Update权限";
+        return "测试Add和Update权限";
     }
 
 }

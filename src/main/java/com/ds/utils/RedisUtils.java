@@ -209,6 +209,7 @@ public class RedisUtils {
 
     /**
      * 加锁
+     *
      * @param lockName
      * @param lockValue
      * @return
@@ -240,8 +241,8 @@ public class RedisUtils {
      * 加锁并设置过期时间、超时时间
      *
      * @param lockName
-     * @param lockExpire 过期时间 秒
-     * @param acquireTimeout  获取锁超时时间  秒
+     * @param lockExpire     过期时间 秒
+     * @param acquireTimeout 获取锁超时时间  秒
      * @return
      */
     public boolean acquireLockWithTimeout(String lockName, int lockExpire, int acquireTimeout) {
@@ -263,9 +264,10 @@ public class RedisUtils {
 
     /**
      * 释放锁
+     *
      * @param lockName
      */
-    public void releaseLock(String lockName){
+    public void releaseLock(String lockName) {
         redisTemplate.delete(lockName);
     }
 

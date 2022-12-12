@@ -18,11 +18,12 @@ public interface BoyService extends IService<Boy> {
 
     List<Boy> queryBoy(List<Integer> ids);
 
-    List<Boy> queryBoy(Map<String,Object> map);
+    List<Boy> queryBoy(Map<String, Object> map);
 
     List<Boy> queryBoy(Boy boy);
 
     int addBoy(Boy boy);
+
     Boy addBoy2(Boy boy);
 
     int updateBoy(Boy boy);

@@ -41,7 +41,7 @@ public class AsyncConfig {
 
     @Bean("tptExecutor")
     @Primary
-    public ThreadPoolTaskExecutor tptExecutor(){
+    public ThreadPoolTaskExecutor tptExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 核心线程数：线程池创建时候初始化的线程数
         executor.setCorePoolSize(cpuNum * 2);
@@ -61,10 +61,10 @@ public class AsyncConfig {
 
     //@Scheduled(cron = "0 0 1 * * ?")
     @Async("tptExecutor")
-    public void a(){
-        if(redisUtils.acquireLock("bfsjk",10)){
+    public void a() {
+        if (redisUtils.acquireLock("bfsjk", 10)) {
             try {
-                log.info("执行定时任务》》》"+new Date());
+                log.info("执行定时任务》》》" + new Date());
                 backupDataSource();
                 log.info("备份数据库成功!!!");
             } catch (Exception e) {
@@ -76,22 +76,22 @@ public class AsyncConfig {
     }
 
     //备份数据库
-    public void backupDataSource(){
+    public void backupDataSource() {
         try {
             //String filePath=this.getClass().getResource("/sql").getPath();
-            String filePath=this.getClass().getClassLoader().getResource("sql").getPath();
-            if(filePath.startsWith("/")){
+            String filePath = this.getClass().getClassLoader().getResource("sql").getPath();
+            if (filePath.startsWith("/")) {
                 filePath = filePath.substring(1);
             }
-            String ip="127.0.0.1";
-            String port="3306";
-            String dbName="test";//备份的数据库名
-            String username="root";//用户名
-            String password="123456";//密码
+            String ip = "127.0.0.1";
+            String port = "3306";
+            String dbName = "test";//备份的数据库名
+            String username = "root";//用户名
+            String password = "123456";//密码
             File uploadDir = new File(filePath);
             if (!uploadDir.exists())
                 uploadDir.mkdirs();
-            String cmd = "mysqldump -h"+ip+" -P"+port+" -u"+username+" -p"+password+" "+dbName+" > "+ filePath + "/" + dbName+new Date().getTime()+ ".sql";
+            String cmd = "mysqldump -h" + ip + " -P" + port + " -u" + username + " -p" + password + " " + dbName + " > " + filePath + "/" + dbName + new Date().getTime() + ".sql";
             String osName = System.getProperty("os.name").toLowerCase();
             String[] command = new String[0];
             if (osName.startsWith("windows")) {
@@ -106,20 +106,20 @@ public class AsyncConfig {
     }
 
     //还原数据库
-    public void restoreDataSource(){
+    public void restoreDataSource() {
         try {
             //String filePath=this.getClass().getResource("/sql").getPath();
-            String filePath=this.getClass().getClassLoader().getResource("sql").getPath();
-            if(filePath.startsWith("/")){
+            String filePath = this.getClass().getClassLoader().getResource("sql").getPath();
+            if (filePath.startsWith("/")) {
                 filePath = filePath.substring(1);
             }
-            String dbName="test";//备份的数据库名
-            String username="root";//用户名
-            String password="123456";//密码
+            String dbName = "test";//备份的数据库名
+            String username = "root";//用户名
+            String password = "123456";//密码
             File uploadDir = new File(filePath);
             if (!uploadDir.exists())
                 uploadDir.mkdirs();
-            String cmd = "mysqldump -u"+username+" -p"+password+" "+dbName+" < "+ filePath + "/" + dbName+new Date().getTime()+ ".sql";
+            String cmd = "mysqldump -u" + username + " -p" + password + " " + dbName + " < " + filePath + "/" + dbName + new Date().getTime() + ".sql";
             String osName = System.getProperty("os.name").toLowerCase();
             String[] command = new String[0];
             if (osName.startsWith("windows")) {
@@ -134,8 +134,8 @@ public class AsyncConfig {
     }
 
     @Async("tptExecutor")
-    public Future<String> b(){
-        return new AsyncResult<>("返回值："+Thread.currentThread().getName());
+    public Future<String> b() {
+        return new AsyncResult<>("返回值：" + Thread.currentThread().getName());
     }
 
 }

@@ -26,11 +26,12 @@ public class ShiroConfig {
      * 装配ShiroFilterFactoryBean，并将 DefaultWebSecurityManager 注入到 ShiroFilterFactoryBean 中
      * Shiro内置过滤器，可以实现权限相关的拦截器
      * 常用的过滤器：
-     *    non: 无需认证（登录）可以访问
-     *    authc: 必须认证才可以访问
-     *    user: 如果使用rememberMe的功能可以直接访问
-     *    perms： 该资源必须得到资源权限才可以访问 perms[user:add] perms[user:update]
-     *    role: 该资源必须得到角色权限才可以访问
+     * non: 无需认证（登录）可以访问
+     * authc: 必须认证才可以访问
+     * user: 如果使用rememberMe的功能可以直接访问
+     * perms： 该资源必须得到资源权限才可以访问 perms[user:add] perms[user:update]
+     * role: 该资源必须得到角色权限才可以访问
+     *
      * @return
      */
     @Bean
@@ -43,7 +44,7 @@ public class ShiroConfig {
         // 允许匿名访问
         map.put("/shiro/login", "anon");
         //设置注销过滤器
-        map.put("/shiro/logout","logout");
+        map.put("/shiro/logout", "logout");
         // 进行身份认证后才能访问
         map.put("/shiro/**", "authc");
         // 将拦截器链设置到shiro中
@@ -59,6 +60,7 @@ public class ShiroConfig {
 
     /**
      * 创建DefaultWebSecurityManager ，并且将 MyRealm 注入到 DefaultWebSecurityManager bean 中
+     *
      * @return
      */
     @Bean
@@ -70,6 +72,7 @@ public class ShiroConfig {
 
     /**
      * 自定义过滤器Realm
+     *
      * @return
      */
     @Bean
@@ -79,6 +82,7 @@ public class ShiroConfig {
 
     /**
      * 开启Shiro注解模式，可以在Controller中的方法上添加注解
+     *
      * @param securityManager
      * @return
      */

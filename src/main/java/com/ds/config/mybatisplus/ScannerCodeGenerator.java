@@ -36,7 +36,7 @@ public class ScannerCodeGenerator {
                 return ipt;
             }
         }
-        throw  new MybatisPlusException("请输入正确的" + tip + "！");
+        throw new MybatisPlusException("请输入正确的" + tip + "！");
     }
 
     public static void main(String[] args) {
@@ -47,7 +47,7 @@ public class ScannerCodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         //String properties = System.getProperty("user.dir");
         String properties = "D:/JAVA/IDEA/IdeaProjects/springboot";
-        gc.setOutputDir(properties+"/src/main/java");
+        gc.setOutputDir(properties + "/src/main/java");
         gc.setAuthor("lt");
         gc.setOpen(false);
         gc.setFileOverride(false);//是否覆盖

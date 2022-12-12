@@ -50,6 +50,7 @@ public class MyWebSocket extends TextWebSocketHandler {
 
     /**
      * webSocket创建连接后调用
+     *
      * @param session
      */
     @Override
@@ -65,12 +66,13 @@ public class MyWebSocket extends TextWebSocketHandler {
 
     /**
      * 连接关闭会调用
+     *
      * @param session
      * @param status
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        if(userMap.containsValue(getSessionId(session))){
+        if (userMap.containsValue(getSessionId(session))) {
             String user = userMap.entrySet().stream().filter(entry ->
                     entry.getValue().equals(getSessionId(session))).findAny().map(Map.Entry::getKey).orElse(null);
             userMap.remove(user);
@@ -82,12 +84,13 @@ public class MyWebSocket extends TextWebSocketHandler {
 
     /**
      * 连接出错会调用
+     *
      * @param session
      * @param exception
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        if(userMap.containsValue(getSessionId(session))){
+        if (userMap.containsValue(getSessionId(session))) {
             String user = userMap.entrySet().stream().filter(entry ->
                     entry.getValue().equals(getSessionId(session))).findAny().map(Map.Entry::getKey).orElse(null);
             userMap.remove(user);
@@ -98,18 +101,19 @@ public class MyWebSocket extends TextWebSocketHandler {
 
     /**
      * 接收到消息调用
+     *
      * @param session
      * @param message
      */
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        log.debug("WebSocket服务端接受:接受来自客户端发送的信息: "+message.getPayload().toString());
+        log.debug("WebSocket服务端接受:接受来自客户端发送的信息: " + message.getPayload().toString());
         session.sendMessage(message);
     }
 
-    public WebSocketSession getSession(String user){
+    public WebSocketSession getSession(String user) {
         String sessionId = userMap.get(user);
-        if(StringUtil.isEmpty(sessionId) || StringUtils.isEmpty(sessionMap.get(sessionId))){
+        if (StringUtil.isEmpty(sessionId) || StringUtils.isEmpty(sessionMap.get(sessionId))) {
             return null;
         }
         WebSocketSession session = sessionMap.get(sessionId);
@@ -121,12 +125,12 @@ public class MyWebSocket extends TextWebSocketHandler {
      */
     public void sendMessage(String user, String message) {
         String sessionId = userMap.get(user);
-        if(StringUtil.isEmpty(sessionId) || StringUtils.isEmpty(sessionMap.get(sessionId))){
+        if (StringUtil.isEmpty(sessionId) || StringUtils.isEmpty(sessionMap.get(sessionId))) {
             return;
         }
         WebSocketSession session = sessionMap.get(sessionId);
         try {
-            synchronized (session){
+            synchronized (session) {
                 session.sendMessage(new TextMessage(message));
             }
 
@@ -135,11 +139,11 @@ public class MyWebSocket extends TextWebSocketHandler {
         }
     }
 
-    public Map<String, String> getUserMap(){
+    public Map<String, String> getUserMap() {
         return userMap;
     }
 
-    public Map<String, WebSocketSession> getSessionMap(){
+    public Map<String, WebSocketSession> getSessionMap() {
         return sessionMap;
     }
 

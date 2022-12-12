@@ -43,28 +43,28 @@ public class PermissionAspect {
     private MenuService menuService;
 
     @Pointcut("@annotation(com.ds.config.perm.Authentication)")
-    private void cut(){
+    private void cut() {
     }
 
     @Around("cut()")
-    public Object around(ProceedingJoinPoint joinPoint)throws Throwable{
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = null;
-        try{
+        try {
             HttpServletRequest request = HttpServletUtil.getRequest();
             HttpServletResponse response = HttpServletUtil.getResponse();
-            MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+            MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
             Method methodObject = methodSignature.getMethod();
             Authentication annotation = methodObject.getAnnotation(Authentication.class);
-            if(annotation.required()){
+            if (annotation.required()) {
                 boolean isPass = false;
                 PermissionType permissionType = annotation.permissionType();
                 String[] value = annotation.value();
                 Logical logical = annotation.logical();
-                if(value.length == 0){
+                if (value.length == 0) {
                     isPass = true;
                 }
                 List<String> valueList = Arrays.stream(value).collect(Collectors.toList());
-                if(valueList.contains("admin")){
+                if (valueList.contains("admin")) {
                     isPass = true;
                 }
                 String token = request.getHeader("token");
@@ -73,15 +73,15 @@ public class PermissionAspect {
                 List<String> roleList = roles.stream().map(Role::getRole).collect(Collectors.toList());
                 List<Integer> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
                 //是否包含某些角色
-                switch (permissionType){
+                switch (permissionType) {
                     case ROLE:
                         //是否包含某些角色
-                        if(logical == Logical.AND){
-                            if(roleList.containsAll(valueList)){
+                        if (logical == Logical.AND) {
+                            if (roleList.containsAll(valueList)) {
                                 isPass = true;
                             }
-                        }else if(logical == Logical.OR){
-                            if(valueList.stream().anyMatch(a -> roleList.contains(a))){
+                        } else if (logical == Logical.OR) {
+                            if (valueList.stream().anyMatch(a -> roleList.contains(a))) {
                                 isPass = true;
                             }
                         }
@@ -91,13 +91,13 @@ public class PermissionAspect {
                         //String path = request.getRequestURI();
                         List<Menu> menuList = menuService.findByRoleId(roleIds);
                         Set<String> menuPermsSet = menuList.stream().map(Menu::getPerms).collect(Collectors.toSet());
-                        if(CollectionUtils.isNotEmpty(menuPermsSet)){
-                            if(logical == Logical.AND) {
+                        if (CollectionUtils.isNotEmpty(menuPermsSet)) {
+                            if (logical == Logical.AND) {
                                 if (menuPermsSet.containsAll(valueList)) {
                                     isPass = true;
                                 }
-                            }else if(logical == Logical.OR){
-                                if(valueList.stream().anyMatch(a -> menuPermsSet.contains(a))){
+                            } else if (logical == Logical.OR) {
+                                if (valueList.stream().anyMatch(a -> menuPermsSet.contains(a))) {
                                     isPass = true;
                                 }
                             }
@@ -107,7 +107,7 @@ public class PermissionAspect {
                         //是否包含权限
                         List<String> permissionList = permissionService.findByRoleId(roleIds);
                         Set<Object> permissionSet = new HashSet<>(permissionList);
-                        if(CollectionUtils.isNotEmpty(permissionSet)) {
+                        if (CollectionUtils.isNotEmpty(permissionSet)) {
                             if (logical == Logical.AND) {
                                 if (permissionSet.containsAll(valueList)) {
                                     isPass = true;
@@ -122,12 +122,12 @@ public class PermissionAspect {
                     default:
                         break;
                 }
-                if(!isPass){
+                if (!isPass) {
                     return Result.build(null, ResultCodeEnum.FORBIDDEN);
                 }
             }
             result = joinPoint.proceed();
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return Result.build(null, ResultCodeEnum.INTERNAL_SERVER_ERROR);
         }

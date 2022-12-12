@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *数据范围权限拦截器，配合@DataScope注解使用
+ * 数据范围权限拦截器，配合@DataScope注解使用
  */
 public class DataScopeInnerInterceptor implements InnerInterceptor {
 
@@ -45,7 +45,7 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
         for (Method m : methods) {
             if (Objects.equals(m.getName(), methodName)) {
                 //获取注解  来判断是不是要处理sql
-                if(!m.isAnnotationPresent(DataScope.class)){
+                if (!m.isAnnotationPresent(DataScope.class)) {
                     continue;
                 }
                 DataScope dataScope = m.getAnnotation(DataScope.class);
@@ -59,7 +59,7 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
                 if (!Objects.isNull(auth)) {
                     //根据用户权限拼接sql
                     String newSql = getInExpressionByAuth(auth, dataScope, originalSql);
-                    if(newSql == null){
+                    if (newSql == null) {
                         continue;
                     }
                     //通过反射修改sql语句

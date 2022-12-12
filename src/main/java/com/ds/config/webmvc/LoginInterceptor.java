@@ -18,12 +18,12 @@ import java.lang.reflect.Method;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-	@Resource
-	RedisTemplate<String,Object> redisTemplate;
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 		/*
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
@@ -31,26 +31,26 @@ public class LoginInterceptor implements HandlerInterceptor {
 		response.setHeader("Access-Control-Allow-Headers", "access-control-allow-origin, authority, content-type, version-info, X-Requested-With, Access-Token, token");
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		*/
-		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		if(!(handler instanceof HandlerMethod)){
-			return true;
-		}
-		HandlerMethod handlerMethod = (HandlerMethod)handler;
-		Method method = handlerMethod.getMethod();
-		if(method.isAnnotationPresent(PassToken.class)){
-			PassToken annotation = method.getAnnotation(PassToken.class);
-			if(annotation.required()){
-				return true;
-			}
-		}
-		boolean useLoginToken = true;
-		if(method.isAnnotationPresent(UseLoginToken.class)){
-			UseLoginToken annotation = method.getAnnotation(UseLoginToken.class);
-			useLoginToken = annotation.required();
-		}
-		if(!useLoginToken){
-			return true;
-		}
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        if (method.isAnnotationPresent(PassToken.class)) {
+            PassToken annotation = method.getAnnotation(PassToken.class);
+            if (annotation.required()) {
+                return true;
+            }
+        }
+        boolean useLoginToken = true;
+        if (method.isAnnotationPresent(UseLoginToken.class)) {
+            UseLoginToken annotation = method.getAnnotation(UseLoginToken.class);
+            useLoginToken = annotation.required();
+        }
+        if (!useLoginToken) {
+            return true;
+        }
 		/*String token = request.getHeader("token");
 		if(StringUtil.isEmpty(token)){
 			token = request.getParameter("token");
@@ -72,17 +72,17 @@ public class LoginInterceptor implements HandlerInterceptor {
 		result.put("msg", "请重新登录！");
 		out.write(result.toString().getBytes());
 		return false;*/
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) throws Exception {
 
-	}
+    }
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
-	}
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+    }
 }

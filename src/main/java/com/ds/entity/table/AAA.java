@@ -20,12 +20,12 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("aaa")
-@ApiModel(value="aaa", description = "aaa对象")
+@ApiModel(value = "aaa", description = "aaa对象")
 public class AAA extends BaseModel implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-    @Column(type = MySqlTypeConstant.BIGINT, isKey = true,isAutoIncrement = true)
+    @Column(type = MySqlTypeConstant.BIGINT, isKey = true, isAutoIncrement = true)
     @TableId(type = IdType.AUTO)
     @ApiModelProperty("主键")
     private Long id;

@@ -16,6 +16,7 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
     /**
      * 是否允许访问。如果带有 token，则对 token 进行检查，否则直接通过。
      * 如果请求头不存在 Token，则可能是执行登陆操作或者是游客状态访问，无需检查 token，直接返回 true
+     *
      * @param request
      * @param response
      * @param mappedValue
@@ -25,17 +26,17 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         //判断请求的请求头是否带上 "Token"
-        if (isLoginAttempt(request, response)){
+        if (isLoginAttempt(request, response)) {
             //如果存在，则进入 executeLogin 方法执行登入，检查 token 是否正确
             try {
                 executeLogin(request, response);
                 return true;
-            }catch (Exception e){
+            } catch (Exception e) {
                 //token 错误
                 Throwable throwable = e.getCause() == null ? e : e.getCause();
                 Result r = Result.fail(throwable.getMessage());
                 String json = JSONObject.toJSONString(r);
-                HttpServletResponse httpServletResponse = (HttpServletResponse)response;
+                HttpServletResponse httpServletResponse = (HttpServletResponse) response;
                 httpServletResponse.setHeader("content-type", "text/html;charset=UTF-8");//防止乱码
                 httpServletResponse.getWriter().print(json);
                 return false;
@@ -50,9 +51,9 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req= (HttpServletRequest) request;
-        String token=req.getHeader("token");
-        return token!=null;
+        HttpServletRequest req = (HttpServletRequest) request;
+        String token = req.getHeader("token");
+        return token != null;
     }
 
     /**
@@ -63,9 +64,9 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest req= (HttpServletRequest) request;
-        String token=req.getHeader("token");
-        JwtToken jwt=new JwtToken(token);
+        HttpServletRequest req = (HttpServletRequest) request;
+        String token = req.getHeader("token");
+        JwtToken jwt = new JwtToken(token);
         //交给自定义的realm对象去登录，如果错误他会抛出异常并被捕获
         getSubject(request, response).login(jwt);
         return true;
@@ -123,6 +124,7 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
      * 拦截器的前置拦截，
      * 因为我们是前后端分析项目，项目中除了需要跨域全局配置之外，我们再拦截器中也需要提供跨域支持。
      * 这样，拦截器才不会在进入Controller之前就被限制了。
+     *
      * @param request
      * @param response
      * @return
@@ -130,11 +132,11 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest req= (HttpServletRequest) request;
-        HttpServletResponse res= (HttpServletResponse) response;
-        res.setHeader("Access-control-Allow-Origin",req.getHeader("Origin"));
-        res.setHeader("Access-control-Allow-Methods","GET,POST,OPTIONS,PUT,DELETE");
-        res.setHeader("Access-control-Allow-Headers",req.getHeader("Access-Control-Request-Headers"));
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
+        res.setHeader("Access-control-Allow-Origin", req.getHeader("Origin"));
+        res.setHeader("Access-control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+        res.setHeader("Access-control-Allow-Headers", req.getHeader("Access-Control-Request-Headers"));
         // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
         if (req.getMethod().equals(RequestMethod.OPTIONS.name())) {
             res.setStatus(HttpStatus.OK.value());

@@ -24,11 +24,10 @@ public class ReentrantLockOperate {
      * getAndIncrement() - 以原子方式递增当前值并返回旧值。它相当于++ i操作。
      * decrementAndGet()- 原子地将当前值减1并在减量后返回新值。它等同于i-操作。
      * getAndDecrement() - 以原子方式递减当前值并返回旧值。它相当于-i操作。
-     *
+     * <p>
      * 2、在比较和交换操作中实现非阻塞算法。
      * 比较和交换操作将内存位置的内容与给定值进行比较，并且只有它们相同时，才将该内存位置的内容修改为给定的新值。这是作为单个原子操作完成的
      * boolean compareAndSet(int expect, int update)
-     *
      */
     AtomicInteger count = new AtomicInteger(30);
 
@@ -77,9 +76,9 @@ public class ReentrantLockOperate {
 //        }
         //锁对象，不同对象，单个线程同步
         byte[] byteArr = new byte[2];
-        synchronized (byteArr){
+        synchronized (byteArr) {
             Thread.sleep(1000);
-            log.info(Thread.currentThread().getName()+": "+ LocalDateTime.now());
+            log.info(Thread.currentThread().getName() + ": " + LocalDateTime.now());
         }
     }
 

@@ -32,14 +32,14 @@ public class AspectImpl {
 
     //@Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")
     @Pointcut("@annotation(com.ds.annotation.AspectService)")
-    private void cut(){
+    private void cut() {
 
     }
 
     //环绕增强，是在before前就会触发,目标方法执行前后分别执行一些代码
     @Around("cut()")
-    public Object around(ProceedingJoinPoint joinPoint)throws Throwable{
-        try{
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        try {
             RequestAttributes ra = RequestContextHolder.getRequestAttributes();
             ServletRequestAttributes sra = (ServletRequestAttributes) ra;
             HttpServletRequest request = sra.getRequest();
@@ -48,7 +48,7 @@ public class AspectImpl {
             String uri = request.getRequestURI();
             String remoteAddr = request.getRemoteAddr();
             String queryString = request.getQueryString();
-            log.info("Request, url: {"+url+"}, method: {"+method+"}, uri: {"+uri+"}, remoteAddr: {"+remoteAddr+"}, params: {"+queryString+"}");
+            log.info("Request, url: {" + url + "}, method: {" + method + "}, uri: {" + uri + "}, remoteAddr: {" + remoteAddr + "}, params: {" + queryString + "}");
 
             //获取controller名
             String controllerFullName = joinPoint.getTarget().getClass().getName();
@@ -56,7 +56,7 @@ public class AspectImpl {
             String controllerName = controllerNames[controllerNames.length - 1];
 
             //方法上注解
-            MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+            MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
             Method methodObject = methodSignature.getMethod();
             String operationType = methodObject.getAnnotation(AspectService.class).operationType();
             String operationName = methodObject.getAnnotation(AspectService.class).operationName();
@@ -100,35 +100,35 @@ public class AspectImpl {
 
             String startDateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
             log.info("【{}】:接口【{}】请求方式【{}】方法【{}】参数【{}】,IP为【{}】进行了【{}】类型的【{}】操作;"
-                    , startDateStr, controllerName, methodType, methodName, params.toString().replace(" ",""), remoteAddr, operationType, operationName);
+                    , startDateStr, controllerName, methodType, methodName, params.toString().replace(" ", ""), remoteAddr, operationType, operationName);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 
         // result的值就是被拦截方法的返回值
         Object result = joinPoint.proceed();
-        log.info("请求返回值：{}",result);
+        log.info("请求返回值：{}", result);
         return result;
     }
 
     //进来切点世界，先经过的第一个站
     @Before("cut()")
-    public void before(JoinPoint joinPoint){
+    public void before(JoinPoint joinPoint) {
 
     }
 
     //进来切点这，最后经过的一个站，也是方法正常运行结束后,不管是抛出异常或者正常退出都会执行
     @After("cut()")
-    public void after(JoinPoint joinPoint){
+    public void after(JoinPoint joinPoint) {
 
     }
 
     //统一异常处理
-    @AfterThrowing(pointcut="cut()",throwing="e")
-    public void afterThrowable(JoinPoint joinPoint,Throwable e) {
+    @AfterThrowing(pointcut = "cut()", throwing = "e")
+    public void afterThrowable(JoinPoint joinPoint, Throwable e) {
         //方法名获取
-        String methodName = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
-        log.error("请求异常：请求方法：{}, 异常信息：{}",methodName,e.getMessage());
+        String methodName = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
+        log.error("请求异常：请求方法：{}, 异常信息：{}", methodName, e.getMessage());
     }
 }

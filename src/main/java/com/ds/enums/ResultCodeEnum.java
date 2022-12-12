@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ResultCodeEnum {
 
-    OK (200,"成功"),
+    OK(200, "成功"),
     FAIL(201, "失败"),
     BAD_REQUEST(400, "错误的请求"),
     UNAUTHORIZED(401, "未经授权"),
@@ -27,7 +27,7 @@ public enum ResultCodeEnum {
 
     public static String getValues(Integer code) {
         for (ResultCodeEnum enums : ResultCodeEnum.values()) {
-            if(enums.getCode().equals(code)){
+            if (enums.getCode().equals(code)) {
                 return enums.getValue();
             }
         }

@@ -31,32 +31,32 @@ public class Boy implements Serializable {
     private Integer girlId;
 
     @ApiModelProperty("女朋友们")
-    @TableField(exist=false)
+    @TableField(exist = false)
     private String girls;
 
     @ApiModelProperty("创建人")
     private String createUser;
 
     //自动回填创建时间
-    @TableField(value="create_time", fill = FieldFill.INSERT)
-    @ApiModelProperty(value="创建时间")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
 
     //自动回填修改时间
-    @TableField(value="update_time",fill = FieldFill.INSERT_UPDATE)
-    @ApiModelProperty(value="修改时间")
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty(value = "修改时间")
     private LocalDateTime updateTime;
 
     //乐观锁
     @Version
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value="乐观锁")
+    @ApiModelProperty(value = "乐观锁")
     private Integer version;
 
     //逻辑删除
     @TableLogic(value = "0", delval = "1")
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value="逻辑删除（0-未删除、1-已删除）")
+    @ApiModelProperty(value = "逻辑删除（0-未删除、1-已删除）")
     private Integer isdelete;
 
     public Boy(int id, String name, String girls) {

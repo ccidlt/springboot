@@ -33,6 +33,7 @@ public class FileUtils {
 
     /**
      * 单文件上传
+     *
      * @param file
      * @param path
      * @return
@@ -46,13 +47,13 @@ public class FileUtils {
         String originalFilename = file.getOriginalFilename();
         String hz = originalFilename.substring(originalFilename.lastIndexOf("."));
         File filedir = new File(path);
-        if(!filedir.exists()){
+        if (!filedir.exists()) {
             filedir.mkdirs();
         }
-        String filename = UUID.randomUUID().toString().replace("-","") + hz;
+        String filename = UUID.randomUUID().toString().replace("-", "") + hz;
         try {
-            file.transferTo(new File(filedir,filename));
-            result = Result.ok(path+"/"+filename);
+            file.transferTo(new File(filedir, filename));
+            result = Result.ok(path + "/" + filename);
         } catch (IOException e) {
             e.printStackTrace();
             result = Result.fail();
@@ -62,12 +63,13 @@ public class FileUtils {
 
     /**
      * 多文件上传
+     *
      * @param path
      * @return
      */
     public static Result multipleFileUpload(String path) {
         Result result = Result.ok();
-        List<Map<String,String>> fileList = new ArrayList<>();
+        List<Map<String, String>> fileList = new ArrayList<>();
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         /*MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
@@ -77,26 +79,26 @@ public class FileUtils {
         }*/
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         //判断 request 是否有文件上传,即多部分请求
-        if(multipartResolver.isMultipart(request)){
+        if (multipartResolver.isMultipart(request)) {
             //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
-            MultiValueMap<String,MultipartFile> multiFileMap = multiRequest.getMultiFileMap();
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+            MultiValueMap<String, MultipartFile> multiFileMap = multiRequest.getMultiFileMap();
             List<MultipartFile> fileSet = new LinkedList<>();
-            for(Map.Entry<String, List<MultipartFile>> temp : multiFileMap.entrySet()){
+            for (Map.Entry<String, List<MultipartFile>> temp : multiFileMap.entrySet()) {
                 fileSet = temp.getValue();
             }
-            for(MultipartFile file : fileSet){
+            for (MultipartFile file : fileSet) {
                 String originalFilename = file.getOriginalFilename();
                 String hz = originalFilename.substring(originalFilename.lastIndexOf("."));
                 File filedir = new File(path);
-                if(!filedir.exists()){
+                if (!filedir.exists()) {
                     filedir.mkdirs();
                 }
-                String filename = UUID.randomUUID().toString().replace("-","") + hz;
+                String filename = UUID.randomUUID().toString().replace("-", "") + hz;
                 try {
-                    file.transferTo(new File(filedir,filename));
+                    file.transferTo(new File(filedir, filename));
                     Map<String, String> fileMap = new HashMap<>();
-                    fileMap.put(originalFilename, path+"/"+filename);
+                    fileMap.put(originalFilename, path + "/" + filename);
                     fileList.add(fileMap);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -109,7 +111,8 @@ public class FileUtils {
 
     /**
      * 将文件以流的形式一次性读取到内存，通过响应输出流输出到前端
-     * @param path 想要下载的文件的路径
+     *
+     * @param path     想要下载的文件的路径
      * @param response
      * @功能描述 预览文件:文件预览仅适用文件格式为jpg、pdf、txt等文件格式，其他格式文件直接以附件形式下载。
      */
@@ -141,7 +144,7 @@ public class FileUtils {
             response.addHeader("Content-Disposition", "inline;filename=" + URLEncoder.encode(filename, "UTF-8"));
             // 告知浏览器文件的大小
             response.addHeader("Content-Length", "" + file.length());
-            response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
+            response.setHeader("Access-Control-Expose-Headers", "content-disposition");
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
             outputStream.write(buffer);
             outputStream.flush();
@@ -152,7 +155,8 @@ public class FileUtils {
 
     /**
      * 将文件以流的形式一次性读取到内存，通过响应输出流输出到前端
-     * @param path 想要下载的文件的路径
+     *
+     * @param path     想要下载的文件的路径
      * @param response
      * @功能描述 下载文件:
      */
@@ -186,7 +190,7 @@ public class FileUtils {
             response.addHeader("Content-Length", "" + file.length());
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
-            response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
+            response.setHeader("Access-Control-Expose-Headers", "content-disposition");
             outputStream.write(buffer);
             outputStream.flush();
         } catch (IOException ex) {
@@ -196,7 +200,8 @@ public class FileUtils {
 
     /**
      * 将输入流中的数据循环写入到响应输出流中，而不是一次性读取到内存，通过响应输出流输出到前端
-     * @param path 指想要下载的文件的路径
+     *
+     * @param path     指想要下载的文件的路径
      * @param response
      * @功能描述 下载文件:将输入流中的数据循环写入到响应输出流中，而不是一次性读取到内存
      */
@@ -207,7 +212,7 @@ public class FileUtils {
         response.setContentType("application/octet-stream");
         String filename = new File(path).getName();
         response.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
-        response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
+        response.setHeader("Access-Control-Expose-Headers", "content-disposition");
         ServletOutputStream outputStream = response.getOutputStream();
         byte[] b = new byte[1024];
         int len;
@@ -220,7 +225,8 @@ public class FileUtils {
 
     /**
      * 下载网络文件到本地
-     * @param path 下载后的文件路径和名称
+     *
+     * @param path       下载后的文件路径和名称
      * @param netAddress 文件所在网络地址
      * @功能描述 网络文件下载到服务器本地
      */
@@ -243,6 +249,7 @@ public class FileUtils {
 
     /**
      * 网络文件获取到服务器后，经服务器处理后响应给前端
+     *
      * @param netAddress
      * @param filename
      * @param isOnLine
@@ -264,7 +271,7 @@ public class FileUtils {
             //纯下载方式 文件名应该编码成UTF-8
             response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
         }
-        response.setHeader("Access-Control-Expose-Headers", "content-disposition" );
+        response.setHeader("Access-Control-Expose-Headers", "content-disposition");
 
         byte[] buffer = new byte[1024];
         int len;
@@ -277,8 +284,9 @@ public class FileUtils {
 
     /**
      * 功能描述:  将文件打包的方法，需要传一个压缩路径，和一个文件，一次只将一个文件写入压缩包
-     * @param filePath 文件路径
-     * @param zipOut 压缩流：new ZipOutputStream(new FileOutputStream(zipFilePath));传给前端new ZipOutputStream(response.getOutputStream());
+     *
+     * @param filePath     文件路径
+     * @param zipOut       压缩流：new ZipOutputStream(new FileOutputStream(zipFilePath));传给前端new ZipOutputStream(response.getOutputStream());
      * @param realFileName 真实的文件名
      * @return void
      */
@@ -306,13 +314,14 @@ public class FileUtils {
 
     /**
      * 表格导成pdf文件
-     * @param path 保存文件路径
+     *
+     * @param path     保存文件路径
      * @param fileName 文件名
-     * @param titles 表格头
-     * @param list 表格数据
-     * @param fields 表格字段
+     * @param titles   表格头
+     * @param list     表格数据
+     * @param fields   表格字段
      */
-    public static void exportPdfTable(String path, String fileName, List<String> titles, List<Map<String,String>> list, List<String> fields) {
+    public static void exportPdfTable(String path, String fileName, List<String> titles, List<Map<String, String>> list, List<String> fields) {
         Document document = new Document(PageSize.A4, 5, 5, 30, 30);
         //横向
         Rectangle pageSize = new Rectangle(PageSize.A4.getHeight(), PageSize.A4.getWidth());
@@ -320,10 +329,10 @@ public class FileUtils {
         document.setPageSize(pageSize);
         try {
             File fileDir = new File(path);
-            if(!fileDir.exists()) {
+            if (!fileDir.exists()) {
                 fileDir.mkdirs();
             }
-            String filePath = path+"/"+System.currentTimeMillis() + "_" + RandomStringUtils.random(12, true, true)+".pdf";
+            String filePath = path + "/" + System.currentTimeMillis() + "_" + RandomStringUtils.random(12, true, true) + ".pdf";
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
             document.open();
 
@@ -343,7 +352,7 @@ public class FileUtils {
             Paragraph paragraph2 = new Paragraph(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), size10font);
             paragraph2.setAlignment(Paragraph.ALIGN_RIGHT);
             document.add(paragraph2);
-            document.add( Chunk.NEWLINE );
+            document.add(Chunk.NEWLINE);
 
             String[] name = titles.toArray(new String[0]);
             PdfPTable titleTable = new PdfPTable(name.length);//生成一个两列的表格
@@ -361,12 +370,12 @@ public class FileUtils {
 
             //将数据放入表格中
             for (int i = 0; i < list.size(); i++) {
-                Map<String,String> map = list.get(i);
+                Map<String, String> map = list.get(i);
                 PdfPTable dataTable = new PdfPTable(name.length);
                 dataTable.setWidthPercentage(widthPercentage);
                 dataTable.setTotalWidth(floats);
                 //将数组中的数据按照顺序添加
-                for(int j=0;j<fields.size();j++){
+                for (int j = 0; j < fields.size(); j++) {
                     dataTable.addCell(pdfTableStyle(map.get(fields.get(j)), size10font, high, true, true));
                 }
                 document.add(dataTable);
@@ -379,14 +388,15 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
-    private static PdfPCell pdfTableStyle(String content, Font font, int high, boolean isAlignCenter, boolean isAlignMidde){
-        PdfPCell pdfPCell  = new PdfPCell(new Phrase(content,font));
+
+    private static PdfPCell pdfTableStyle(String content, Font font, int high, boolean isAlignCenter, boolean isAlignMidde) {
+        PdfPCell pdfPCell = new PdfPCell(new Phrase(content, font));
         pdfPCell.setMinimumHeight(high);
         pdfPCell.setUseAscender(true); // 设置可以居中
-        if (isAlignCenter){
+        if (isAlignCenter) {
             pdfPCell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER); // 设置水平居中
         }
-        if (isAlignMidde){
+        if (isAlignMidde) {
             pdfPCell.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE); // 设置垂直居中
         }
         return pdfPCell;

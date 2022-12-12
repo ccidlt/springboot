@@ -93,9 +93,9 @@ public class Snowflake {
         Snowflake snowFlake = new Snowflake(2, 3);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
-            System.out.println("当前生成的有序数字串："+snowFlake.nextId());
+            System.out.println("当前生成的有序数字串：" + snowFlake.nextId());
         }
 
-        System.out.println("总共耗时："+(System.currentTimeMillis() - start));
+        System.out.println("总共耗时：" + (System.currentTimeMillis() - start));
     }
 }

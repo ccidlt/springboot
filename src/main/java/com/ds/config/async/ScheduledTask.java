@@ -28,35 +28,36 @@ public class ScheduledTask {
      * 启动任务
      * 如果不想手动触发任务可以使用 @PostConstruct注解来启动
      */
-    public void startTask(String name)  {
+    public void startTask(String name) {
         try {
             ScheduledFuture<?> schedule = threadPoolTaskScheduler.schedule(new MyTask(name), new CronTrigger(cronStr));
-            if(Optional.ofNullable(schedule).isPresent()){
+            if (Optional.ofNullable(schedule).isPresent()) {
                 scheduleMap.put(name, schedule);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
         }
     }
 
     /**
      * 查询所有的任务
      */
-    public void queryTask(){
-        scheduleMap.forEach((k,v)->{
-            System.out.println(k+"  "+v);
+    public void queryTask() {
+        scheduleMap.forEach((k, v) -> {
+            System.out.println(k + "  " + v);
         });
     }
 
     /**
      * 停止单个任务
+     *
      * @param name
      */
-    public void stopTask(String name){
+    public void stopTask(String name) {
         if (scheduleMap.isEmpty()) return;
-        if(scheduleMap.containsKey(name)){//如果包含这个任务
+        if (scheduleMap.containsKey(name)) {//如果包含这个任务
             ScheduledFuture<?> scheduledFuture = scheduleMap.get(name);
-            if(scheduledFuture!=null){
+            if (scheduledFuture != null) {
                 scheduledFuture.cancel(true);
                 boolean cancelled = scheduledFuture.isCancelled();
                 while (!cancelled) {
@@ -70,13 +71,14 @@ public class ScheduledTask {
     /**
      * 停止所有任务
      */
-    public void stopAll(){
+    public void stopAll() {
         if (scheduleMap.isEmpty()) return;
-        scheduleMap.values().forEach(scheduledFuture -> scheduledFuture.cancel(true) );
+        scheduleMap.values().forEach(scheduledFuture -> scheduledFuture.cancel(true));
     }
 
     /**
-     *修改定时任务
+     * 修改定时任务
+     *
      * @param cronStr
      * @param name
      */

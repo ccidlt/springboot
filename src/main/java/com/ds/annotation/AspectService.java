@@ -11,9 +11,13 @@ import java.lang.annotation.*;
 //@Inherited注解用于标注一个父类的注解是否可以被子类继承，如果一个注解需要被其子类所继承，则在声明时直接使用@Inherited注解即可。如果没有写此注解，则无法被子类继承。
 //@Inherited
 public @interface AspectService {
-    /** 要执行的操作类型比如：add操作 **/
+    /**
+     * 要执行的操作类型比如：add操作
+     **/
     String operationType() default "";
 
-    /** 要执行的具体操作人比如：添加用户 **/
+    /**
+     * 要执行的具体操作人比如：添加用户
+     **/
     String operationName() default "";
 }

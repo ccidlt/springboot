@@ -37,16 +37,18 @@ public class ServerResponseVO<T> implements Serializable {
 
     /**
      * 返回成功信息
-     * @param data      信息内容
+     *
+     * @param data 信息内容
      * @param <T>
      * @return
      */
-    public static<T> ServerResponseVO success(T data) {
+    public static <T> ServerResponseVO success(T data) {
         return new ServerResponseVO<>(ServerResponseEnum.SUCCESS, data);
     }
 
     /**
      * 返回成功信息
+     *
      * @return
      */
     public static ServerResponseVO success() {
@@ -55,7 +57,8 @@ public class ServerResponseVO<T> implements Serializable {
 
     /**
      * 返回错误信息
-     * @param responseCode      响应码
+     *
+     * @param responseCode 响应码
      * @return
      */
     public static ServerResponseVO error(ServerResponseEnum responseCode) {

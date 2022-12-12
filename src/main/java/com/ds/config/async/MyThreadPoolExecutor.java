@@ -9,7 +9,8 @@ import java.util.function.Supplier;
 public class MyThreadPoolExecutor {
 
 
-    private MyThreadPoolExecutor(){}
+    private MyThreadPoolExecutor() {
+    }
 
     /**
      * 单例模式的创建
@@ -48,7 +49,7 @@ public class MyThreadPoolExecutor {
 
     /**
      * 静态内部类的方式：
-     *
+     * <p>
      * 静态内部类结合了懒汉式和饿汉式的优点既保证了线程安全，又节省空间
      */
     private static class ThreadPoolExecutorHolder {
@@ -59,14 +60,14 @@ public class MyThreadPoolExecutor {
          * TimeUnit unit ：表示keepAliveTime的单位
          * workQueue：用于缓存任务的阻塞队列,它决定了缓存任务的排队策略.ThreadPoolExecutor线程池推荐了三种等待队列，它们是：SynchronousQueue 、LinkedBlockingQueue 和 ArrayBlockingQueue。
          * handler 拒绝策略：表示当 workQueue 已满，且池中的线程数达到 maximumPoolSize 时，线程池拒绝添加新任务时采取的策略。
-         *      hreadPoolExecutor.AbortPolicy()抛出RejectedExecutionException异常。默认策略
-         *      ThreadPoolExecutor.CallerRunsPolicy()由向线程池提交任务的线程来执行该任务
-         *      ThreadPoolExecutor.DiscardPolicy()抛弃当前的任务
-         *      ThreadPoolExecutor.DiscardOldestPolicy()抛弃最旧的任务（最先提交而没有得到执行的任务）
-
+         * hreadPoolExecutor.AbortPolicy()抛出RejectedExecutionException异常。默认策略
+         * ThreadPoolExecutor.CallerRunsPolicy()由向线程池提交任务的线程来执行该任务
+         * ThreadPoolExecutor.DiscardPolicy()抛弃当前的任务
+         * ThreadPoolExecutor.DiscardOldestPolicy()抛弃最旧的任务（最先提交而没有得到执行的任务）
          */
-        private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,30, TimeUnit.MINUTES,new ArrayBlockingQueue<>(64),new ThreadPoolExecutor.DiscardPolicy());
+        private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 20, 30, TimeUnit.MINUTES, new ArrayBlockingQueue<>(64), new ThreadPoolExecutor.DiscardPolicy());
     }
+
     public static ThreadPoolExecutor getThreadPoolExecutor() {
         return ThreadPoolExecutorHolder.threadPoolExecutor;
     }
@@ -75,40 +76,41 @@ public class MyThreadPoolExecutor {
     private static class ScheduledExecutorServiceHolder {
         private static ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
     }
+
     public static ScheduledExecutorService getScheduledExecutorService() {
         return ScheduledExecutorServiceHolder.scheduledExecutorService;
     }
 
 
-    public static void submit(Runnable runnable){
+    public static void submit(Runnable runnable) {
         MyThreadPoolExecutor.getThreadPoolExecutor().submit(runnable);
     }
 
-    public static<T> T submit(Callable<T> callable){
+    public static <T> T submit(Callable<T> callable) {
         Future<T> future = MyThreadPoolExecutor.getThreadPoolExecutor().submit(callable);
         T t = null;
         try {
             t = future.get();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return t;
     }
 
-    public static void scheduled(Runnable runnable,Long initialDelay,Long period,TimeUnit timeUnit){
+    public static void scheduled(Runnable runnable, Long initialDelay, Long period, TimeUnit timeUnit) {
         MyThreadPoolExecutor.getScheduledExecutorService().scheduleAtFixedRate(runnable, initialDelay, period, timeUnit);
     }
 
-    public static void runAsync(Runnable runnable){
+    public static void runAsync(Runnable runnable) {
         CompletableFuture.runAsync(runnable, Executors.newSingleThreadExecutor());
     }
 
-    public static <T> T runAsync(Supplier<T> supplier){
-        CompletableFuture<T> future = CompletableFuture.supplyAsync(supplier,Executors.newSingleThreadExecutor());
+    public static <T> T runAsync(Supplier<T> supplier) {
+        CompletableFuture<T> future = CompletableFuture.supplyAsync(supplier, Executors.newSingleThreadExecutor());
         T t = null;
         try {
             t = future.get();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return t;

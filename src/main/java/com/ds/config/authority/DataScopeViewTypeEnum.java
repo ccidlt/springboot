@@ -49,7 +49,7 @@ public enum DataScopeViewTypeEnum {
 
     public static String getValues(String code) {
         for (DataScopeViewTypeEnum enums : values()) {
-            if(enums.getCode().equals(code)){
+            if (enums.getCode().equals(code)) {
                 return enums.getName();
             }
         }

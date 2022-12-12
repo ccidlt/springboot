@@ -27,17 +27,18 @@ import java.util.Map;
 public class HttpUtil {
     /**
      * 发送post请求
+     *
      * @param inurl
      * @param params
      * @return
      * @throws IOException
      */
-    public static String readByPost(String inurl,String params) throws IOException {
+    public static String readByPost(String inurl, String params) throws IOException {
         StringBuffer sbf = new StringBuffer();
         String strRead = null;
         URL url = new URL(inurl);
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -46,8 +47,8 @@ public class HttpUtil {
         out.print(params);
         out.flush();
         InputStream is = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-        while((strRead = reader.readLine())!=null){
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        while ((strRead = reader.readLine()) != null) {
             sbf.append(strRead);
             sbf.append("\r\n");
         }
@@ -55,9 +56,11 @@ public class HttpUtil {
         connection.disconnect();
         return sbf.toString();
     }
+
     /**
      * 向指定 URL 发送POST方法的请求
-     * @param url 发送请求的 URL
+     *
+     * @param url   发送请求的 URL
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果
      */
@@ -180,11 +183,12 @@ public class HttpUtil {
 
     /**
      * 向指定 URL 发送POST方法的请求(为了解决坑爹的erp登录接口问题，用这个)
-     * @param url 发送请求的 URL
+     *
+     * @param url   发送请求的 URL
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果
      */
-    public String jsonPost(String url, String param,String contentType) {
+    public String jsonPost(String url, String param, String contentType) {
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -229,7 +233,7 @@ public class HttpUtil {
     }
 
     //转换成JSON格式的字符串
-    public String toJsonString(Map map){
+    public String toJsonString(Map map) {
         JSONObject json = new JSONObject(map);
         String params = json.toString();
         return params;

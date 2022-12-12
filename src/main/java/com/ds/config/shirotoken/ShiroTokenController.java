@@ -23,7 +23,7 @@ public class ShiroTokenController {
     @PostMapping("/login")
     public Result login(@RequestBody User user) {
         User u = userService.findByParam(user);
-        if(!Optional.ofNullable(u).isPresent()){
+        if (!Optional.ofNullable(u).isPresent()) {
             return Result.build(201, "用户名或密码错误");
         }
         Map<String, String> map = new HashMap<>();
@@ -34,6 +34,7 @@ public class ShiroTokenController {
 
     /**
      * 获取当前登录用户信息
+     *
      * @return
      */
     @GetMapping("/userInfo")

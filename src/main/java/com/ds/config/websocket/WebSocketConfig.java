@@ -30,6 +30,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void setWebSocketController(MyWebSocket myWebSocket) {
         this.myWebSocket = myWebSocket;
     }
+
     public MyWebSocket getMyWebSocket() {
         return myWebSocket;
     }
@@ -46,7 +47,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .withSockJS();
     }
 
-    public class HandShakeInterceptor  extends HttpSessionHandshakeInterceptor {
+    public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
         /*
          * 在WebSocket连接建立之前的操作，以鉴权为例
          */
@@ -56,10 +57,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
             ServletServerHttpRequest serverRequest = (ServletServerHttpRequest) request;
             ServletServerHttpResponse serverResponse = (ServletServerHttpResponse) response;
             String user = serverRequest.getServletRequest().getParameter("user");
-            if(StringUtil.isNotEmpty(user)){
+            if (StringUtil.isNotEmpty(user)) {
                 attributes.put("user", user);
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }

@@ -15,11 +15,11 @@ public class MyApplicationContext implements ApplicationContextAware {
         MyApplicationContext.applicationContext = applicationContext;
     }
 
-    public static Object getBean(String beanName){
+    public static Object getBean(String beanName) {
         return applicationContext.getBean(beanName);
     }
 
-    public static<T> T getBean(Class<T> bean){
+    public static <T> T getBean(Class<T> bean) {
         return applicationContext.getBean(bean);
     }
 }

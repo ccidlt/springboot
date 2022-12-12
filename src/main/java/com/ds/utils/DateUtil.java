@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class DateUtil {
 
-    private  static Logger logger = LoggerFactory.getLogger(DateUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
     private static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -41,6 +41,7 @@ public class DateUtil {
 
     /**
      * 相差天数
+     *
      * @param dateStart
      * @param dateEnd
      * @return
@@ -48,25 +49,26 @@ public class DateUtil {
     public static long dayGapByDate(String dateStart, String dateEnd) throws ParseException {
         Date date1 = strToDate(dateStart);
         Date date2 = strToDate(dateEnd);
-        return (date2.getTime()-date1.getTime())/24/60/60/1000;
+        return (date2.getTime() - date1.getTime()) / 24 / 60 / 60 / 1000;
     }
 
     public static long dayGapByTime(String dateStr1, String dateStr2) throws ParseException {
         Date date1 = strToTime(dateStr1);
         Date date2 = strToTime(dateStr2);
-        return (int) Math.ceil((date2.getTime()-date1.getTime())/24/60/60/1000);
+        return (int) Math.ceil((date2.getTime() - date1.getTime()) / 24 / 60 / 60 / 1000);
     }
 
-    public static String dayAddAndSubtract(int day){
-        Date date=new Date();
-        Calendar calendar=Calendar.getInstance();
+    public static String dayAddAndSubtract(int day) {
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.DATE,day);
+        calendar.add(Calendar.DATE, day);
         return sdfTime.format(calendar.getTime());
     }
 
     /**
      * 相差日期集合
+     *
      * @param dateStart
      * @param dateEnd
      * @return
@@ -78,7 +80,7 @@ public class DateUtil {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
         List<String> dayList = new ArrayList<>();
-        while (calendar.getTime().getTime() <= endDate.getTime()){
+        while (calendar.getTime().getTime() <= endDate.getTime()) {
             calendar.add(Calendar.DATE, 1);
             dayList.add(sdfDate.format(calendar.getTime()));
         }

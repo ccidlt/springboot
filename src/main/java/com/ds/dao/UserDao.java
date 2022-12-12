@@ -11,5 +11,5 @@ public interface UserDao {
 
     User findByParam(User user);
 
-    User findById(@Param("id")Integer id);
+    User findById(@Param("id") Integer id);
 }

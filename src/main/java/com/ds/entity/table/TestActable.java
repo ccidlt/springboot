@@ -26,7 +26,7 @@ public class TestActable extends BaseModel {
     @TableId(type = IdType.AUTO)//mybatis-plus主键注解
     @IsAutoIncrement   //自增
     @IsKey             //actable主键注解
-    @Column(name = "id", type = MySqlTypeConstant.BIGINT, isNull = false, isKey = true, isAutoIncrement=true, comment = "id")
+    @Column(name = "id", type = MySqlTypeConstant.BIGINT, isNull = false, isKey = true, isAutoIncrement = true, comment = "id")
     private Long id;
 
     @TableField(value = "name")

@@ -30,6 +30,7 @@ public class UserRealm extends AuthorizingRealm {
     private RoleService roleService;
     @Resource
     private PermissionService permissionService;
+
     /**
      * 为了让realm支持jwt的凭证校验
      * 等同于配置类的指定token类型
@@ -49,10 +50,10 @@ public class UserRealm extends AuthorizingRealm {
         String userId = JWTUtils.getClaim(token, "userId");
         User user = userService.findById(Integer.valueOf(userId));
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        if(user.getUsername().equals("admin")){//该用户拥有所有权限
+        if (user.getUsername().equals("admin")) {//该用户拥有所有权限
             info.addRole("*");
             info.addStringPermission("*:*:*");
-        }else {
+        } else {
             List<Role> roleList = roleService.findRoleByUserId(user.getId());
             Set<String> roleSet = new HashSet<>();
             List<Integer> roleIds = new ArrayList<>();
@@ -76,7 +77,7 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        JwtToken jwtToken = (JwtToken)authenticationToken;
+        JwtToken jwtToken = (JwtToken) authenticationToken;
         String token = (String) jwtToken.getPrincipal();
         //token是否存在
         if (StringUtils.isEmpty(token)) {
@@ -84,18 +85,18 @@ public class UserRealm extends AuthorizingRealm {
         }
         String userId = null;
         try {
-            userId= JWTUtils.getClaim(token, "userId");
-        }catch (Exception e){
+            userId = JWTUtils.getClaim(token, "userId");
+        } catch (Exception e) {
             throw new AuthenticationException("token非法，不是规范的token，可能被篡改了，或者过期了");
         }
-        if (!JWTUtils.verify(token) || userId == null){
+        if (!JWTUtils.verify(token) || userId == null) {
             throw new AuthenticationException("token认证失效，token错误或者过期，重新登陆");
         }
         User user = userService.findById(Integer.valueOf(userId));
-        if (user==null){
+        if (user == null) {
             throw new AuthenticationException("该用户不存在");
         }
         DataContextSupport.setDataPermissions(user);
-        return new SimpleAuthenticationInfo(token,token,getName());
+        return new SimpleAuthenticationInfo(token, token, getName());
     }
 }
