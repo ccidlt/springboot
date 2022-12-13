@@ -36,3 +36,5 @@ spring:
             refresh: true
           - dataId: other.yml
             refresh: true
+          - dataId: seata.yml
+            refresh: true

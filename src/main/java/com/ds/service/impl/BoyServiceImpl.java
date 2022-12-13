@@ -7,11 +7,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.service.BoyService;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -122,5 +126,17 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         Page<Boy> boyPage = new Page<>(pagenum, pagesize);
         boyDao.selectPage(boyPage, null);
         return boyPage;
+    }
+
+    @Autowired
+    private RestTemplate restTemplate;
+    @Override
+    @GlobalTransactional(rollbackFor = Exception.class)
+    public Boy saveBoy(Boy boy) {
+        System.out.println("AService XID: "+ RootContext.getXID());
+        restTemplate.getForObject("http://www.baidu.com",Boy.class);
+        boyDao.insert(boy);
+        int i = 1/0;
+        return boyDao.selectById(boy.getId());
     }
 }

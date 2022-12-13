@@ -31,4 +31,6 @@ public interface BoyService extends IService<Boy> {
     int deleteBoy(int id);
 
     Page<Boy> queryBoy(int pagenum, int pagesize);
+
+    Boy saveBoy(Boy boy);
 }

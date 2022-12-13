@@ -82,6 +82,16 @@ public class BoyController {
         return boyService.getById(boy.getId());
     }
 
+    @RequestMapping(value = "/saveBoy", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("新增/修改")
+    public Boy saveBoy(
+            @ApiParam(name = "boy", value = "Boy", required = true)
+            @Validated
+            @RequestBody(required = true) Boy boy) {
+        return boyService.saveBoy(boy);
+    }
+
     @Value("${filePath:F:/file/}")
     String filePath;
 
