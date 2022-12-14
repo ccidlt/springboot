@@ -275,6 +275,12 @@
             <version>5.5.13</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.4</version>
+        </dependency>
+
         <!-- http://localhost:8080/actuator 检测系统的健康情况、当前的Beans、系统的缓存等 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
