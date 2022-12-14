@@ -132,6 +132,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     private RestTemplate restTemplate;
     @Override
     @GlobalTransactional(rollbackFor = Exception.class)
+    @Transactional
     public Boy saveBoy(Boy boy) {
         System.out.println("AService XID: "+ RootContext.getXID());
         restTemplate.getForObject("http://www.baidu.com",Boy.class);

@@ -1,5 +1,6 @@
 package com.ds.controller.setting;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
@@ -44,6 +45,7 @@ public class BoyController {
             @ApiResponse(code = 404, message = "请求路径没有或页面跳转路径不对"),
             @ApiResponse(code = 500, message = "后端程序报错")
     })
+    @SentinelResource(value = "getBoys")
     public List<Boy> getBoys() {
         List<Boy> boys = boyService.getBoys();
         logger.info("获取所有的表数据条数={}", boys != null ? boys.size() : 0);

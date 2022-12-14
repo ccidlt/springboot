@@ -38,3 +38,5 @@ spring:
             refresh: true
           - dataId: seata.yml
             refresh: true
+          - dataId: sentinel.yml
+            refresh: true

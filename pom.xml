@@ -287,7 +287,13 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- SpringCloud Alibaba Seata 分布式事务 -->
+        <!-- SpringCloud Alibaba Sentinel 限流、流量整形、熔断降级、系统负载保护、热点防护 -->
+       <dependency>
+           <groupId>com.alibaba.cloud</groupId>
+           <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+       </dependency>
+
+       <!-- SpringCloud Alibaba Seata 分布式事务 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
