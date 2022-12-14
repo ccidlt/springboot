@@ -275,15 +275,7 @@
             <version>5.5.13</version>
         </dependency>
 
-        <!-- http://localhost:8080/actuator/health 检测系统的健康情况、当前的Beans、系统的缓存等 -->
-        <!--
-        # 访问端口
-        management.server.port=8081
-        # 根路径
-        management.endpoints.web.base-path=/actuator/z
-        # web端允许的路径
-        management.endpoints.web.exposure.include=*
-        -->
+        <!-- http://localhost:8080/actuator 检测系统的健康情况、当前的Beans、系统的缓存等 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
