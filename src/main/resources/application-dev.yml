@@ -273,6 +273,14 @@ swagger:
   url: http://xxx
   email: xxx@qq.com
 
+management:
+  server:
+    port: 8078
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
 #文件路径
 filePath: D:/file
 
