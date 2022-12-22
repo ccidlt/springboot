@@ -1,5 +1,6 @@
 package com.ds.service.impl;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -36,6 +37,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     //@Cacheable(key = "#boy.all")
     @Cacheable(keyGenerator = "keyGenerator")
     //@CacheEvict(allEntries = true)//删除所有的boy缓存
+    @SentinelResource(value = "getBoys")
     public List<Boy> getBoys() {
         List<Boy> result = new ArrayList<>();
         List<Boy> boyList = boyDao.getBoys();
