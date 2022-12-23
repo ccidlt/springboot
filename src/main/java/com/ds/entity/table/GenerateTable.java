@@ -19,9 +19,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("aaa")
-@ApiModel(value = "aaa", description = "aaa对象")
-public class AAA extends BaseModel implements Serializable {
+@TableName("generate_table")
+@ApiModel(value = "generate_table", description = "自生成对象")
+public class GenerateTable extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
