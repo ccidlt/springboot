@@ -1,6 +1,16 @@
 package com.ds;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.*;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.ds.config.async.ReentrantLockOperate;
+import com.ds.controller.setting.BoyController;
+import com.ds.entity.Boy;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -324,6 +335,78 @@ public class SpringbootApplicationTests {
             reentrantLockOperate.synchronizedText();
         }
         Thread.sleep(60 * 1000);
+    }
+
+    @Test
+    public void hutool(){
+        //简单的uuid
+        System.out.println(IdUtil.fastSimpleUUID());
+        Snowflake snowflake = IdUtil.getSnowflake(1, 1);
+        long id = snowflake.nextId();
+        System.out.println(id);
+        //类型转换工具类-Convert
+        int a = 1;
+        String aStr = Convert.toStr(a);
+        String[] b = { "1", "2", "3", "4" };
+        Integer[] intArray = Convert.toIntArray(b);
+        String[] strArr = {"a", "b", "c", "d"};
+        List<String> strList = Convert.toList(String.class, strArr);
+        Object[] aArr = {"a", "你", "好", "", 1};
+        List<?> list = Convert.convert(List.class, aArr);
+        list = Convert.toList(aArr);
+        //字符串工具
+        System.out.println(StrUtil.isNotEmpty("abc"));
+        System.out.println(StrUtil.equals("123","abc"));
+        System.out.println(StrUtil.contains("abc","ab"));
+        System.out.println(StrUtil.sub("abc",0,"abc".length()));//截取
+        System.out.println(StrUtil.format("{}+{}=2","1","1"));//格式化
+        System.out.println(StrUtil.replace("{}+{}=2","{}","1"));//替换
+        //对象工具
+        System.out.println(ObjectUtil.isNotNull(new ArrayList<String>()));
+        System.out.println(ObjectUtil.isNotEmpty(new HashMap<String,Object>()));
+        //对象转换工具 BeanUtil
+        Boy boy = BeanUtil.copyProperties(new Boy(), Boy.class);
+        System.out.println(boy);
+        Map<String, Object> boyMap = BeanUtil.beanToMap(boy);
+        System.out.println(boyMap);
+        Map<String, Object> boyMap2 = BeanUtil.beanToMap(boyMap);
+        System.out.println(boyMap2);
+        List<Boy> boys = BeanUtil.copyToList(new ArrayList<Boy>(), Boy.class);
+        System.out.println(boys);
+        //反射
+        Method[] methods = ReflectUtil.getMethods(BoyController.class);
+        Method method = ReflectUtil.getMethod(BoyController.class, "getBoys");
+        System.out.println(method.getName());
+        //数字工具
+        System.out.println(NumberUtil.isNumber("1.2"));
+        System.out.println(NumberUtil.add(1, 1.2, 1.3));
+        System.out.println(NumberUtil.sub(5, 1.1, 1.2));
+        System.out.println(NumberUtil.mul(10, 1.12));
+        System.out.println(NumberUtil.div(1.12, 10, 2));
+        System.out.println(NumberUtil.roundStr(1.125, 2));
+        System.out.println(NumberUtil.decimalFormat(",###", 299792458));//299,792,458
+        int[] array = NumberUtil.generateRandomNumber(0, 10, 8);// 生成随机数,用int类型数组承载
+        System.out.println(StrUtil.join(",",array));
+        //时间工具
+        System.out.println(DateUtil.date());
+        System.out.println(DateUtil.parse("2019-09-17", "yyyy-MM-dd"));
+        System.out.println(DateUtil.format(DateUtil.date(), "yyyy-MM-dd"));
+        System.out.println(DateUtil.year(DateUtil.date()));
+        System.out.println(DateUtil.month(DateUtil.date())+1);
+        System.out.println(DateUtil.dayOfMonth(DateUtil.date()));
+        Date date1 = DateUtil.parse("2019-09-20 17:35:35");
+        Date date2 = DateUtil.parse("2019-09-17 14:35:35");
+        System.out.println(DateUtil.between(date1, date2, DateUnit.DAY));//3
+        //Http工具
+        String get = HttpUtil.get("https://www.baidu.com");
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("name", "zhang3");
+        requestJson.put("age", 10);
+        String requestParam = requestJson.toJSONString();
+        String post = HttpUtil.post("https://www.baidu.com", requestParam, 10 * 1000);
+        //ServletUtil
+        //Map<String, String> map = ServletUtil.getParamMap(request);
+        //文件工具FileUtil
     }
 
 }
