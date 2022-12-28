@@ -344,6 +344,7 @@ public class SpringbootApplicationTests {
         Snowflake snowflake = IdUtil.getSnowflake(1, 1);
         long id = snowflake.nextId();
         System.out.println(id);
+        //long snowflakeNextId = IdUtil.getSnowflakeNextId();
         //类型转换工具类-Convert
         int a = 1;
         String aStr = Convert.toStr(a);
