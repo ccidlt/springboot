@@ -182,6 +182,9 @@ spring:
     #        min-idle: 0
     #连接超时时间（毫秒）
     timeout: 30000
+  session:
+    store-type: redis #是否将session存到redis  none/redis
+    timeout: 1000 # 配置session在redis中的过期时间
   servlet:
     multipart:
       max-file-size: 1024MB

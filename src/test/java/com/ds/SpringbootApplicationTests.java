@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.*;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.ds.config.async.ReentrantLockOperate;
@@ -339,12 +340,16 @@ public class SpringbootApplicationTests {
 
     @Test
     public void hutool(){
-        //简单的uuid
+        //简单的uuid、雪花算法id、md5加密、随机数
         System.out.println(IdUtil.fastSimpleUUID());
+        System.out.println(IdUtil.randomUUID());
         Snowflake snowflake = IdUtil.getSnowflake(1, 1);
         long id = snowflake.nextId();
         System.out.println(id);
-        //long snowflakeNextId = IdUtil.getSnowflakeNextId();
+        long snowflakeNextId = IdUtil.getSnowflakeNextId();
+        System.out.println(snowflakeNextId);
+        System.out.println(SecureUtil.md5("123456"));
+        System.out.println(RandomUtil.randomNumbers(5));
         //类型转换工具类-Convert
         int a = 1;
         String aStr = Convert.toStr(a);
