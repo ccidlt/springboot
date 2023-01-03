@@ -40,3 +40,5 @@ spring:
             refresh: true
           - dataId: sentinel.yml
             refresh: true
+          - dataId: quartz.yml
+            refresh: true
