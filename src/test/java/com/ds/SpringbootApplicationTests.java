@@ -366,12 +366,14 @@ public class SpringbootApplicationTests {
         System.out.println(StrUtil.isNotEmpty("abc"));
         System.out.println(StrUtil.equals("123","abc"));
         System.out.println(StrUtil.contains("abc","ab"));
+        System.out.println(StrUtil.nullToEmpty(null));//""
         System.out.println(StrUtil.sub("abc",0,"abc".length()));//截取
         System.out.println(StrUtil.format("{}+{}=2","1","1"));//格式化
         System.out.println(StrUtil.replace("{}+{}=2","{}","1"));//替换
         //对象工具
         System.out.println(ObjectUtil.isNotNull(new ArrayList<String>()));
         System.out.println(ObjectUtil.isNotEmpty(new HashMap<String,Object>()));
+        System.out.println(ObjectUtil.defaultIfNull("abc",""));
         //对象转换工具 BeanUtil
         Boy boy = BeanUtil.copyProperties(new Boy(), Boy.class);
         System.out.println(boy);
