@@ -55,6 +55,7 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
+        //如果属性有值则不覆盖,如果填充值为null则不填充.
         this.strictInsertFill(metaObject, "createTime", Date.class, new Date());
         this.strictInsertFill(metaObject, "updateTime", Date.class, new Date());
         this.strictInsertFill(metaObject, "version", Integer.class, 1);
@@ -64,7 +65,9 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "updateTime", Date.class, new Date());
+//        this.strictUpdateFill(metaObject, "updateTime", Date.class, new Date());
+        //无论属性是否有值都填充
+        this.setFieldValByName("updateTime", new Date(), metaObject);
     }
 
     @Bean
