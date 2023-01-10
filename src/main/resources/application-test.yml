@@ -12,6 +12,13 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  session:
+    store-type: redis #是否将session存到redis  none/redis
+    timeout: 1000 # 配置session在redis中的过期时间
   datasource:
     #    driver-class-name: com.mysql.cj.jdbc.Driver
     #    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
@@ -56,12 +63,6 @@ spring:
     #        min-idle: 0
     #连接超时时间（毫秒）
     timeout: 30000
-  session:
-    store-type: redis #是否将session存到redis  none/redis
-    timeout: 1000 # 配置session在redis中的过期时间
-  servlet:
-    multipart:
-      max-file-size: 1024MB
 
   kafka:
     bootstrap-servers: 127.0.0.1:9092
