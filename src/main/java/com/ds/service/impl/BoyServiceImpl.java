@@ -1,12 +1,12 @@
 package com.ds.service.impl;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
+import com.ds.service.BoyFeignService;
 import com.ds.service.BoyService;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Service("boyService")
 @CacheConfig(cacheNames = "boy")
-@DS("slave")
+//@DS("slave")
 public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyService {
 
     @Resource
@@ -132,12 +132,15 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
 
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private BoyFeignService boyFeignService;
     @Override
-    @GlobalTransactional(rollbackFor = Exception.class)
-    @Transactional
+    @GlobalTransactional
+//    @Transactional
     public Boy saveBoy(Boy boy) {
         System.out.println("AService XID: "+ RootContext.getXID());
-        restTemplate.getForObject("http://www.baidu.com",Boy.class);
+//        restTemplate.getForObject("http://springboot/globalTransactionalTest", Result.class);
+        boyFeignService.globalTransactionalTest();
         boyDao.insert(boy);
         int i = 1/0;
         return boyDao.selectById(boy.getId());

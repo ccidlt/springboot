@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -157,6 +158,14 @@ public class BoyController {
             ex.printStackTrace();
         }
         return response;
+    }
+
+    @RequestMapping(value = "/globalTransactionalTest", method = RequestMethod.GET)
+    @Transactional
+    public Result globalTransactionalTest(){
+        Boy boy = new Boy();
+        boy.setName("令狐冲");
+        return Result.ok(boyService.save(boy));
     }
 
 }
