@@ -164,6 +164,10 @@ pagehelper:
   pageSizeZero: false #pageSize=0
   params: count=countSql
 
+springboot:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
+
 swagger:
   enable: true
   title: springboot
