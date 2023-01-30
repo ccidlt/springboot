@@ -40,7 +40,7 @@ public class LoginController {
         Map<String, String> userMap = new HashMap<>();
         userMap.put("userId", String.valueOf(u.getId()));
         userMap.put("now", String.valueOf(System.currentTimeMillis()));
-        String token = JWTUtils.getToken(userMap);
+        String token = JWTUtils.getToken(userMap, 31 * 60);
         redisUtils.set(token, u, 30L, TimeUnit.MINUTES);
         return Result.ok(token);
     }

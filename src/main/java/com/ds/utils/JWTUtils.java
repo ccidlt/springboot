@@ -4,9 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,12 +82,26 @@ public class JWTUtils {
         return claim;
     }
 
+    public static boolean isOverdue(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        Map<String, Claim> claims = jwt.getClaims();
+        Claim exp = claims.get("exp");
+        Date date = exp.asDate();
+        return new Date().before(date);
+    }
+
     public static void main(String[] args) {
         Map<String, String> map = new HashMap<>();
         map.put("userId", "1");
         map.put("loginName", "admin");
-        String token = getToken(map, 60);
+        String token = getToken(map, 30 * 60);
         log.info(token);
+        DecodedJWT jwt = JWT.decode(token);
+        Map<String, Claim> claims = jwt.getClaims();
+        Claim exp = claims.get("exp");
+        Date date = exp.asDate();
+        //获取到过期时间
+        System.out.println("date = " + date);
         boolean verify = verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbk5hbWUiOiJhZG1pbiIsImV4cCI6MTY2MzEyMzQxMCwidXNlcklkIjoiMSJ9.vRhEhGGNPA3EJlBXpsGfW-GjEZp4txwURqhfAsRkRDU");
         if (verify) {
             String userId = getClaim(token, "userId");
