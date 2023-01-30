@@ -365,6 +365,7 @@ public class SpringbootApplicationTests {
         list = Convert.toList(aArr);
         int[] nums = {1,2,3,4,5,6};
         Integer[] integers = Arrays.stream(nums).boxed().toArray(Integer[]::new);
+        int[] ints = Arrays.stream(integers).mapToInt(Integer::intValue).toArray();
         //字符串工具
         System.out.println(StrUtil.isNotEmpty("abc"));
         System.out.println(StrUtil.equals("123","abc"));
