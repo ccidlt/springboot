@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -30,6 +31,13 @@ public class ReentrantLockOperate {
      * boolean compareAndSet(int expect, int update)
      */
     AtomicInteger count = new AtomicInteger(30);
+
+    /**
+     * 减法计数器,用于线程阻塞
+     * countDownLatch.countDown();计数器减一
+     * countDownLatch.await();等待计数器归零主线程才会继续执行
+     */
+    CountDownLatch countDownLatch = new CountDownLatch(100);
 
     /**
      * 线程安全类：
@@ -80,6 +88,25 @@ public class ReentrantLockOperate {
             Thread.sleep(1000);
             log.info(Thread.currentThread().getName() + ": " + LocalDateTime.now());
         }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        AtomicInteger count = new AtomicInteger(0);
+        //java中的辅助类，可以保证
+        final CountDownLatch latch = new CountDownLatch(10);
+        for (int i = 0; i < 10; i++) {
+            int ii = i;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    count.getAndIncrement();
+                    System.out.println(Thread.currentThread().getName()+"-"+ii+":"+count);
+                    latch.countDown();
+                }
+            }).start();
+        }
+        latch.await();
+        System.out.println(count.get());
     }
 
 }
