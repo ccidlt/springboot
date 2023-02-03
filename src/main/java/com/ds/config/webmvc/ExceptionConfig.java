@@ -4,6 +4,7 @@ import com.ds.entity.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
+@Order(999999)
 public class ExceptionConfig {
 
     private Logger logger = LoggerFactory.getLogger(ExceptionConfig.class);
@@ -22,8 +24,8 @@ public class ExceptionConfig {
     /**
      * 捕捉其他所有异常
      */
-    @ExceptionHandler(Exception.class)
-    public Result globalException(HttpServletRequest request, Exception e) {
+    @ExceptionHandler(Throwable.class)
+    public Result globalException(HttpServletRequest request, Throwable e) {
         if (e instanceof NoHandlerFoundException) {
             return Result.build(HttpStatus.NOT_FOUND.value(), "找不到资源");
         } else if (e instanceof TypeMismatchException) {

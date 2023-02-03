@@ -48,89 +48,83 @@ public class PermissionAspect {
 
     @Around("cut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result = null;
-        try {
-            HttpServletRequest request = HttpServletUtil.getRequest();
-            HttpServletResponse response = HttpServletUtil.getResponse();
-            MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-            Method methodObject = methodSignature.getMethod();
-            Authentication annotation = methodObject.getAnnotation(Authentication.class);
-            if (annotation.required()) {
-                boolean isPass = false;
-                PermissionType permissionType = annotation.permissionType();
-                String[] value = annotation.value();
-                Logical logical = annotation.logical();
-                if (value.length == 0) {
-                    isPass = true;
-                }
-                List<String> valueList = Arrays.stream(value).collect(Collectors.toList());
-                if (valueList.contains("admin")) {
-                    isPass = true;
-                }
-                String token = request.getHeader("token");
-                User user = userService.getUser(token);
-                List<Role> roles = roleService.findRoleByUserId(user.getId());
-                List<String> roleList = roles.stream().map(Role::getRole).collect(Collectors.toList());
-                List<Integer> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
-                //是否包含某些角色
-                switch (permissionType) {
-                    case ROLE:
-                        //是否包含某些角色
+        HttpServletRequest request = HttpServletUtil.getRequest();
+        HttpServletResponse response = HttpServletUtil.getResponse();
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Method methodObject = methodSignature.getMethod();
+        Authentication annotation = methodObject.getAnnotation(Authentication.class);
+        if (annotation.required()) {
+            boolean isPass = false;
+            PermissionType permissionType = annotation.permissionType();
+            String[] value = annotation.value();
+            Logical logical = annotation.logical();
+            if (value.length == 0) {
+                isPass = true;
+            }
+            List<String> valueList = Arrays.stream(value).collect(Collectors.toList());
+            if (valueList.contains("admin")) {
+                isPass = true;
+            }
+            String token = request.getHeader("token");
+            User user = userService.getUser(token);
+            List<Role> roles = roleService.findRoleByUserId(user.getId());
+            List<String> roleList = roles.stream().map(Role::getRole).collect(Collectors.toList());
+            List<Integer> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
+            //是否包含某些角色
+            switch (permissionType) {
+                case ROLE:
+                    //是否包含某些角色
+                    if (logical == Logical.AND) {
+                        if (roleList.containsAll(valueList)) {
+                            isPass = true;
+                        }
+                    } else if (logical == Logical.OR) {
+                        if (valueList.stream().anyMatch(a -> roleList.contains(a))) {
+                            isPass = true;
+                        }
+                    }
+                    break;
+                case MENU:
+                    //是否包含这次的请求路径的菜单
+                    //String path = request.getRequestURI();
+                    List<Menu> menuList = menuService.findByRoleId(roleIds);
+                    Set<String> menuPermsSet = menuList.stream().map(Menu::getPerms).collect(Collectors.toSet());
+                    if (CollectionUtils.isNotEmpty(menuPermsSet)) {
                         if (logical == Logical.AND) {
-                            if (roleList.containsAll(valueList)) {
+                            if (menuPermsSet.containsAll(valueList)) {
                                 isPass = true;
                             }
                         } else if (logical == Logical.OR) {
-                            if (valueList.stream().anyMatch(a -> roleList.contains(a))) {
+                            if (valueList.stream().anyMatch(a -> menuPermsSet.contains(a))) {
                                 isPass = true;
                             }
                         }
-                        break;
-                    case MENU:
-                        //是否包含这次的请求路径的菜单
-                        //String path = request.getRequestURI();
-                        List<Menu> menuList = menuService.findByRoleId(roleIds);
-                        Set<String> menuPermsSet = menuList.stream().map(Menu::getPerms).collect(Collectors.toSet());
-                        if (CollectionUtils.isNotEmpty(menuPermsSet)) {
-                            if (logical == Logical.AND) {
-                                if (menuPermsSet.containsAll(valueList)) {
-                                    isPass = true;
-                                }
-                            } else if (logical == Logical.OR) {
-                                if (valueList.stream().anyMatch(a -> menuPermsSet.contains(a))) {
-                                    isPass = true;
-                                }
+                    }
+                    break;
+                case PERMISSION:
+                    //是否包含权限
+                    List<String> permissionList = permissionService.findByRoleId(roleIds);
+                    Set<Object> permissionSet = new HashSet<>(permissionList);
+                    if (CollectionUtils.isNotEmpty(permissionSet)) {
+                        if (logical == Logical.AND) {
+                            if (permissionSet.containsAll(valueList)) {
+                                isPass = true;
+                            }
+                        } else if (logical == Logical.OR) {
+                            if (valueList.stream().anyMatch(a -> permissionSet.contains(a))) {
+                                isPass = true;
                             }
                         }
-                        break;
-                    case PERMISSION:
-                        //是否包含权限
-                        List<String> permissionList = permissionService.findByRoleId(roleIds);
-                        Set<Object> permissionSet = new HashSet<>(permissionList);
-                        if (CollectionUtils.isNotEmpty(permissionSet)) {
-                            if (logical == Logical.AND) {
-                                if (permissionSet.containsAll(valueList)) {
-                                    isPass = true;
-                                }
-                            } else if (logical == Logical.OR) {
-                                if (valueList.stream().anyMatch(a -> permissionSet.contains(a))) {
-                                    isPass = true;
-                                }
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                if (!isPass) {
-                    return Result.build(null, ResultCodeEnum.FORBIDDEN);
-                }
+                    }
+                    break;
+                default:
+                    break;
             }
-            result = joinPoint.proceed();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return Result.build(null, ResultCodeEnum.INTERNAL_SERVER_ERROR);
+            if (!isPass) {
+                return Result.build(null, ResultCodeEnum.FORBIDDEN);
+            }
         }
+        Object result = joinPoint.proceed();
         return result;
     }
 }

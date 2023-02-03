@@ -39,72 +39,67 @@ public class AspectImpl {
     //环绕增强，是在before前就会触发,目标方法执行前后分别执行一些代码
     @Around("cut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        try {
-            RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-            ServletRequestAttributes sra = (ServletRequestAttributes) ra;
-            HttpServletRequest request = sra.getRequest();
-            String url = request.getRequestURL().toString();
-            String method = request.getMethod();
-            String uri = request.getRequestURI();
-            String remoteAddr = request.getRemoteAddr();
-            String queryString = request.getQueryString();
-            log.info("Request, url: {" + url + "}, method: {" + method + "}, uri: {" + uri + "}, remoteAddr: {" + remoteAddr + "}, params: {" + queryString + "}");
+        RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes sra = (ServletRequestAttributes) ra;
+        HttpServletRequest request = sra.getRequest();
+        String url = request.getRequestURL().toString();
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+        String remoteAddr = request.getRemoteAddr();
+        String queryString = request.getQueryString();
+        log.info("Request, url: {" + url + "}, method: {" + method + "}, uri: {" + uri + "}, remoteAddr: {" + remoteAddr + "}, params: {" + queryString + "}");
 
-            //获取controller名
-            String controllerFullName = joinPoint.getTarget().getClass().getName();
-            String[] controllerNames = controllerFullName.split("\\.");
-            String controllerName = controllerNames[controllerNames.length - 1];
+        //获取controller名
+        String controllerFullName = joinPoint.getTarget().getClass().getName();
+        String[] controllerNames = controllerFullName.split("\\.");
+        String controllerName = controllerNames[controllerNames.length - 1];
 
-            //方法上注解
-            MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-            Method methodObject = methodSignature.getMethod();
-            String operationType = methodObject.getAnnotation(AspectService.class).operationType();
-            String operationName = methodObject.getAnnotation(AspectService.class).operationName();
-            log.info("Method Type:" + operationType);
-            log.info("Method Desc:" + operationName);
+        //方法上注解
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Method methodObject = methodSignature.getMethod();
+        String operationType = methodObject.getAnnotation(AspectService.class).operationType();
+        String operationName = methodObject.getAnnotation(AspectService.class).operationName();
+        log.info("Method Type:" + operationType);
+        log.info("Method Desc:" + operationName);
 
-            // 方法名
-            //String methodName = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
-            String methodName = joinPoint.getSignature().getName();
-            //请求方式
-            String methodType = request.getMethod();
+        // 方法名
+        //String methodName = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
+        String methodName = joinPoint.getSignature().getName();
+        //请求方式
+        String methodType = request.getMethod();
 
-            Map<String, Object> paramsMap = new HashMap<>();
-            Object paramValues[] = joinPoint.getArgs();
-            log.info("请求方法：{}, 请求参数: {}", methodName, Arrays.toString(paramValues));
-            // 参数名称
-            String[] paramNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();
-            // 格式化参数信息
-            StringBuffer params = new StringBuffer("{");
-            for (int i = 0; i < paramValues.length; i++) {
-                String paramName = paramNames[i];
-                Object paramValue = paramValues[i];
-                // 过滤请求、响应、校验结果对象
-                if (paramValue instanceof BindingResult || paramValue instanceof HttpServletRequest ||
-                        paramValue instanceof HttpServletResponse) {
-                    continue;
-                }
-                // 上传文件信息特殊处理
-                if (paramValue instanceof MultipartFile) {
-                    MultipartFile file = (MultipartFile) paramValue;
-                    paramsMap.put("fileName", file.getOriginalFilename());
-                    params.append("fileName:").append(file.getOriginalFilename());
-                    continue;
-                }
-
-                String paramValueStr = String.valueOf(paramValue);
-                paramsMap.put(paramName, paramValueStr);
-                params.append(paramName).append(":").append(paramValueStr);
+        Map<String, Object> paramsMap = new HashMap<>();
+        Object paramValues[] = joinPoint.getArgs();
+        log.info("请求方法：{}, 请求参数: {}", methodName, Arrays.toString(paramValues));
+        // 参数名称
+        String[] paramNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();
+        // 格式化参数信息
+        StringBuffer params = new StringBuffer("{");
+        for (int i = 0; i < paramValues.length; i++) {
+            String paramName = paramNames[i];
+            Object paramValue = paramValues[i];
+            // 过滤请求、响应、校验结果对象
+            if (paramValue instanceof BindingResult || paramValue instanceof HttpServletRequest ||
+                    paramValue instanceof HttpServletResponse) {
+                continue;
             }
-            params.append("}");
+            // 上传文件信息特殊处理
+            if (paramValue instanceof MultipartFile) {
+                MultipartFile file = (MultipartFile) paramValue;
+                paramsMap.put("fileName", file.getOriginalFilename());
+                params.append("fileName:").append(file.getOriginalFilename());
+                continue;
+            }
 
-            String startDateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
-            log.info("【{}】:接口【{}】请求方式【{}】方法【{}】参数【{}】,IP为【{}】进行了【{}】类型的【{}】操作;"
-                    , startDateStr, controllerName, methodType, methodName, params.toString().replace(" ", ""), remoteAddr, operationType, operationName);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
+            String paramValueStr = String.valueOf(paramValue);
+            paramsMap.put(paramName, paramValueStr);
+            params.append(paramName).append(":").append(paramValueStr);
         }
+        params.append("}");
+
+        String startDateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+        log.info("【{}】:接口【{}】请求方式【{}】方法【{}】参数【{}】,IP为【{}】进行了【{}】类型的【{}】操作;"
+                , startDateStr, controllerName, methodType, methodName, params.toString().replace(" ", ""), remoteAddr, operationType, operationName);
 
         // result的值就是被拦截方法的返回值
         Object result = joinPoint.proceed();
@@ -127,8 +122,9 @@ public class AspectImpl {
     //统一异常处理
     @AfterThrowing(pointcut = "cut()", throwing = "e")
     public void afterThrowable(JoinPoint joinPoint, Throwable e) {
+        //ExceptionConfig类统一异常处理
         //方法名获取
-        String methodName = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
-        log.error("请求异常：请求方法：{}, 异常信息：{}", methodName, e.getMessage());
+//        String methodName = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
+//        log.error("请求异常：请求方法：{}, 异常信息：{}", methodName, e.getMessage());
     }
 }
