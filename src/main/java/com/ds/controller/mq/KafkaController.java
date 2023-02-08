@@ -2,12 +2,30 @@ package com.ds.controller.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.KafkaListenerErrorHandler;
 import org.springframework.kafka.listener.ListenerExecutionFailedException;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+@ConditionalOnProperty(prefix = "spring.kafka",value = "enabled", havingValue = "true")
 @RestController
 @Slf4j
 @RequestMapping("/kafka")
@@ -21,14 +39,6 @@ public class KafkaController implements KafkaListenerErrorHandler {
     public Object handleError(Message<?> message, ListenerExecutionFailedException exception, Consumer<?, ?> consumer) {
         return null;
     }
-
-    /*@Bean
-    public NewTopic initialTopic1(){
-        return new NewTopic("topic-new-1",8,(short)1);//分区和副本
-    }
-
-    @Autowired
-    private NewTopic newTopic1;
 
     @Resource
     private KafkaTemplate<String,String> kafkaTemplate;
@@ -123,5 +133,5 @@ public class KafkaController implements KafkaListenerErrorHandler {
             registry.getListenerContainer("topic-new-1-id").pause();
         }
         return "===> kafka Listener pause";
-    }*/
+    }
 }

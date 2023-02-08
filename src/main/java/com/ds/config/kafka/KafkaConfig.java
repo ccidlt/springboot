@@ -1,24 +1,37 @@
 package com.ds.config.kafka;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+@ConditionalOnProperty(prefix = "spring.kafka", name = "enabled", havingValue = "true")
 @Configuration
 public class KafkaConfig {
 
-    /*@Bean
-    public NewTopic topic1(){
-        return new NewTopic("nptc-01", 3, (short)1);
+    /*@Bean("initialTopic1")
+    public NewTopic initialTopic1(){
+        return new NewTopic("topic01",8,(short)1);//分区和副本
     }
 
-    @Bean
-    public NewTopic topic2(){
-        return new NewTopic("nptc-02", 5, (short)1);
-    }
+    @Bean("initialTopic2")
+    public NewTopic initialTopic2(){
+        return new NewTopic("topic-new-1",8,(short)1);//分区和副本
+    }*/
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaServers;
 
-    *//**
+    /**
      *
      * 创建 Topic：createTopics(Collection<NewTopic> newTopics)
      * 删除 Topic：deleteTopics(Collection<String> topics)
@@ -36,7 +49,7 @@ public class KafkaConfig {
      * 增加分区：createPartitions(Map<String, NewPartitions> newPartitions)
      *
      * @return
-     *//*
+     */
     @Bean
     public AdminClient adminClient() {
         Map<String, Object> props = new HashMap<>();
@@ -49,7 +62,7 @@ public class KafkaConfig {
     private AdminClient adminClient;
 
     public void adminClientTest(){
-        DescribeTopicsResult result = adminClient.describeTopics(Arrays.asList("nptc-01","nptc-02"));
+        DescribeTopicsResult result = adminClient.describeTopics(Arrays.asList("topic01","topic-new-1"));
         try {
             result.all().get().forEach((k,v)->System.out.println("k: "+k+" ,v: "+v.toString()+"\n"));
         } catch (InterruptedException e) {
@@ -57,6 +70,6 @@ public class KafkaConfig {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
 }
