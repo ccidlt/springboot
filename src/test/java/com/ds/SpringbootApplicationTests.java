@@ -509,6 +509,14 @@ public class SpringbootApplicationTests {
         System.out.println(size2);
         System.out.println(redisTemplate.opsForZSet().range(PREFIXTAG + "zset",0,size2-1));
         System.out.println(redisTemplate.opsForZSet().rangeByScore(PREFIXTAG + "zset", 0, 0.5));
+        System.out.println("=====================================");
+        //setIfAbsent
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(PREFIXTAG + "absent", "a", 1L, TimeUnit.MINUTES);
+        System.out.println(ifAbsent+":::"+redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
+        Boolean ifAbsent2 = redisTemplate.opsForValue().setIfAbsent(PREFIXTAG + "absent", "b", 1L, TimeUnit.MINUTES);
+        System.out.println(ifAbsent2+":::"+redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
+        redisTemplate.opsForValue().set(PREFIXTAG + "absent","c", 1L, TimeUnit.MINUTES);
+        System.out.println(redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
     }
 
     @Resource
