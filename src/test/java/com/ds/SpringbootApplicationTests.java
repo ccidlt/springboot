@@ -22,9 +22,13 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,6 +37,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -442,6 +447,77 @@ public class SpringbootApplicationTests {
         System.out.println(jwt.getPayload("expire_time"));
         boolean verify = JWTUtil.verify(rightToken, "1234".getBytes());
         System.out.println(verify);
+    }
+
+    @Resource
+    private RedisTemplate<String,String> redisTemplate;
+    private static final String PREFIXTAG = "test:";
+    @Test
+    public void redisTest(){
+        //字符串
+        redisTemplate.opsForValue().set(PREFIXTAG + "value:next", "a", 1L, TimeUnit.MINUTES);//text/value/test:value:next=abc
+        System.out.println(redisTemplate.opsForValue().get(PREFIXTAG + "value:next"));
+        redisTemplate.opsForValue().set(PREFIXTAG + "value", "b", 1L, TimeUnit.MINUTES);//text/test:value=abc
+        System.out.println(redisTemplate.opsForValue().get(PREFIXTAG + "value"));
+        redisTemplate.opsForValue().set("value", "c", 1L, TimeUnit.MINUTES);//value=abc
+        System.out.println(redisTemplate.opsForValue().get("value"));
+        System.out.println("=====================================");
+        //哈希
+        redisTemplate.opsForHash().put(PREFIXTAG + "hash", "hashkey1", "a");
+        redisTemplate.opsForHash().put(PREFIXTAG + "hash", "hashkey2", "b");
+        if(redisTemplate.getExpire(PREFIXTAG + "hash") != null){
+            redisTemplate.expire(PREFIXTAG + "hash", 1L, TimeUnit.MINUTES);
+        }
+        System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey1"));
+        System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey2"));
+        System.out.println(redisTemplate.opsForHash().keys(PREFIXTAG + "hash"));
+        System.out.println("=====================================");
+        //列表
+        redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "a");
+        redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "b");
+        redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "c");
+        if(redisTemplate.getExpire(PREFIXTAG + "list") != null){
+            redisTemplate.expire(PREFIXTAG + "list", 1L, TimeUnit.MINUTES);
+        }
+        Long size = redisTemplate.opsForList().size(PREFIXTAG + "list");
+        System.out.println(size);
+        System.out.println(redisTemplate.opsForList().range(PREFIXTAG + "list",0,size-1));
+        for(int i=0;i<size;i++){
+            System.out.println(redisTemplate.opsForList().rightPop(PREFIXTAG + "list"));
+        }
+        System.out.println("=====================================");
+        //集合
+        redisTemplate.opsForSet().add(PREFIXTAG + "set", "a", "b", "c");
+        if(redisTemplate.getExpire(PREFIXTAG + "set") != null){
+            redisTemplate.expire(PREFIXTAG + "set", 1L, TimeUnit.MINUTES);
+        }
+        Set<String> members = redisTemplate.opsForSet().members(PREFIXTAG + "set");
+        System.out.println(members);
+        Iterator<String> iterator = members.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+        System.out.println("=====================================");
+        //有序集合
+        redisTemplate.opsForZSet().add(PREFIXTAG + "zset", "c", 0.3);
+        redisTemplate.opsForZSet().add(PREFIXTAG + "zset", "a", 0.1);
+        redisTemplate.opsForZSet().add(PREFIXTAG + "zset", "b", 0.2);
+        if(redisTemplate.getExpire(PREFIXTAG + "zset") != null){
+            redisTemplate.expire(PREFIXTAG + "zset", 1L, TimeUnit.MINUTES);
+        }
+        Long size2 = redisTemplate.opsForZSet().size(PREFIXTAG + "zset");
+        System.out.println(size2);
+        System.out.println(redisTemplate.opsForZSet().range(PREFIXTAG + "zset",0,size2-1));
+        System.out.println(redisTemplate.opsForZSet().rangeByScore(PREFIXTAG + "zset", 0, 0.5));
+    }
+
+    @Resource
+    private KafkaTemplate<String,String> kafkaTemplate;
+    @Value("${kafka_topics}")
+    private String kafkaTopics;
+    @Test
+    public void kafkaTest(){
+        kafkaTemplate.send(kafkaTopics.split(",")[0], "abc");
     }
 
 }
