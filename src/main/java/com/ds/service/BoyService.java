@@ -33,4 +33,7 @@ public interface BoyService extends IService<Boy> {
     Page<Boy> queryBoy(int pagenum, int pagesize);
 
     Boy saveBoy(Boy boy);
+
+    void testAsync();
+
 }

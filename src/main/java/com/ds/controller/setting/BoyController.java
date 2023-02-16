@@ -168,4 +168,12 @@ public class BoyController {
         return Result.ok(boyService.save(boy));
     }
 
+
+    @RequestMapping(value = "/testAsync", method = RequestMethod.GET)
+    public Result testAsync(){
+        boyService.testAsync();
+        return Result.ok();
+    }
+
+
 }

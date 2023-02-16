@@ -10,11 +10,13 @@ import com.ds.service.BoyFeignService;
 import com.ds.service.BoyService;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -144,5 +146,25 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         boyDao.insert(boy);
         int i = 1/0;
         return boyDao.selectById(boy.getId());
+    }
+
+    @Override
+    @Transactional
+    public void testAsync() {
+        System.out.println("threadName:"+Thread.currentThread().getName());
+        Boy boy = new Boy();
+        boy.setName("袁承志");
+        boyDao.insert(boy);
+        BoyServiceImpl boyService = (BoyServiceImpl)AopContext.currentProxy();
+        boyService.asyncMethod();
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED, rollbackFor = Exception.class)
+    public void asyncMethod() {
+        System.out.println("threadName:"+Thread.currentThread().getName());
+        Boy boy = new Boy();
+        boy.setName("乔峰");
+        boyDao.insert(boy);
+        int i = 1/0;
     }
 }
