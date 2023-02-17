@@ -155,7 +155,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         Boy boy = new Boy();
         boy.setName("袁承志");
         boyDao.insert(boy);
-        BoyServiceImpl boyService = (BoyServiceImpl)AopContext.currentProxy();
+        BoyServiceImpl boyService = (BoyServiceImpl) AopContext.currentProxy();
         boyService.asyncMethod();
     }
 
