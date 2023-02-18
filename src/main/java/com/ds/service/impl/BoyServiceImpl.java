@@ -138,9 +138,9 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     private BoyFeignService boyFeignService;
     @Override
     @GlobalTransactional
-//    @Transactional
+    @Transactional
     public Boy saveBoy(Boy boy) {
-        System.out.println("AService XID: "+ RootContext.getXID());
+        System.out.println("saveBoy AService XID: "+ RootContext.getXID());
 //        restTemplate.getForObject("http://springboot/globalTransactionalTest", Result.class);
         boyFeignService.globalTransactionalTest();
         boyDao.insert(boy);

@@ -3,6 +3,7 @@ package com.ds.controller.setting;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
+import io.seata.core.context.RootContext;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -163,6 +164,7 @@ public class BoyController {
     @RequestMapping(value = "/globalTransactionalTest", method = RequestMethod.GET)
     @Transactional
     public Result globalTransactionalTest(){
+        System.out.println("globalTransactionalTest AService XID: "+ RootContext.getXID());
         Boy boy = new Boy();
         boy.setName("令狐冲");
         return Result.ok(boyService.save(boy));
