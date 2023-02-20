@@ -88,7 +88,7 @@ public class BoyController {
     @RequestMapping(value = "/saveBoy", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("新增/修改")
-    @SentinelResource(value = "saveBoy") //value对应资源名
+    @SentinelResource(value = "saveBoy") //热点参数限流：value对应资源名
     public Boy saveBoy(
             @ApiParam(name = "boy", value = "Boy", required = true)
             @Validated
