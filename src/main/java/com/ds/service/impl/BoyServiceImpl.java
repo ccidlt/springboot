@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
+import com.ds.entity.Result;
 import com.ds.service.BoyFeignService;
 import com.ds.service.BoyService;
 import io.seata.core.context.RootContext;
@@ -141,7 +142,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     @Transactional
     public Boy saveBoy(Boy boy) {
         System.out.println("saveBoy AService XID: "+ RootContext.getXID());
-//        restTemplate.getForObject("http://springboot/globalTransactionalTest", Result.class);
+        restTemplate.getForObject("http://springboot/globalTransactionalTest", Result.class);
         boyFeignService.globalTransactionalTest();
         boyDao.insert(boy);
         int i = 1/0;

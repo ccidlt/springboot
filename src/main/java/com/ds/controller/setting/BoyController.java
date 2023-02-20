@@ -1,5 +1,6 @@
 package com.ds.controller.setting;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
@@ -87,6 +88,7 @@ public class BoyController {
     @RequestMapping(value = "/saveBoy", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("新增/修改")
+    @SentinelResource(value = "saveBoy") //value对应资源名
     public Boy saveBoy(
             @ApiParam(name = "boy", value = "Boy", required = true)
             @Validated
