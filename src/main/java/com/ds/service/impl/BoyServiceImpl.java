@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,9 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
@@ -142,8 +146,8 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     @Transactional
     public Boy saveBoy(Boy boy) {
         System.out.println("saveBoy AService XID: "+ RootContext.getXID());
-        restTemplate.getForObject("http://springboot/globalTransactionalTest", Result.class);
-        boyFeignService.globalTransactionalTest();
+        restTemplate.getForObject("http://springboot/globalTransactional", Result.class);
+        boyFeignService.globalTransactional();
         boyDao.insert(boy);
         int i = 1/0;
         return boyDao.selectById(boy.getId());
@@ -151,13 +155,37 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
 
     @Override
     @Transactional
-    public void testAsync() {
+    public void async() {
         System.out.println("threadName:"+Thread.currentThread().getName());
         Boy boy = new Boy();
         boy.setName("袁承志");
         boyDao.insert(boy);
         BoyServiceImpl boyService = (BoyServiceImpl) AopContext.currentProxy();
         boyService.asyncMethod();
+    }
+
+    @Resource(name="tptExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Override
+    public void atomic() {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        List<CompletableFuture> completableFutureList = new ArrayList<>();
+        for(int i=1;i<=5;i++){
+            int num = i;
+            CompletableFuture completableFuture = CompletableFuture.runAsync(() -> {
+                System.out.println(Thread.currentThread().getName() + "---num:" + num + "---atomic:" + atomicInteger.incrementAndGet());
+            },threadPoolTaskExecutor);
+            completableFutureList.add(completableFuture);
+        }
+        //同时返回
+        CompletableFuture<Void> future = CompletableFuture.allOf(completableFutureList.stream().toArray(CompletableFuture[]::new));
+        try {
+            future.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED, rollbackFor = Exception.class)

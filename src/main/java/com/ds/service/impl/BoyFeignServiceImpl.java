@@ -15,7 +15,7 @@ public class BoyFeignServiceImpl implements BoyFeignService {
     }
 
     @Override
-    public Result globalTransactionalTest() {
+    public Result globalTransactional() {
         return null;
     }
 }

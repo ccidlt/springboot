@@ -34,6 +34,7 @@ public interface BoyService extends IService<Boy> {
 
     Boy saveBoy(Boy boy);
 
-    void testAsync();
+    void async();
 
+    void atomic();
 }

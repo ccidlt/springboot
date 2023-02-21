@@ -163,21 +163,25 @@ public class BoyController {
         return response;
     }
 
-    @RequestMapping(value = "/globalTransactionalTest", method = RequestMethod.GET)
+    @RequestMapping(value = "/globalTransactional", method = RequestMethod.GET)
     @Transactional
-    public Result globalTransactionalTest(){
-        System.out.println("globalTransactionalTest AService XID: "+ RootContext.getXID());
+    public Result globalTransactional(){
+        System.out.println("globalTransactional AService XID: "+ RootContext.getXID());
         Boy boy = new Boy();
         boy.setName("令狐冲");
         return Result.ok(boyService.save(boy));
     }
 
-
-    @RequestMapping(value = "/testAsync", method = RequestMethod.GET)
-    public Result testAsync(){
-        boyService.testAsync();
+    @RequestMapping(value = "/async", method = RequestMethod.GET)
+    public Result async(){
+        boyService.async();
         return Result.ok();
     }
 
+    @RequestMapping(value = "/atomic", method = RequestMethod.GET)
+    public Result atomic(){
+        boyService.atomic();
+        return Result.ok();
+    }
 
 }
