@@ -163,9 +163,9 @@ public class BoyController {
         return response;
     }
 
-    @RequestMapping(value = "/globalTransactional", method = RequestMethod.GET)
+    @RequestMapping(value = "/globalTransactional")
     @Transactional
-    public Result globalTransactional(){
+    public Result globalTransactional(@RequestBody(required = false) Boy b){
         System.out.println("globalTransactional AService XID: "+ RootContext.getXID());
         Boy boy = new Boy();
         boy.setName("令狐冲");

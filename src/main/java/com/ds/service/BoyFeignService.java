@@ -21,7 +21,7 @@ public interface BoyFeignService {
             headers = {"Content-Type=application/json;charset=UTF-8"})
     List<Boy> getBoys();
 
-    @RequestMapping(value = "/globalTransactional", method = RequestMethod.GET)
+    @RequestMapping(value = "/globalTransactional", method = RequestMethod.POST)
     Result globalTransactional();
 
 }

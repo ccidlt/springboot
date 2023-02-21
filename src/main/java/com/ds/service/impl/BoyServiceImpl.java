@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
+import com.ds.entity.Result;
 import com.ds.service.BoyFeignService;
 import com.ds.service.BoyService;
 import io.seata.core.context.RootContext;
@@ -23,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -145,8 +147,10 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
     @Transactional
     public Boy saveBoy(Boy boy) {
         System.out.println("saveBoy AService XID: "+ RootContext.getXID());
-//        restTemplate.getForObject("http://springboot/globalTransactional", Result.class);
-        boyFeignService.globalTransactional();
+        Map<String, String> map = new HashMap<>();
+        map.put("name","韦小宝");
+//        Result r1 = restTemplate.postForObject("http://springboot/globalTransactional", map, Result.class);
+        Result r2 = boyFeignService.globalTransactional();
         boyDao.insert(boy);
         int i = 1/0;
         return boyDao.selectById(boy.getId());
