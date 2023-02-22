@@ -17,30 +17,30 @@ interface ${table.mapperName} : ${superMapperClass}<${entity}>
 #else
 public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
 
-        /**
-         *  根据指定主键获取一条数据库记录, ${table.name}
-         */
-        List<${table.entityName}> select(${table.entityName} ${table.entityPath});
+    /**
+     *  根据指定主键获取一条数据库记录, ${table.name}
+     */
+    List<${table.entityName}> select(${table.entityName} ${table.entityPath});
 
-        /**
-         *  根据指定主键获取一条数据库记录, ${table.name}
-         */
+    /**
+     *  根据指定主键获取一条数据库记录, ${table.name}
+     */
     ${table.entityName} selectByPrimaryKey(Long id);
 
-        /**
-         *  新写入数据库记录, ${table.name}
-         */
-        int insert(${table.entityName} ${table.entityPath});
+    /**
+     *  新写入数据库记录, ${table.name}
+     */
+    int insert(${table.entityName} ${table.entityPath});
 
-        /**
-         *  根据主键来更新符合条件的数据库记录, ${table.name}
-         */
-        int updateByPrimaryKey(${table.entityName} ${table.entityPath});
+    /**
+     *  根据主键来更新符合条件的数据库记录, ${table.name}
+     */
+    int updateByPrimaryKey(${table.entityName} ${table.entityPath});
 
-        /**
-         *  根据主键删除数据库的记录, ${table.name}
-         */
-        int deleteByPrimaryKey(Long id);
+    /**
+     *  根据主键删除数据库的记录, ${table.name}
+     */
+    int deleteByPrimaryKey(Long id);
 
-        }
+}
 #end
