@@ -70,7 +70,7 @@ public class QuartzAop {
         }
     }
 
-    // RedisUtil中的锁代码
+    // 锁代码
     public boolean checkLock(String key,int second) {
         String lockKey = "lock:" + key;
         try {
