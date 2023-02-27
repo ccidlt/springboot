@@ -74,7 +74,7 @@ public class QuartzAop {
     public boolean checkLock(String key,int second) {
         String lockKey = "lock:" + key;
         try {
-            // 1表示之前不存在，设置成功
+            //第一次设置成功返回true；如果有值，返回false
             if (redisTemplate.opsForValue().setIfAbsent(lockKey, "lock")) {
                 // 设置有限期
                 redisTemplate.expire(lockKey, second, TimeUnit.SECONDS);
