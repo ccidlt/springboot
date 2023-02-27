@@ -1,6 +1,8 @@
 package com.ds.utils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class IpUtils {
 
@@ -43,6 +45,10 @@ public class IpUtils {
             System.out.println("getRemoteAddr ip: " + ip);
         }
         return ip;
+    }
+
+    public static String getIP() throws UnknownHostException {
+        return InetAddress.getLocalHost().getHostAddress();
     }
 
 }
