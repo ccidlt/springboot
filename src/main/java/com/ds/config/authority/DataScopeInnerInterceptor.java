@@ -124,4 +124,9 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
             throw new RuntimeException(e);
         }
     }
+
+    public static void main(String[] args) {
+        System.out.println(addWhereCondition("select a.* from (select * from sys_user where 1=1) a where 2=2", "3=3"));
+    }
+
 }
