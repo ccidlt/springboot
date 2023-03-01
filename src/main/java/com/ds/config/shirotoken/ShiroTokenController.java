@@ -5,6 +5,7 @@ import com.ds.entity.User;
 import com.ds.service.UserService;
 import com.ds.utils.JWTUtils;
 import com.ds.utils.StringUtil;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,8 @@ public class ShiroTokenController {
         Map<String, String> map = new HashMap<>();
         map.put("userId", StringUtil.getString(u.getId()));
         String token = JWTUtils.getToken(map, 30 * 60);
+        JwtToken jwtToken = new JwtToken(token);
+        SecurityUtils.getSubject().login(jwtToken);
         return Result.ok(token);
     }
 
