@@ -74,6 +74,7 @@ public class UserRealm extends AuthorizingRealm {
      * 登录认证校验
      * 默认使用此方法进行用户名正确与否验证, 如果没有权限注解的话就不会去走上面的方法只会走这个方法
      * SecurityUtils.getSubject().login(token)时调用
+     * token：new UsernamePasswordToken(username, password)/new JwtToken(token)
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
