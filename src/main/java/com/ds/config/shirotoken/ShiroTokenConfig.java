@@ -33,9 +33,16 @@ public class ShiroTokenConfig {
     @Bean
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("getDefaultWebSecurityManager") DefaultWebSecurityManager defaultWebSecurityManager) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+
+        //loginUrl：没有登录的用户请求需要登录的页面时自动跳转到登录页面。
+        //unauthorizedUrl：没有权限默认跳转的页面，登录的用户访问了没有被授权的资源自动跳转到的页面。
+        //其他的一些配置，如下：
+        //successUrl：登录成功默认跳转页面，不配置则跳转至”/”，可以不配置，直接通过代码进行处理。
+        //securityManager：这个属性是必须的，配置为securityManager就好了。
+        //filterChainDefinitions：配置过滤规则，从上到下的顺序匹配。
+
         //设置安全管理器
         bean.setSecurityManager(defaultWebSecurityManager);
-        //bean.setLoginUrl("/shiroToken/login");
         // 添加自定义过滤器
         Map<String, Filter> filterMap = new LinkedHashMap<>();
         filterMap.put("tokenFilter", new TokenFilter());
@@ -43,6 +50,8 @@ public class ShiroTokenConfig {
 
         Map<String, String> filterRuleMap = new LinkedHashMap<>();
         filterRuleMap.put("/shiroToken/login", "anon");//不需要认证，可以直接访问的
+        filterRuleMap.put("/static/**", "anon");
+        filterRuleMap.put("/public/**", "anon");
         // 其余请求都要经过BearerTokenFilter自定义拦截器
         filterRuleMap.put("/shiroToken/**", "tokenFilter");
         bean.setFilterChainDefinitionMap(filterRuleMap);
