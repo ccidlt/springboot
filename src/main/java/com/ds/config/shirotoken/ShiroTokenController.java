@@ -7,12 +7,14 @@ import com.ds.utils.JWTUtils;
 import com.ds.utils.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/shiroToken")
@@ -20,6 +22,8 @@ public class ShiroTokenController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @PostMapping("/login")
     public Result login(@RequestBody User user) {
@@ -32,6 +36,7 @@ public class ShiroTokenController {
         String token = JWTUtils.getToken(map, 30 * 60);
         JwtToken jwtToken = new JwtToken(token);
         SecurityUtils.getSubject().login(jwtToken);
+        redisTemplate.opsForValue().set(token, u, 35 * 60, TimeUnit.SECONDS);
         return Result.ok(token);
     }
 

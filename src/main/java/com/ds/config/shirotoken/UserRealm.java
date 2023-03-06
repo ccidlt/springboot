@@ -6,6 +6,7 @@ import com.ds.service.PermissionService;
 import com.ds.service.RoleService;
 import com.ds.service.UserService;
 import com.ds.utils.JWTUtils;
+import com.ds.utils.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -15,12 +16,11 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class UserRealm extends AuthorizingRealm {
 
@@ -30,6 +30,8 @@ public class UserRealm extends AuthorizingRealm {
     private RoleService roleService;
     @Resource
     private PermissionService permissionService;
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 为了让realm支持jwt的凭证校验
@@ -97,7 +99,32 @@ public class UserRealm extends AuthorizingRealm {
         if (user == null) {
             throw new AuthenticationException("该用户不存在");
         }
+        // 校验token是否超时失效 & 或者账号密码是否错误
+        if (!jwtTokenRefresh(token)) {
+            throw new AuthenticationException("token失效，请重新登录!");
+        }
         DataContextSupport.setDataPermissions(user);
         return new SimpleAuthenticationInfo(token, token, getName());
+    }
+
+    /**
+     * jwt刷新令牌
+     *
+     * @param token 令牌
+     * @return boolean
+     */
+    public boolean jwtTokenRefresh(String token) {
+        User user = (User) redisTemplate.opsForValue().get(token);
+        if (user != null) {
+            if (!JWTUtils.verify(token)) {
+                Map<String, String> map = new HashMap<>();
+                map.put("userId", StringUtil.getString(user.getId()));
+                String newToken = JWTUtils.getToken(map, 30 * 60);
+                //设置redis缓存
+                redisTemplate.opsForValue().set(newToken, user, 35 * 60, TimeUnit.SECONDS);
+            }
+            return true;
+        }
+        return false;
     }
 }
