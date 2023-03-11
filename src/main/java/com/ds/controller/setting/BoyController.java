@@ -1,30 +1,44 @@
 package com.ds.controller.setting;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
 import io.seata.core.context.RootContext;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/")
@@ -182,6 +196,146 @@ public class BoyController {
     public Result atomic(){
         boyService.atomic();
         return Result.ok();
+    }
+
+
+    @Resource(name = "tptExecutor")
+    private ThreadPoolTaskExecutor tptExecutor;
+    @Autowired
+    private SqlSessionTemplate sqlSessionTemplate;
+    @ApiOperation(value = "编程式事务测试", notes = "编程式事务测试")
+    @RequestMapping(value = "/sqlSession", method = RequestMethod.GET)
+    public String transactionTest() throws Exception {
+        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(false);
+        Connection connection = sqlSession.getConnection();
+        connection.setAutoCommit(false);
+        try {
+            Boy boy = new Boy();
+            boy.setName("ABC");
+            BoyDao mapper = sqlSession.getMapper(BoyDao.class);
+            mapper.insert(boy);
+            List<Future<String>> futureList = new ArrayList<>();
+            Future<String> thread1 = tptExecutor.submit(() -> {
+                Boy SysDictOne = mapper.selectOne(new LambdaQueryWrapper<Boy>().eq(Boy::getId, boy.getId()).last("limit 1"));
+                Boy boy1 = new Boy();
+                boy1.setName("DEF");
+                boy1.setGirlId(SysDictOne.getId());
+                mapper.insert(boy1);
+                int i = 1/0;
+                return "ok";
+            });
+            futureList.add(thread1);
+            for (Future<String> future : futureList) {
+                System.out.println(future.get());
+            }
+            connection.commit();
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            connection.rollback();
+        } finally {
+            connection.close();
+        }
+        return "ok";
+    }
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    @ApiOperation(value = "编程式事务测试", notes = "编程式事务测试")
+    @RequestMapping(value = "/transaction", method = RequestMethod.GET)
+    public String transactionTest2() throws Exception {
+        String result = "";
+        CountDownLatch rollBackLatch = new CountDownLatch(1);
+        CountDownLatch mainThreadLatch = new CountDownLatch(2);
+        AtomicBoolean rollbackFlag = new AtomicBoolean(false);
+        List<Future<String>> list = new ArrayList<Future<String>>();
+        // 线程有返回值
+        Future<String> future = executor1(rollBackLatch, mainThreadLatch, rollbackFlag);
+        list.add(future);
+        // 线程无返回值
+        executor2(rollBackLatch, mainThreadLatch, rollbackFlag);
+        // 主线程业务执行完毕 如果其他线程也执行完毕 且没有报异常 正在阻塞状态中 唤醒其他线程 提交所有的事务
+        // 如果其他线程或者主线程报错 则不会进入if 会触发回滚
+        if (!rollbackFlag.get()) {
+            try {
+                mainThreadLatch.await();
+                rollBackLatch.countDown();
+                for (Future<String> f : list)
+                    if (!"success".equals(f.get()))
+                        result = f.get() + "。";
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+    public Future<String> executor1(CountDownLatch rollBackLatch, CountDownLatch mainThreadLatch,AtomicBoolean rollbackFlag) {
+        Future<String> result = tptExecutor.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                if (rollbackFlag.get())
+                    return "error"; // 如果其他线程已经报错 就停止线程
+                // 设置一个事务
+                DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // 事物隔离级别，开启新事务，这样会比较安全些。
+                TransactionStatus status = transactionManager.getTransaction(def); // 获得事务状态
+                try {
+                    // 业务处理开始
+                    // ..............
+                    // 业务处理结束
+                    mainThreadLatch.countDown();
+                    rollBackLatch.await();// 线程等待
+                    if (rollbackFlag.get()) {
+                        transactionManager.rollback(status);
+                    } else {
+                        transactionManager.commit(status);
+                    }
+                    return "success";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // 如果出错了 就放开锁 让别的线程进入提交/回滚 本线程进行回滚
+                    rollbackFlag.set(true);
+                    rollBackLatch.countDown();
+                    mainThreadLatch.countDown();
+                    transactionManager.rollback(status);
+                    return "操作失败：" + e.getMessage();
+                }
+            }
+
+        });
+        // result.get()阻塞线程
+        return result;
+    }
+    public void executor2(CountDownLatch rollBackLatch, CountDownLatch mainThreadLatch, AtomicBoolean rollbackFlag) {
+        tptExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (rollbackFlag.get())
+                    return; // 如果其他线程已经报错 就停止线程
+                // 设置一个事务
+                DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // 事物隔离级别，开启新事务，这样会比较安全些。
+                TransactionStatus status = transactionManager.getTransaction(def); // 获得事务状态
+                try {
+                    // 业务处理开始
+                    // .....
+                    // 业务处理结束
+                    mainThreadLatch.countDown();
+                    rollBackLatch.await();// 线程等待
+                    if (rollbackFlag.get()) {
+                        transactionManager.rollback(status);
+                    } else {
+                        transactionManager.commit(status);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // 如果出错了 就放开锁 让别的线程进入提交/回滚 本线程进行回滚
+                    rollbackFlag.set(true);
+                    rollBackLatch.countDown();
+                    mainThreadLatch.countDown();
+                    transactionManager.rollback(status);
+                }
+            }
+        });
     }
 
 }
