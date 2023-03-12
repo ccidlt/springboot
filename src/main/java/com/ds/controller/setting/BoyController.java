@@ -23,6 +23,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -243,6 +246,47 @@ public class BoyController {
     @ApiOperation(value = "编程式事务测试", notes = "编程式事务测试")
     @RequestMapping(value = "/transaction", method = RequestMethod.GET)
     public String transactionTest2() throws Exception {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus mainStatus = transactionManager.getTransaction(def);
+        try {
+            Boy boy = new Boy();
+            boy.setName("ABC");
+            boyService.save(boy);
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    tptExecutor.execute(() -> {
+                        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+                        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                        TransactionStatus childStatus = transactionManager.getTransaction(def);
+                        try {
+                            Boy SysDictOne = boyService.getOne(new LambdaQueryWrapper<Boy>().eq(Boy::getId, boy.getId()).last("limit 1"));
+                            Boy boy1 = new Boy();
+                            boy1.setName("DEF");
+                            boy1.setGirlId(SysDictOne.getId());
+                            boyService.save(boy1);
+                            transactionManager.commit(childStatus);
+                        } catch (Exception e) {
+                            log.error(e.getMessage(),e);
+                            transactionManager.rollback(childStatus);
+                        }
+                    });
+                }
+            });
+            int i = 1/0;
+            transactionManager.commit(mainStatus);
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            transactionManager.rollback(mainStatus);
+        }
+        return "ok";
+    }
+
+
+    @ApiOperation(value = "编程式事务测试", notes = "编程式事务测试")
+    @RequestMapping(value = "/transaction2", method = RequestMethod.GET)
+    public String transactionTest3() throws Exception {
         String result = "";
         CountDownLatch rollBackLatch = new CountDownLatch(1);
         CountDownLatch mainThreadLatch = new CountDownLatch(2);
@@ -334,6 +378,80 @@ public class BoyController {
                     mainThreadLatch.countDown();
                     transactionManager.rollback(status);
                 }
+            }
+        });
+    }
+
+    /**
+     * 每个子线程事务 在外部事务完成后 提交或者回滚
+     *
+     * @param tasks           实际任务接口列表
+     * @throws Exception TODO: 当前tasks.size() 必须<=核心线程数，否则死锁
+     */
+//    @Transactional
+    public void execTasks(List<Integer> tasks) throws Exception {
+        ArrayList<Runnable> runnables = new ArrayList<>();
+        // 线程执行完标志
+        CountDownLatch taskCount = new CountDownLatch(tasks.size());
+        CountDownLatch mainCount = new CountDownLatch(1);
+        AtomicBoolean isCommit = new AtomicBoolean(true);
+        final Exception[] exception = new Exception[1];
+        for (Integer task : tasks) {
+            runnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+                    transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                    TransactionStatus status = transactionManager.getTransaction(transactionDefinition);
+                    try {
+                        //业务代码执行...
+                        System.out.println(tasks.size()+"..."+task.intValue());
+                        // 任务正常执行完成
+                        taskCount.countDown();
+                        mainCount.await();
+                        if (isCommit.get()) {
+                            transactionManager.commit(status);
+                        } else {
+                            transactionManager.rollback(status);
+                        }
+                    } catch (Throwable ex) {
+                        isCommit.set(false);
+                        transactionManager.rollback(status);
+                        exception[0] = new Exception(ex.getMessage(), ex);
+                        taskCount.countDown();
+                        logger.error(ex.getMessage(), ex);
+                    }
+                }
+            });
+        }
+        try {
+            afterTransaction(mainCount, isCommit);
+            for (Runnable runnable : runnables) {
+                tptExecutor.submit(runnable);
+            }
+            taskCount.await();
+            if (!isCommit.get()) {
+                // 子线程有异常
+                throw new Exception(exception[0].getMessage(), exception[0]);
+            }
+        } catch (Throwable ex) {
+            log.error(ex.getMessage(), ex);
+            throw new Exception(ex.getMessage(), ex);
+        }
+    }
+    private void afterTransaction(CountDownLatch mainCount, AtomicBoolean isCommit) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCompletion(int status) {
+                super.afterCompletion(status);
+                if (status != TransactionSynchronization.STATUS_COMMITTED) {
+                    // 事务没有提交
+                    log.error("事务回滚");
+                    isCommit.set(false);
+                } else {
+                    log.info("事务提交");
+                }
+                mainCount.countDown();
             }
         });
     }
