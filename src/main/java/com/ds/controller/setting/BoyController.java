@@ -202,6 +202,9 @@ public class BoyController {
     }
 
 
+    /**
+     * 编程式事务
+     */
     @Resource(name = "tptExecutor")
     private ThreadPoolTaskExecutor tptExecutor;
     @Autowired
