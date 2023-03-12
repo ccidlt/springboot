@@ -253,7 +253,7 @@ public class BoyController {
             Boy boy = new Boy();
             boy.setName("ABC");
             boyService.save(boy);
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
                     tptExecutor.execute(() -> {
