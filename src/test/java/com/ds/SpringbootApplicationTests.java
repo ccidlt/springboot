@@ -18,6 +18,7 @@ import cn.hutool.jwt.JWTHeader;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.ds.config.async.ReentrantLockOperate;
+import com.ds.config.webmvc.MyEvent;
 import com.ds.controller.setting.BoyController;
 import com.ds.entity.Boy;
 import com.ds.entity.FatherAndSon;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -561,6 +563,13 @@ public class SpringbootApplicationTests {
     @Test
     public void kafkaTest(){
         kafkaTemplate.send(kafkaTopics.split(",")[0], "abc");
+    }
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Test
+    public void eventListen(){
+        applicationContext.publishEvent(new MyEvent("abc"));
     }
 
 }
