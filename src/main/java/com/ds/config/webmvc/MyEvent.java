@@ -10,6 +10,11 @@ public class MyEvent extends ApplicationEvent {
         super(source);
     }
 
+    public MyEvent(Object source, String message) {
+        super(source);
+        this.message = message;
+    }
+
     @Override
     public Object getSource() {
         return super.getSource();
