@@ -5,7 +5,6 @@ import com.ds.entity.User;
 import com.ds.service.UserService;
 import com.ds.utils.JWTUtils;
 import com.ds.utils.StringUtil;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +33,8 @@ public class ShiroTokenController {
         Map<String, String> map = new HashMap<>();
         map.put("userId", StringUtil.getString(u.getId()));
         String token = JWTUtils.getToken(map, 30 * 60);
-        JwtToken jwtToken = new JwtToken(token);
-        SecurityUtils.getSubject().login(jwtToken);
+//        JwtToken jwtToken = new JwtToken(token);
+//        SecurityUtils.getSubject().login(jwtToken);
         redisTemplate.opsForValue().set(token, u, 35 * 60, TimeUnit.SECONDS);
         return Result.ok(token);
     }
