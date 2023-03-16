@@ -65,7 +65,7 @@ public class ShiroController {
     }
 
     @GetMapping("/permission")
-    @RequiresPermissions(value = {"add", "update"}, logical = Logical.AND)
+    @RequiresPermissions(value = {"add", "update"}, logical = Logical.OR)
     public String permission() {
         return "测试Add和Update权限";
     }

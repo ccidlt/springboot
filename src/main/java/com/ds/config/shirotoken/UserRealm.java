@@ -52,22 +52,21 @@ public class UserRealm extends AuthorizingRealm {
         String userId = JWTUtils.getClaim(token, "userId");
         User user = userService.findById(Integer.valueOf(userId));
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        List<Role> roleList = roleService.findRoleByUserId(user.getId());
+        Set<String> roleSet = new HashSet<>();
+        List<Integer> roleIds = new ArrayList<>();
+        for (Role role : roleList) {
+            roleSet.add(role.getRole());
+            roleIds.add(role.getId());
+        }
+        // 放入角色信息
+        info.setRoles(roleSet);
+        // 放入权限信息
+        List<String> permissionList = permissionService.findByRoleId(roleIds);
+        info.setStringPermissions(new HashSet<>(permissionList));
         if (user.getUsername().equals("admin")) {//该用户拥有所有权限
             info.addRole("*");
-            info.addStringPermission("*:*:*");
-        } else {
-            List<Role> roleList = roleService.findRoleByUserId(user.getId());
-            Set<String> roleSet = new HashSet<>();
-            List<Integer> roleIds = new ArrayList<>();
-            for (Role role : roleList) {
-                roleSet.add(role.getRole());
-                roleIds.add(role.getId());
-            }
-            // 放入角色信息
-            info.setRoles(roleSet);
-            // 放入权限信息
-            List<String> permissionList = permissionService.findByRoleId(roleIds);
-            info.setStringPermissions(new HashSet<>(permissionList));
+            info.addStringPermission("*");
         }
         return info;
     }

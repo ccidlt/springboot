@@ -5,6 +5,7 @@ import com.ds.entity.User;
 import com.ds.service.UserService;
 import com.ds.utils.JWTUtils;
 import com.ds.utils.StringUtil;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -51,14 +52,14 @@ public class ShiroTokenController {
     }
 
     @GetMapping("/test1")
-    @RequiresPermissions("sys:user:del")
+    @RequiresPermissions(value = {"add","update","delete"}, logical = Logical.OR)
     public Result test1() {
         User user = DataContextSupport.getDataPermissions();
         return Result.ok(user);
     }
 
     @GetMapping("/test2")
-    @RequiresPermissions("sys:role:delete")
+    @RequiresPermissions("select")
     public Result test2() {
         User user = DataContextSupport.getDataPermissions();
         return Result.ok(user);
