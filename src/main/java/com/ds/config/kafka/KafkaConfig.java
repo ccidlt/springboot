@@ -18,15 +18,15 @@ import java.util.concurrent.ExecutionException;
 @Configuration
 public class KafkaConfig {
 
-    /*@Bean("initialTopic1")
-    public NewTopic initialTopic1(){
-        return new NewTopic("topic01",8,(short)1);//分区和副本
-    }
+//    @Bean("initialTopic1")
+//    public NewTopic initialTopic1(){
+//        return new NewTopic("topic01",8,(short)1);//分区和副本
+//    }
 
-    @Bean("initialTopic2")
-    public NewTopic initialTopic2(){
-        return new NewTopic("topic-new-1",8,(short)1);//分区和副本
-    }*/
+//    @Bean("initialTopic2")
+//    public NewTopic initialTopic2(){
+//        return new NewTopic("topic-new-1",8,(short)1);//分区和副本
+//    }
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaServers;
@@ -57,6 +57,21 @@ public class KafkaConfig {
         props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
         return AdminClient.create(props);
     }
+
+//    @Bean
+//    public KafkaConsumer<String, String> getConsumer() {
+//        Properties props = new Properties();
+//        // kafka集群所需的broker地址
+//        props.put("bootstrap.servers", kafkaServers);
+//        // kafka消费者群组名称
+//        props.put("group.id", "group_demo");
+//        // 消费者从broker端获取的消息格式都是byte[]数组类型，key和value需要进行反序列化。
+//        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+//        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+//        // 创建消费者
+//        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
+//        return consumer;
+//    }
 
     @Autowired
     private AdminClient adminClient;
