@@ -41,9 +41,7 @@ public class KafkaController{
             SendResult<String, String> sendResult = future.get();
             RecordMetadata recordMetadata = sendResult.getRecordMetadata();
             System.out.println(recordMetadata.topic()+"\t"+recordMetadata.partition()+"\t"+recordMetadata.offset());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         //异步发送消息
