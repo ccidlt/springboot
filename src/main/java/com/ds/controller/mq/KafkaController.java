@@ -1,7 +1,6 @@
 package com.ds.controller.mq;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.KafkaListenerErrorHandler;
-import org.springframework.kafka.listener.ListenerExecutionFailedException;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.messaging.Message;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,16 +25,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @Slf4j
 @RequestMapping("/kafka")
-public class KafkaController implements KafkaListenerErrorHandler {
-    @Override
-    public Object handleError(Message<?> message, ListenerExecutionFailedException e) {
-        return null;
-    }
-
-    @Override
-    public Object handleError(Message<?> message, ListenerExecutionFailedException exception, Consumer<?, ?> consumer) {
-        return null;
-    }
+public class KafkaController{
 
     @Resource
     private KafkaTemplate<String,String> kafkaTemplate;
@@ -74,8 +61,8 @@ public class KafkaController implements KafkaListenerErrorHandler {
         });
     }
 
-    //@KafkaListener(groupId = "topicgroupid-"+"#{T(java.util.UUID).randomUUID()}", topics = "#{'${kafka_topics}'.split(',')}")
-    @KafkaListener(id="topicid1",topics = "#{'${kafka_topics}'.split(',')}")
+    //@KafkaListener(groupId = "topicgroupid-"+"#{T(java.util.UUID).randomUUID()}", topics = "#{'${kafka_topics}'.split(',')}",errorHandler = "kafkaListenerException")
+    @KafkaListener(id="topicid1",topics = "#{'${kafka_topics}'.split(',')}",errorHandler = "kafkaListenerException")
     public void onMessage(ConsumerRecord<String,String> record){
         System.out.println("消费者收到的消息："+record.topic()+"\t"+record.partition()+"\t"+record.offset()+"\t"+record.key()+"\t"+record.value());
     }
@@ -94,8 +81,8 @@ public class KafkaController implements KafkaListenerErrorHandler {
         }
     }
 
-    //@KafkaListener(groupId = "topicgroupid-"+"#{T(java.util.UUID).randomUUID()}", topics = "#{'${kafka_topics}'.split(',')}")
-    @KafkaListener(id="topicid2",topics = "#{'${kafka_topics}'.split(',')}")
+    //@KafkaListener(groupId = "topicgroupid-"+"#{T(java.util.UUID).randomUUID()}", topics = "#{'${kafka_topics}'.split(',')}",errorHandler = "kafkaListenerException")
+    @KafkaListener(id="topicid2",topics = "#{'${kafka_topics}'.split(',')}",errorHandler = "kafkaListenerException")
     public void accept(List<ConsumerRecord<String,String>> records, Acknowledgment ack){
         if(records != null && !records.isEmpty()){
             for(ConsumerRecord<String,String> record : records){

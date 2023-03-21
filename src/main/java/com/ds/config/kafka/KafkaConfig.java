@@ -80,9 +80,7 @@ public class KafkaConfig {
         DescribeTopicsResult result = adminClient.describeTopics(Arrays.asList("topic01","topic-new-1"));
         try {
             result.all().get().forEach((k,v)->System.out.println("k: "+k+" ,v: "+v.toString()+"\n"));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
