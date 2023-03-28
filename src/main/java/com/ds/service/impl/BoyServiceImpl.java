@@ -186,9 +186,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         CompletableFuture<Void> future = CompletableFuture.allOf(completableFutureList.stream().toArray(CompletableFuture[]::new));
         try {
             future.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
