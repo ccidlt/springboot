@@ -1,6 +1,8 @@
 package com.ds.service.impl;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -198,5 +200,33 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         boy.setName("乔峰");
         boyDao.insert(boy);
         int i = 1/0;
+    }
+
+    /**
+     * @DS 数据源切换
+     * @DSTransactional 单独调用ds服务各自支持事务
+     * @param boy
+     * @return
+     */
+    @DS("master")
+//    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional
+    public Integer addBoyByDs1(Boy boy) {
+        int insert = boyDao.insert(boy);
+        return insert;
+    }
+
+    /**
+     * @DS 数据源切换
+     * @DSTransactional 单独调用ds服务各自支持事务
+     * @param boy
+     * @return
+     */
+    @DS("slave")
+//    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional
+    public Integer addBoyByDs2(Boy boy) {
+        int insert = boyDao.insert(boy);
+        return insert;
     }
 }

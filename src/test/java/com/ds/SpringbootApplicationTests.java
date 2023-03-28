@@ -23,6 +23,7 @@ import com.ds.controller.setting.BoyController;
 import com.ds.entity.Boy;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.User;
+import com.ds.service.impl.BoyFeignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -578,7 +579,7 @@ public class SpringbootApplicationTests {
     @Resource(name = "tptExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Test
-    public void atomicCountDown() throws InterruptedException {
+    public void atomicCountDown() {
         AtomicInteger mainab = new AtomicInteger(0);
         CountDownLatch maincdl = new CountDownLatch(1);
         CountDownLatch subcdl = new CountDownLatch(5);
@@ -597,8 +598,28 @@ public class SpringbootApplicationTests {
         }
         log.info("main{}====ato{}===={}","1",mainab.get(),Thread.currentThread().getName());
         maincdl.countDown();
-        subcdl.await();
+        try {
+            subcdl.await();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
         log.info("main{}====ato{}===={}","2",mainab.get(),Thread.currentThread().getName());
+    }
+
+    @Autowired
+    private BoyFeignServiceImpl boyFeignServiceImpl;
+    /**
+     * 调用主服务支持全局事务提交、回滚，
+     * 单独调用ds服务各自支持事务
+     */
+    @Test
+    public void dsTransactional() {
+        Boy boy1 = new Boy();
+        boy1.setName("乔峰");
+        Boy boy2 = new Boy();
+        boy2.setName("段誉");
+        Integer result = boyFeignServiceImpl.dsTransactional(boy1, boy2);
+        log.info("result======{}",result);
     }
 
 }
