@@ -33,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -43,8 +44,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -570,6 +573,32 @@ public class SpringbootApplicationTests {
     @Test
     public void eventListen(){
         applicationContext.publishEvent(new MyEvent("abc"));
+    }
+
+    @Resource(name = "tptExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Test
+    public void atomicCountDown() throws InterruptedException {
+        AtomicInteger mainab = new AtomicInteger(0);
+        CountDownLatch maincdl = new CountDownLatch(1);
+        CountDownLatch subcdl = new CountDownLatch(5);
+        for (int i=1;i<=5;i++){
+            int ii = i;
+            threadPoolTaskExecutor.submit(()->{
+                try {
+                    maincdl.await();
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage());
+                }
+                log.info("sub{}========{}",ii,Thread.currentThread().getName());
+                subcdl.countDown();
+                mainab.incrementAndGet();
+            });
+        }
+        log.info("main{}====ato{}===={}","1",mainab.get(),Thread.currentThread().getName());
+        maincdl.countDown();
+        subcdl.await();
+        log.info("main{}====ato{}===={}","2",mainab.get(),Thread.currentThread().getName());
     }
 
 }
