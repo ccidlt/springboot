@@ -14,6 +14,52 @@
     </select>
 
     <select id="getBoyDataPage" resultType="com.ds.entity.Boy" useCache="false">
-    select * from boy where isdelete=0
-  </select>
+      select * from boy where isdelete=0
+    </select>
+
+    <!-- 批量新增-->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into boy(id, name, girl_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.name},#{item.girlId})
+        </foreach>
+    </insert>
+    <!-- 批量修改-->
+    <update id="updateBatchByIds" parameterType="java.util.List">
+        update boy
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="name = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id= #{item.id} then #{item.name}
+                </foreach>
+            </trim>
+            <trim prefix="girl_id = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id= #{item.id} then #{item.girlId}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </update>
+    <!-- 根据ids批量获取-->
+    <select id="selectBatchByIds" parameterType="java.util.List" resultType="com.ds.entity.Boy" >
+        select id, name, girl_id from boy where id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <!-- 根据多个字段批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete
+        from boy
+        where (name, girl_id) in
+        <foreach collection="list" open="(" close=")" item="item" separator=",">
+            (#{item.name}, #{item.girlId})
+        </foreach>
+    </delete>
+
 </mapper>
