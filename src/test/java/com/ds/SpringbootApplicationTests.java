@@ -22,7 +22,9 @@ import com.ds.config.webmvc.MyEvent;
 import com.ds.controller.setting.BoyController;
 import com.ds.entity.Boy;
 import com.ds.entity.FatherAndSon;
+import com.ds.entity.Person;
 import com.ds.entity.User;
+import com.ds.service.PersonFactory;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -620,6 +622,23 @@ public class SpringbootApplicationTests {
         boy2.setName("段誉");
         Integer result = boyFeignServiceImpl.dsTransactional(boy1, boy2);
         log.info("result======{}",result);
+    }
+
+    @Test
+    public void functionInterface() {
+//        Function<String,Integer> function = new Function<String, Integer>() {
+//            @Override
+//            public Integer apply(String s) {
+//                return Integer.valueOf(s);
+//            }
+//        };
+//        Function<String,Integer> function = a->Integer.valueOf(a);
+        Function<String,Integer> function = Integer::valueOf;
+        System.out.println(function.apply("123"));
+//        Function<String,Boy> function = Boy::new;
+//        System.out.println(function.apply("张三"));
+        PersonFactory<Person> personFactory = Person::new;
+        System.out.println(personFactory.create("李四","13800000000"));
     }
 
 }

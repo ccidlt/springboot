@@ -65,4 +65,11 @@ public class Boy implements Serializable {
         this.name = name;
         this.girls = girls;
     }
+    public Boy(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    public Boy(String name) {
+        this.name = name;
+    }
 }

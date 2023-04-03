@@ -18,12 +18,20 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ReentrantLockOperate {
 
     /**
+     * ThreadLocal/Volaitile
      * ThreadLocal叫做线程变量，意思是ThreadLocal中填充的变量属于当前线程，该变量对其他线程而言是隔离的，也就是说该变量是当前线程独有的变量。
      * ThreadLocal为变量在每个线程中都创建了一个副本，那么每个线程可以访问自己内部的副本变量。
      */
     static ThreadLocal threadLocal = new ThreadLocal<String>();
 
     /**
+     * 非阻塞同步锁（乐观锁）
+     *
+     * (1)CAS 实现：Java 中java.util.concurrent.atomic包下面的原子变量使用了乐观锁的一种 CAS 实现方式。
+     * (2)版本号控制：一般是在数据表中加上一个数据版本号 version 字段，表示数据被修改的次数。当数据被修改时，version 值会 +1。当线程 A 要更新数据时，在读取数据的同时也会读取 version 值，在提交更新时，若刚才读取到的 version 值与当前数据库中的 version 值相等时才更新，否则重试更新操作，直到更新成功。
+     *
+     * Atomic类
+     *
      * 1、作为多个线程同时使用的原子计数器。
      * addAndGet()- 以原子方式将给定值添加到当前值，并在添加后返回新值。
      * getAndAdd() - 以原子方式将给定值添加到当前值并返回旧值。
@@ -37,13 +45,27 @@ public class ReentrantLockOperate {
      * boolean compareAndSet(int expect, int update)
      */
     AtomicInteger count = new AtomicInteger(30);
-
     /**
      * 减法计数器,用于线程阻塞
      * countDownLatch.countDown();计数器减一
      * countDownLatch.await();等待计数器归零主线程才会继续执行
      */
     CountDownLatch countDownLatch = new CountDownLatch(100);
+
+    /**
+     * 互斥同步锁（悲观锁）
+     *
+     * (1)传统的关系型数据库悲观锁主要分为共享锁和排他锁。
+     * 共享锁：select * from table(表) lock in share mode;
+     * 排他锁：select * from table(表) for update;
+     * (2)Java 里面的同步 synchronized、ReentrantLock 关键字的实现。
+     *
+     * ReentrantLock/Synchorized
+     *
+     * 锁ReentrantLock，同一对象，所有线程同步
+     *
+     */
+    ReentrantLock lock = new ReentrantLock();
 
     /**
      * 线程安全类：
@@ -54,9 +76,6 @@ public class ReentrantLockOperate {
      */
     Map<String, AtomicInteger> concurrentHashMap = new ConcurrentHashMap<>();
 
-
-    //锁ReentrantLock，同一对象，所有线程同步
-    ReentrantLock lock = new ReentrantLock();
 
     @Async("tptExecutor")
     public Future<Boolean> reentrantLockTest() throws Exception {
