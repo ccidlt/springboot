@@ -1,25 +1,50 @@
 package com.ds.config.async;
 
+import com.ds.SpringbootApplication;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class MyThreadLocal {
 
     private static final ThreadLocal<SqlSession> threadSession = new ThreadLocal<>();
 
-    @Autowired
-    private SqlSessionTemplate sqlSessionTemplate;
     private static SqlSessionFactory sqlSessionFactory;
 
-    @PostConstruct
-    public void init(){
-        sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+    /**
+     * 属性注入
+     */
+//    @Autowired
+//    private SqlSessionTemplate sqlSessionTemplate;
+//    @PostConstruct
+//    public void init(){
+//        sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+//    }
+
+    private SqlSessionTemplate sqlSessionTemplate;
+
+    /**
+     * setter注入
+     * @param sqlSessionTemplate
+     */
+//    @Autowired
+//    public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
+//        this.sqlSessionTemplate = sqlSessionTemplate;
+//        MyThreadLocal.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+//    }
+
+    /**
+     * 构造器注入
+     * @param sqlSessionTemplate
+     */
+    @Autowired
+    public MyThreadLocal(SqlSessionTemplate sqlSessionTemplate) {
+        this.sqlSessionTemplate = sqlSessionTemplate;
+        MyThreadLocal.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
     }
 
     public static SqlSessionFactory getSqlSessionFactory() {
@@ -37,6 +62,11 @@ public class MyThreadLocal {
             throw new Exception(e);
         }
         return ss;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringbootApplication.class, args);
+        System.out.println(getSqlSessionFactory());
     }
 
 }
