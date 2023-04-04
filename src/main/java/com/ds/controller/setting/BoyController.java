@@ -2,6 +2,8 @@ package com.ds.controller.setting;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ds.config.snowflake.Snowflake;
+import com.ds.config.snowflake.SnowflakeProperties;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
@@ -40,13 +42,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/")
 @Api(tags = "接口")
 @Slf4j
+//@RefreshScope
 public class BoyController {
 
     private Logger logger = LoggerFactory.getLogger(BoyController.class);
@@ -457,6 +463,21 @@ public class BoyController {
                 mainCount.countDown();
             }
         });
+    }
+
+
+    @Resource
+    private Snowflake snowflake;
+//    @Value("${snow-flake.dataCenterId}")
+//    private String dataCenterId;
+//    @Value("${snow-flake.machineId}")
+//    private String machineId;
+    @Resource
+    private SnowflakeProperties snowflakeProperties;
+    @RequestMapping("/getSnowflake")
+    public long getSnowflake() {
+        log.info("dataCenterId:{},machineId:{}",snowflakeProperties.getDataCenterId(),snowflakeProperties.getMachineId());
+        return snowflake.nextId();
     }
 
 }
