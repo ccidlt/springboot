@@ -31,7 +31,7 @@ public class ReentrantLockOperate {
      * (1)CAS 实现：Java 中java.util.concurrent.atomic包下面的原子变量使用了乐观锁的一种 CAS 实现方式。
      * (2)版本号控制：一般是在数据表中加上一个数据版本号 version 字段，表示数据被修改的次数。当数据被修改时，version 值会 +1。当线程 A 要更新数据时，在读取数据的同时也会读取 version 值，在提交更新时，若刚才读取到的 version 值与当前数据库中的 version 值相等时才更新，否则重试更新操作，直到更新成功。
      *
-     * Atomic类
+     * Atomic类:AtomicBoolean、AtomicInteger、AtomicLong、AtomicReference<V>
      *
      * 1、作为多个线程同时使用的原子计数器。
      * addAndGet()- 以原子方式将给定值添加到当前值，并在添加后返回新值。
