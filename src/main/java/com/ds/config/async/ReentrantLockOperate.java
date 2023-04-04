@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +23,7 @@ public class ReentrantLockOperate {
      * ThreadLocal叫做线程变量，意思是ThreadLocal中填充的变量属于当前线程，该变量对其他线程而言是隔离的，也就是说该变量是当前线程独有的变量。
      * ThreadLocal为变量在每个线程中都创建了一个副本，那么每个线程可以访问自己内部的副本变量。
      */
-    static ThreadLocal threadLocal = new ThreadLocal<String>();
+    ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
     /**
      * 非阻塞同步锁（乐观锁）
@@ -69,12 +70,11 @@ public class ReentrantLockOperate {
 
     /**
      * 线程安全类：
-     * 1、通过synchronized实现线程安全：Vector、HashTable、StringBuffer
-     * 2、原子类AtomicLong、AtomicInteger等
-     * 3、ConcurrentHashMap
-     * 4、ThreadPoolExecutor
+     * 通过synchronized实现线程安全：Vector、HashTable、StringBuffer
+     * 线程安全并且读取性能比较好的：copyOnWriteArrayList、concurrentHashMap
      */
     Map<String, AtomicInteger> concurrentHashMap = new ConcurrentHashMap<>();
+    CopyOnWriteArrayList copyOnWriteArrayList = new CopyOnWriteArrayList();
 
 
     @Async("tptExecutor")
