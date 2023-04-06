@@ -361,12 +361,6 @@
                 <profile.active>test</profile.active>
             </properties>
         </profile>
-        <profile>
-            <id>qas</id>
-            <properties>
-                <profile.active>qas</profile.active>
-            </properties>
-        </profile>
     </profiles>
 
     <build>

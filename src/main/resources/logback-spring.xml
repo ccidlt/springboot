@@ -130,17 +130,26 @@
         <logger name="com.ds.dao" level="debug" additivity="false">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ASYNC-FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
         </logger>
     </springProfile>
 
     <!--测试环境-->
     <springProfile name="test">
-        <logger name="com.ds.dao" level="info" additivity="false"/>
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC-FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
     </springProfile>
 
     <!--生产环境-->
     <springProfile name="prd">
-        <logger name="com.ds.dao" level="info" additivity="false"/>
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC-FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
     </springProfile>
 
     <root level="info">

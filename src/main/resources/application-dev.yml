@@ -249,6 +249,7 @@ spring:
 
 
 #logging:
+#  config: classpath:logback-spring.xml
 #  level:
 #    root: INFO
 #    com.ds: INFO
