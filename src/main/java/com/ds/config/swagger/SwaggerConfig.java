@@ -4,6 +4,7 @@ package com.ds.config.swagger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMethod;
 import springfox.documentation.builders.*;
 import springfox.documentation.schema.ModelRef;
@@ -25,6 +26,8 @@ import java.util.List;
  */
 @Configuration
 @EnableSwagger2
+@Profile({"dev","test"})
+//@ConditionalOnProperty(name = "swagger.enable", havingValue = "true")
 public class SwaggerConfig {
 
     @Autowired
