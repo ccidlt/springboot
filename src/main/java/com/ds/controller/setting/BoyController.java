@@ -80,9 +80,9 @@ public class BoyController {
     @RequestMapping(value = "/getBoysById", method = RequestMethod.GET)
     @ApiOperation("获取Boy表数据(通过id)")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query", dataType = "Integer")
+            @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query", dataType = "int", example = "1")
     })
-    public List<Boy> getBoysByParam(@RequestParam("id") Integer id) {
+    public List<Boy> getBoysByParam(@RequestParam(value = "id",required = true) Integer id) {
         Boy boy = new Boy();
         boy.setId(id);
         return boyService.queryBoy(boy);
@@ -124,7 +124,7 @@ public class BoyController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ApiOperation("文件上传")
-    @ApiImplicitParam(name = "file", value = "文件", required = true, paramType = "query", dataType = "file")
+    @ApiImplicitParam(name = "file", value = "文件", required = true, paramType = "form", dataType = "__file")
     public Result upload(MultipartFile file, HttpServletRequest request) {
         /*ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();

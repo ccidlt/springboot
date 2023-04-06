@@ -54,7 +54,7 @@ public class ${table.controllerName} {
     }
 
     @ApiOperation(value = "查询（主键）", notes = "查询（主键）")
-    @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "Integer")
+    @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "int")
     @RequestMapping(value = "/queryById/{id}", method = RequestMethod.GET)
     public Result<${entity}> queryById(@PathVariable Integer id){
         return Result.success(${table.entityPath}Service.getById(id));
@@ -74,7 +74,7 @@ public class ${table.controllerName} {
     }
 
     @ApiOperation(value = "删除（主键）", notes = "删除（主键）")
-    @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "Integer")
+    @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "int")
     @RequestMapping(value = "/deleteById/{id}", method = RequestMethod.GET)
     public Result<Boolean> delete(@PathVariable Integer id){
         return Result.success(${table.entityPath}Service.removeById(id));
