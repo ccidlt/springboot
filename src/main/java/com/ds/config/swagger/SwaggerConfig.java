@@ -65,7 +65,8 @@ public class SwaggerConfig {
                 .globalResponseMessage(RequestMethod.GET, responseMessageList)
                 .globalResponseMessage(RequestMethod.POST, responseMessageList)
                 .globalResponseMessage(RequestMethod.PUT, responseMessageList)
-                .globalResponseMessage(RequestMethod.DELETE, responseMessageList);
+                .globalResponseMessage(RequestMethod.DELETE, responseMessageList)
+                .enable(swaggerProperties.getEnable());
     }
 
     private ApiInfo apiInfoDefault() {
@@ -110,7 +111,8 @@ public class SwaggerConfig {
                 .globalResponseMessage(RequestMethod.GET, responseMessageList)
                 .globalResponseMessage(RequestMethod.POST, responseMessageList)
                 .globalResponseMessage(RequestMethod.PUT, responseMessageList)
-                .globalResponseMessage(RequestMethod.DELETE, responseMessageList);
+                .globalResponseMessage(RequestMethod.DELETE, responseMessageList)
+                .enable(swaggerProperties.getEnable());
     }
 
     @Bean
@@ -145,6 +147,7 @@ public class SwaggerConfig {
                 .globalResponseMessage(RequestMethod.GET, responseMessageList)
                 .globalResponseMessage(RequestMethod.POST, responseMessageList)
                 .globalResponseMessage(RequestMethod.PUT, responseMessageList)
-                .globalResponseMessage(RequestMethod.DELETE, responseMessageList);
+                .globalResponseMessage(RequestMethod.DELETE, responseMessageList)
+                .enable(swaggerProperties.getEnable());
     }
 }
