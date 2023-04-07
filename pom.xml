@@ -290,7 +290,7 @@
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
-        <!-- http://localhost:8080/actuator 检测系统的健康情况、当前的Beans、系统的缓存等 -->
+        <!-- http://localhost:8080/actuator 检测系统的健康情况、当前的Beans、@RequestMapping路径、系统的缓存等 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
