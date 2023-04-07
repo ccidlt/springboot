@@ -4,6 +4,7 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ds.config.snowflake.Snowflake;
 import com.ds.config.snowflake.SnowflakeProperties;
+import com.ds.config.swagger.SwaggerProperties;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,7 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequestMapping("/")
 @Api(tags = "接口")
 @Slf4j
-//@RefreshScope
+@RefreshScope
 public class BoyController {
 
     private Logger logger = LoggerFactory.getLogger(BoyController.class);
@@ -474,9 +476,13 @@ public class BoyController {
 //    private String machineId;
     @Resource
     private SnowflakeProperties snowflakeProperties;
+    @Resource
+    private SwaggerProperties swaggerProperties;
     @RequestMapping("/getSnowflake")
     public long getSnowflake() {
-        log.info("dataCenterId:{},machineId:{}",snowflakeProperties.getDataCenterId(),snowflakeProperties.getMachineId());
+        log.info("dataCenterId:{},machineId:{},swagger.enable:{}",
+                snowflakeProperties.getDataCenterId(),snowflakeProperties.getMachineId(),
+                swaggerProperties.getEnable());
         return snowflake.nextId();
     }
 
