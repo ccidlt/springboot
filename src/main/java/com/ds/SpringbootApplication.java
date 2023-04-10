@@ -12,7 +12,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -29,7 +28,6 @@ import java.net.UnknownHostException;
 @Slf4j
 @EnableFeignClients(basePackages = {"com.ds.service"})
 @ServletComponentScan//检索@WebFilter、@WebListener
-@EnableSwagger2
 @EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)
 public class SpringbootApplication {
 
