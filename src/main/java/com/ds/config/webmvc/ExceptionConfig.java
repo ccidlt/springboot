@@ -48,7 +48,7 @@ public class ExceptionConfig {
             BindException me = (BindException) e;
             return Result.build(HttpStatus.BAD_REQUEST.value(), me.getBindingResult().getFieldError().getDefaultMessage());
         } else {
-            return Result.build(HttpStatus.SERVICE_UNAVAILABLE.value(), this.getClass().getSimpleName() + ": " + e.getMessage());
+            return Result.build(HttpStatus.SERVICE_UNAVAILABLE.value(), e.getMessage());
         }
     }
 
