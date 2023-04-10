@@ -2,6 +2,7 @@ package com.ds.controller.setting;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ds.config.repeatsubmit.RepeatSubmitAnno;
 import com.ds.config.snowflake.Snowflake;
 import com.ds.config.snowflake.SnowflakeProperties;
 import com.ds.config.swagger.SwaggerProperties;
@@ -55,6 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Api(tags = "接口")
 @Slf4j
 @RefreshScope
+@RepeatSubmitAnno(seconds = 5)
 public class BoyController {
 
     private Logger logger = LoggerFactory.getLogger(BoyController.class);
@@ -478,6 +480,7 @@ public class BoyController {
     private SnowflakeProperties snowflakeProperties;
     @Resource
     private SwaggerProperties swaggerProperties;
+    @RepeatSubmitAnno
     @RequestMapping("/getSnowflake")
     public long getSnowflake() {
         log.info("dataCenterId:{},machineId:{},swagger.enable:{}",
