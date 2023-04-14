@@ -34,6 +34,13 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         return new PermissionInterceptor();
     }
 
+//    @Autowired
+//    private StringRedisTemplate stringRedisTemplate;
+//    @Bean
+//    public RepeatSubmitInterceptor getRepeatSubmitInterceptor() {
+//        return new RepeatSubmitInterceptor(stringRedisTemplate);
+//    }
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/login.html");
@@ -42,30 +49,28 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        String[] excludePathPatterns = {
+                "/toLogin",
+                "/login",
+                "/error",
+                "/**/*.html",
+                "/**/*.js",
+                "/**/*.css",
+                "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**",
+                "/shiro/login", "/shiroToken/login"
+        };
         registry.addInterceptor(getLoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/toLogin",
-                        "/login",
-                        "/error",
-                        "/**/*.html",
-                        "/**/*.js",
-                        "/**/*.css",
-                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**",
-                        "/shiro/login", "/shiroToken/login"
-                ).order(1);
+                .excludePathPatterns(excludePathPatterns)
+                .order(1);
         registry.addInterceptor(getPermissionInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/toLogin",
-                        "/login",
-                        "/error",
-                        "/**/*.html",
-                        "/**/*.js",
-                        "/**/*.css",
-                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**",
-                        "/shiro/login", "/shiroToken/login"
-                ).order(2);
+                .excludePathPatterns(excludePathPatterns)
+                .order(2);
+//        registry.addInterceptor(getRepeatSubmitInterceptor())
+//                .addPathPatterns("/**")
+//                .excludePathPatterns(excludePathPatterns)
+//                .order(3);
     }
 
     /**
