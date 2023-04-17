@@ -1,10 +1,13 @@
 package com.ds;
 
+import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
@@ -38,8 +41,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -360,14 +365,14 @@ public class SpringbootApplicationTests {
     }
 
     @Test
-    public void hutool(){
+    public void hutool() throws Throwable{
         //简单的uuid、雪花算法id、md5加密、随机数
-        System.out.println(IdUtil.fastSimpleUUID());
-        System.out.println(IdUtil.randomUUID());
-        Snowflake snowflake = IdUtil.getSnowflake(1, 1);
+        System.out.println("简化的UUID，去掉了横线:"+IdUtil.simpleUUID());
+        System.out.println("获取随机UUID:"+IdUtil.randomUUID());
+        Snowflake snowflake = IdUtil.getSnowflake(1, 1);//参数1为终端ID、参数2为数据中心ID
         long id = snowflake.nextId();
         System.out.println(id);
-        long snowflakeNextId = IdUtil.getSnowflakeNextId();
+        long snowflakeNextId = IdUtil.getSnowflakeNextId();//简单使用
         System.out.println(snowflakeNextId);
         System.out.println(SecureUtil.md5("123456"));
         System.out.println(RandomUtil.randomNumbers(5));
@@ -389,27 +394,11 @@ public class SpringbootApplicationTests {
         System.out.println(StrUtil.equals("123","abc"));
         System.out.println(StrUtil.contains("abc","ab"));
         System.out.println(StrUtil.nullToEmpty(null));
+        System.out.println(StrUtil.nullToDefault(null,""));
         System.out.println(StrUtil.subSuf("abc",1));//截取
         System.out.println(StrUtil.sub("abc",0,"abc".length()));//截取
         System.out.println(StrUtil.format("{}+{}=2","1","1"));//格式化
         System.out.println(StrUtil.replace("{}+{}=2","{}","1"));//替换
-        //对象工具
-        System.out.println(ObjectUtil.isNotNull(new ArrayList<String>()));
-        System.out.println(ObjectUtil.isNotEmpty(new HashMap<String,Object>()));
-        System.out.println(ObjectUtil.defaultIfNull("abc",""));
-        //对象转换工具 BeanUtil
-        Boy boy = BeanUtil.copyProperties(new Boy(), Boy.class);
-        System.out.println(boy);
-        Map<String, Object> boyMap = BeanUtil.beanToMap(boy);
-        System.out.println(boyMap);
-        Map<String, Object> boyMap2 = BeanUtil.beanToMap(boyMap);
-        System.out.println(boyMap2);
-        List<Boy> boys = BeanUtil.copyToList(new ArrayList<Boy>(), Boy.class);
-        System.out.println(boys);
-        //反射
-        Method[] methods = ReflectUtil.getMethods(BoyController.class);
-        Method method = ReflectUtil.getMethod(BoyController.class, "getBoys");
-        System.out.println(method.getName());
         //数字工具
         System.out.println(NumberUtil.isNumber("1.2"));
         System.out.println(NumberUtil.add(1, 1.2, 1.3));
@@ -429,7 +418,35 @@ public class SpringbootApplicationTests {
         System.out.println(DateUtil.dayOfMonth(DateUtil.date()));
         Date date1 = DateUtil.parse("2019-09-20 17:35:35");
         Date date2 = DateUtil.parse("2019-09-17 14:35:35");
-        System.out.println(DateUtil.between(date1, date2, DateUnit.DAY));//3
+        System.out.println(DateUtil.between(date1, date2, DateUnit.DAY));//3  计算日期时间之间的偏移量
+        Date newDate = DateUtil.offset(date1, DateField.DAY_OF_MONTH, 2); //计算日期时间之间的偏移量
+        Date beginOfDay = DateUtil.beginOfDay(date1);//获取某天的开始时间
+        Date endOfDay = DateUtil.endOfDay(date1);//获取某天的结束时间
+        Date beginOfMonth = DateUtil.beginOfMonth(date1);//获取某月的开始时间
+        Date endOfMonth = DateUtil.endOfMonth(date1);//获取某月的结束时间
+        //对象工具
+        System.out.println(ObjectUtil.isNotNull(new ArrayList<String>()));
+        System.out.println(ObjectUtil.isNotEmpty(new HashMap<String,Object>()));
+        System.out.println(ObjectUtil.defaultIfNull(null,""));
+        //对象转换工具 BeanUtil
+        Boy boy = BeanUtil.copyProperties(new Boy(), Boy.class);
+        System.out.println(boy);
+        Map<String, Object> boyMap = BeanUtil.beanToMap(boy);
+        System.out.println(boyMap);
+        Boy boy2 = new Boy();
+        BeanUtil.copyProperties(boy,boy2);
+        System.out.println(boy);
+        List<Boy> boys = BeanUtil.copyToList(new ArrayList<Boy>(), Boy.class);
+        System.out.println(boys);
+        //反射
+        Method[] methods = ReflectUtil.getMethods(BoyController.class);
+        Method method = ReflectUtil.getMethod(BoyController.class, "getBoys");
+        System.out.println(method.getName());
+        //获取定义在src/main/resources文件夹中的配置文件
+        ClassPathResource resource = new ClassPathResource("generator.properties");
+        Properties properties = new Properties();
+        properties.load(resource.getStream());
+        System.out.println("/classPath:"+properties);
         //Http工具
         String get = HttpUtil.get("https://www.baidu.com");
         JSONObject requestJson = new JSONObject();
@@ -437,6 +454,14 @@ public class SpringbootApplicationTests {
         requestJson.put("age", 10);
         String requestParam = requestJson.toJSONString();
         String post = HttpUtil.post("https://www.baidu.com", requestParam, 10 * 1000);
+        //获取指定类、方法、字段、构造器上的注解列表
+        Annotation[] annotationList = AnnotationUtil.getAnnotations(BoyController.class, false);
+        RequestMapping requestMapping = AnnotationUtil.getAnnotation(BoyController.class, RequestMapping.class);//获取指定类型注解
+        Object annotationValue = AnnotationUtil.getAnnotationValue(BoyController.class, RequestMapping.class);//获取指定类型注解的值
+        //MD5加密
+        String str = "123456";
+        String md5Str = SecureUtil.md5(str);
+        System.out.println("secureUtil md5:"+md5Str);
         //ServletUtil
         //Map<String, String> map = ServletUtil.getParamMap(request);
         //文件工具FileUtil
