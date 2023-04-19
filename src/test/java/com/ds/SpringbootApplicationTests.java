@@ -19,10 +19,12 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTHeader;
 import cn.hutool.jwt.JWTUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ds.config.async.ReentrantLockOperate;
 import com.ds.config.webmvc.MyEvent;
 import com.ds.controller.setting.BoyController;
+import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.entity.FatherAndSon;
 import com.ds.entity.Person;
@@ -31,6 +33,27 @@ import com.ds.service.PersonFactory;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +67,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -664,6 +688,176 @@ public class SpringbootApplicationTests {
 //        System.out.println(function.apply("张三"));
         PersonFactory<Person> personFactory = Person::new;
         System.out.println(personFactory.create("李四","13800000000"));
+    }
+
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
+    /**
+     * 创建索引
+     */
+    @Test
+    public void testCreateIndexByIK() throws IOException {
+        CreateIndexRequest request = new CreateIndexRequest("boys");
+        String json = "{\n" +
+                "    \"mappings\":{\n" +
+                "        \"properties\":{\n" +
+                "            \"id\":{\n" +
+                "                \"type\":\"keyword\"\n" +
+                "            },\n" +
+                "            \"name\":{\n" +
+                "                \"type\":\"text\",\n" +
+                "                \"analyzer\":\"ik_max_word\",\n" +
+                "                \"copy_to\":\"all\"\n" +
+                "            },\n" +
+                "            \"all\":{\n" +
+                "                \"type\":\"text\",\n" +
+                "                \"analyzer\":\"ik_max_word\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+        //设置请求中的参数
+        request.source(json, XContentType.JSON);
+        CreateIndexResponse response = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
+        System.out.println(response.isAcknowledged());
+        restHighLevelClient.close();
+    }
+    /**
+     * 删除索引
+     */
+    @Test
+    public void testDeleteIndex() throws IOException {
+        //参数 1: 删除索引对象  参数 2:请求配置对象
+        AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(new DeleteIndexRequest("boys"), RequestOptions.DEFAULT);
+        System.out.println(acknowledgedResponse.isAcknowledged());
+    }
+    @Resource
+    private BoyDao boyDao;
+    /**
+     * 添加/更新文档
+     */
+    @Test
+    public void testCreateDoc() throws IOException {
+        Boy boy = boyDao.selectById(1);
+        IndexRequest request = new IndexRequest("boys");
+        request.id(String.valueOf(boy.getId()));
+        String json = JSON.toJSONString(boy);
+        request.source(json,XContentType.JSON);
+        try {
+            IndexResponse response = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+            System.out.println(response.status());
+        } catch (IOException e) {
+            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+                throw e;
+            }
+            log.error(e.getMessage());
+        } finally {
+            restHighLevelClient.close();
+        }
+    }
+    /**
+     * 批量添加文档
+     */
+    @Test
+    public void testCreateDocAll() throws IOException {
+        List<Boy> boyList = boyDao.selectList(null);
+        BulkRequest bulk = new BulkRequest();
+        for (Boy boy : boyList) {
+            IndexRequest request = new IndexRequest("boys");
+            request.id(String.valueOf(boy.getId()));
+            String json = JSON.toJSONString(boy);
+            request.source(json,XContentType.JSON);
+            bulk.add(request);
+        }
+        try {
+            BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
+            System.out.println(response.status());
+        } catch (IOException e) {
+            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+                throw e;
+            }
+            log.error(e.getMessage());
+        } finally {
+            restHighLevelClient.close();
+        }
+    }
+    /**
+     * 删除文档
+     */
+    @Test
+    public void testDeleteDoc() throws IOException {
+        //参数 1: 删除请求对象 参数 2: 请求配置对象
+        DeleteRequest request = new DeleteRequest("boys");
+        request.id("1");
+        try {
+            DeleteResponse response = restHighLevelClient.delete(request, RequestOptions.DEFAULT);
+            System.out.println(response.status());
+        } catch (IOException e) {
+            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+                throw e;
+            }
+            log.error(e.getMessage());
+        } finally {
+            restHighLevelClient.close();
+        }
+    }
+    /**
+     * 批量删除文档
+     */
+    @Test
+    public void testDeleteDocAll() throws IOException {
+        List<Boy> boyList = boyDao.selectList(null);
+        BulkRequest bulk = new BulkRequest();
+        for (Boy boy : boyList) {
+            DeleteRequest request = new DeleteRequest("boys");
+            request.id(String.valueOf(boy.getId()));
+            bulk.add(request);
+        }
+        try {
+            BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
+            System.out.println(response.status());
+        } catch (IOException e) {
+            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+                throw e;
+            }
+            log.error(e.getMessage());
+        } finally {
+            restHighLevelClient.close();
+        }
+    }
+    /**
+     * 按id查询
+     */
+    @Test
+    public void testGet() throws IOException {
+        GetRequest request = new GetRequest("boys");
+        request.id("1");
+        GetResponse response = restHighLevelClient.get(request, RequestOptions.DEFAULT);
+        String json = response.getSourceAsString();
+        System.out.println(json);
+        System.out.println(JSON.parseObject(json, Boy.class));
+    }
+    /**
+     * 按条件查询
+     */
+    @Test
+    public void testSearch() throws IOException {
+        SearchRequest request = new SearchRequest("boys");
+
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+        builder.query(QueryBuilders.matchAllQuery());
+//        builder.query(QueryBuilders.termQuery("name","郭靖"));
+//        builder.query(QueryBuilders.matchQuery("name","郭"));
+//        builder.query(QueryBuilders.wildcardQuery("all","*郭*"));
+        request.source(builder);
+
+        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+        SearchHits hits = response.getHits();
+        for (SearchHit hit : hits) {
+            String source = hit.getSourceAsString();
+            Boy boy = JSON.parseObject(source, Boy.class);
+            System.out.println(boy);
+        }
     }
 
 }
