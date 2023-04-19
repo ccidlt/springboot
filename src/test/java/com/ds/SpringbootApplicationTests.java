@@ -8,6 +8,7 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
+import cn.hutool.core.lang.ObjectId;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
@@ -390,14 +391,30 @@ public class SpringbootApplicationTests {
 
     @Test
     public void hutool() throws Throwable{
-        //简单的uuid、雪花算法id、md5加密、随机数
-        System.out.println("简化的UUID，去掉了横线:"+IdUtil.simpleUUID());
-        System.out.println("获取随机UUID:"+IdUtil.randomUUID());
+        //UUID
+        //ObjectId（MongoDB）ObjectId是MongoDB数据库的一种唯一ID生成策略，是UUID version1的变种，Hutool针对此封装了cn.hutool.core.lang.ObjectId
+        //Snowflake（Twitter）雪花算法
+        //生成的UUID是带-的字符串，类似于：a5c8a5e8-df2b-4706-bea4-08d0939410e3
+        String uuid = IdUtil.randomUUID();
+        //生成的是不带-的字符串，类似于：b17f24ff026d40949c85a24f4f375d42
+        String simpleUUID = IdUtil.simpleUUID();
+        System.out.println("简化的UUID，去掉了横线:"+simpleUUID);
+        System.out.println("获取随机UUID:"+uuid);
+
+        //生成类似：5b9e306a4df4f8c54a39fb0c
+        String objectId1 = ObjectId.next();
+        //方法2：从Hutool-4.1.14开始提供
+        String objectId2 = IdUtil.objectId();
+        System.out.println(objectId1);
+        System.out.println(objectId2);
+
+        //参数1为终端ID
+        //参数2为数据中心ID
         Snowflake snowflake = IdUtil.getSnowflake(1, 1);//参数1为终端ID、参数2为数据中心ID
         long id = snowflake.nextId();
         System.out.println(id);
-        long snowflakeNextId = IdUtil.getSnowflakeNextId();//简单使用
-        System.out.println(snowflakeNextId);
+
+        //md5加密、随机数
         System.out.println(SecureUtil.md5("123456"));
         System.out.println(RandomUtil.randomNumbers(5));
         //类型转换工具类-Convert
