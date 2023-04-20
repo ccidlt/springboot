@@ -46,12 +46,15 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -736,22 +739,22 @@ public class SpringbootApplicationTests {
         //设置请求中的参数
         request.source(json, XContentType.JSON);
         CreateIndexResponse response = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
-        System.out.println(response.isAcknowledged());
         restHighLevelClient.close();
+        log.info("{}",response.isAcknowledged());
     }
     /**
      * 删除索引
      */
     @Test
     public void testDeleteIndex() throws IOException {
-        //参数 1: 删除索引对象  参数 2:请求配置对象
-        AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(new DeleteIndexRequest("boys"), RequestOptions.DEFAULT);
-        System.out.println(acknowledgedResponse.isAcknowledged());
+        DeleteIndexRequest request = new DeleteIndexRequest("boys");
+        AcknowledgedResponse response = restHighLevelClient.indices().delete(request, RequestOptions.DEFAULT);
+        log.info("{}",response.isAcknowledged());
     }
     @Resource
     private BoyDao boyDao;
     /**
-     * 添加/更新文档
+     * 添加文档
      */
     @Test
     public void testCreateDoc() throws IOException {
@@ -762,7 +765,7 @@ public class SpringbootApplicationTests {
         request.source(json,XContentType.JSON);
         try {
             IndexResponse response = restHighLevelClient.index(request, RequestOptions.DEFAULT);
-            System.out.println(response.status());
+            log.info("{}",response.status().equals(RestStatus.OK));
         } catch (IOException e) {
             if(!StrUtil.contains(e.getMessage(),"200 OK")){
                 throw e;
@@ -788,12 +791,30 @@ public class SpringbootApplicationTests {
         }
         try {
             BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
-            System.out.println(response.status());
+            log.info("{}",response.status().equals(RestStatus.OK));
         } catch (IOException e) {
             if(!StrUtil.contains(e.getMessage(),"200 OK")){
                 throw e;
             }
             log.error(e.getMessage());
+        } finally {
+            restHighLevelClient.close();
+        }
+    }
+    /**
+     * 更新文档
+     */
+    public void testUpdateDoc() throws IOException {
+        Boy boy = boyDao.selectById(1);
+        UpdateRequest request = new UpdateRequest("boys", String.valueOf(boy.getId()));
+        request.doc(JSON.toJSONString(boy), XContentType.JSON);
+        try {
+            UpdateResponse response = restHighLevelClient.update(request, RequestOptions.DEFAULT);
+            log.info("{}",response.status().equals(RestStatus.OK));
+        } catch (IOException e) {
+            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+                throw e;
+            }
         } finally {
             restHighLevelClient.close();
         }
@@ -808,7 +829,7 @@ public class SpringbootApplicationTests {
         request.id("1");
         try {
             DeleteResponse response = restHighLevelClient.delete(request, RequestOptions.DEFAULT);
-            System.out.println(response.status());
+            log.info("{}",response.status().equals(RestStatus.OK));
         } catch (IOException e) {
             if(!StrUtil.contains(e.getMessage(),"200 OK")){
                 throw e;
@@ -832,7 +853,7 @@ public class SpringbootApplicationTests {
         }
         try {
             BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
-            System.out.println(response.status());
+            log.info("{}",response.status().equals(RestStatus.OK));
         } catch (IOException e) {
             if(!StrUtil.contains(e.getMessage(),"200 OK")){
                 throw e;
@@ -850,9 +871,13 @@ public class SpringbootApplicationTests {
         GetRequest request = new GetRequest("boys");
         request.id("1");
         GetResponse response = restHighLevelClient.get(request, RequestOptions.DEFAULT);
-        String json = response.getSourceAsString();
-        System.out.println(json);
-        System.out.println(JSON.parseObject(json, Boy.class));
+        if(response.isExists()){
+            String json = response.getSourceAsString();
+            log.info(json);
+            log.info(JSON.parseObject(json, Boy.class).toString());
+        }else{
+            log.error("没有找到该id的文档");
+        }
     }
     /**
      * 按条件查询
@@ -873,7 +898,7 @@ public class SpringbootApplicationTests {
         for (SearchHit hit : hits) {
             String source = hit.getSourceAsString();
             Boy boy = JSON.parseObject(source, Boy.class);
-            System.out.println(boy);
+            log.info(boy.toString());
         }
     }
 
