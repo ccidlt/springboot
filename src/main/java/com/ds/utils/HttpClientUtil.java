@@ -3,6 +3,7 @@ package com.ds.utils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HttpUtil {
+public class HttpClientUtil {
 
     /**
      * httpclient post
@@ -31,7 +32,7 @@ public class HttpUtil {
         try {
             String body = null;
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost postMethod = new HttpPost(url);
+            HttpPost httpPost = new HttpPost(url);
             List<NameValuePair> nvps = new ArrayList<NameValuePair>();
             if (params != null && params.size() > 0) {
                 for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -39,8 +40,13 @@ public class HttpUtil {
                 }
             }
             HttpEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");
-            postMethod.setEntity(entity);
-            CloseableHttpResponse response = httpClient.execute(postMethod);
+            httpPost.setEntity(entity);
+            //httpClient配置
+            RequestConfig config = RequestConfig.custom()
+                    .setConnectTimeout(60000)		//设置连接超时时间
+                    .setSocketTimeout(60000).build();		//设置响应超时时间
+            httpPost.setConfig(config);
+            CloseableHttpResponse response = httpClient.execute(httpPost);
             HttpEntity httpEntity = response.getEntity();
             if (entity != null) {
                 body = EntityUtils.toString(httpEntity, "UTF-8");
@@ -69,9 +75,14 @@ public class HttpUtil {
             }
             URIBuilder uriBuilder = new URIBuilder(url);
             uriBuilder.setParameters(nvps);
-            HttpGet getMethod = new HttpGet(uriBuilder.build());
+            HttpGet httpGet = new HttpGet(uriBuilder.build());
+            //httpClient配置
+            RequestConfig config = RequestConfig.custom()
+                    .setConnectTimeout(60000)		//设置连接超时时间
+                    .setSocketTimeout(60000).build();		//设置响应超时时间
+            httpGet.setConfig(config);
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            CloseableHttpResponse response = httpClient.execute(getMethod);
+            CloseableHttpResponse response = httpClient.execute(httpGet);
             HttpEntity httpEntity = response.getEntity();
             if (httpEntity != null) {
                 body = EntityUtils.toString(httpEntity, "UTF-8");
@@ -91,14 +102,19 @@ public class HttpUtil {
      */
     public String jsonPost(String url, String json) {
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(url);
+        HttpPost httpPost = new HttpPost(url);
         String result = null;
         try {
             StringEntity s = new StringEntity(json);
             s.setContentEncoding("UTF-8");
             s.setContentType("application/json");//发送json数据需要设置contentType
-            post.setEntity(s);
-            HttpResponse res = httpclient.execute(post);
+            httpPost.setEntity(s);
+            //httpClient配置
+            RequestConfig config = RequestConfig.custom()
+                    .setConnectTimeout(60000)		//设置连接超时时间
+                    .setSocketTimeout(60000).build();		//设置响应超时时间
+            httpPost.setConfig(config);
+            HttpResponse res = httpclient.execute(httpPost);
             result = EntityUtils.toString(res.getEntity(), "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
