@@ -137,6 +137,12 @@
             <appender-ref ref="ASYNC-FILE"/>
             <appender-ref ref="ERROR_FILE"/>
         </logger>
+        <logger name="com.ds.controller" level="info" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC-FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+            <appender-ref ref="LOGSTASH"/>
+        </logger>
     </springProfile>
 
     <!--测试环境-->
@@ -145,7 +151,6 @@
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ASYNC-FILE"/>
             <appender-ref ref="ERROR_FILE"/>
-            <appender-ref ref="LOGSTASH"/>
         </root>
     </springProfile>
 
@@ -155,7 +160,6 @@
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ASYNC-FILE"/>
             <appender-ref ref="ERROR_FILE"/>
-            <appender-ref ref="LOGSTASH"/>
         </root>
     </springProfile>
 
@@ -163,7 +167,6 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="ASYNC-FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="LOGSTASH"/>
     </root>
 
 

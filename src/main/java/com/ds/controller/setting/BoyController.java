@@ -1,6 +1,8 @@
 package com.ds.controller.setting;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ds.config.repeatsubmit.RepeatSubmitAnno;
 import com.ds.config.snowflake.Snowflake;
@@ -491,8 +493,9 @@ public class BoyController {
 
     @RequestMapping("/logstash")
     public String logstash() throws Exception {
-        logger.info("logback 访问hello");
-        logger.error("logback 访问hello");
+//        logger.info("logback 访问hello");
+//        logger.error("logback 访问hello");
+        logger.info(JSON.toJSONString(new Boy(99,"张三丰"), SerializerFeature.WriteMapNullValue));
         return "logback 成功";
     }
 
