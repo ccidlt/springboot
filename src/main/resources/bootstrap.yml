@@ -42,3 +42,5 @@ spring:
             refresh: true
           - dataId: quartz.yml
             refresh: true
+          - dataId: shardingjdbc.yml
+            refresh: true

@@ -1,0 +1,45 @@
+spring:
+  # 一个实体类对应多张表，覆盖
+  main:
+    allow-bean-definition-overriding: true
+  shardingsphere:
+    datasource:
+      # 配置数据源
+      names: db1,db2
+      # master-db1数据库连接信息
+      db1:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://127.0.0.1:3306/db1?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&rewriteBatchedStatements=true
+        username: root
+        password: 123456
+      # slave-db2数据库连接信息
+      db2:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://127.0.0.1:3306/db2?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&rewriteBatchedStatements=true
+        username: root
+        password: 123456
+    sharding:
+      # 未配置分片规则的表将通过默认数据源定位-适用于单库单表，该表无需配置分片规则
+      default-data-source-name: db1
+      tables:
+        t_order:
+          actual-data-nodes: db$->{1..2}.t_order_$->{1..2}
+          # 分库策略
+          database-strategy:
+            standard:
+              sharding-column: user_id
+              algorithm-expression: db$->{user_id % 2 + 1}
+          # 分表策略
+          table-strategy:
+            standard:
+              sharding-column: order_id
+              algorithm-expression: t_order_$->{order_id % 2 + 1}
+#          key-generator:
+#            column: order_id
+#            type: SNOWFLAKE
+    # 显示sql
+    props:
+      sql:
+        show: true

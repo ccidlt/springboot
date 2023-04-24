@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ds.dao.OrderDao">
+ 
+    <resultMap type="com.ds.entity.OrderVO" id="OrderVOMap">
+                    <result property="orderId" column="order_id" jdbcType="INTEGER"/>
+                    <result property="userId" column="user_id" jdbcType="INTEGER"/>
+                    <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+            </resultMap>
+    
+ 
+    <!--按条件查询-->
+    <select id="queryByParam" parameterType="com.ds.entity.OrderDTO" resultMap="OrderVOMap">
+        SELECT
+            order_id, user_id, user_name
+        FROM t_order
+        <where>
+                            <if test="orderId != null">
+                    AND order_id = #{orderId}
+                </if>
+                            <if test="userId != null">
+                    AND user_id = #{userId}
+                </if>
+                            <if test="userName != null and userName != ''">
+                    AND user_name = #{userName}
+                </if>
+                    </where>
+    </select>
+    
+ 
+    <!--分页查询-->
+    <select id="queryByPage" parameterType="com.ds.entity.OrderDTO" resultMap="OrderVOMap">
+        SELECT
+            order_id, user_id, user_name
+        FROM t_order
+        <where>
+                            <if test="param.orderId != null">
+                    AND order_id = #{param.orderId}
+                </if>
+                            <if test="param.userId != null">
+                    AND user_id = #{param.userId}
+                </if>
+                            <if test="param.userName != null and param.userName != ''">
+                    AND user_name = #{param.userName}
+                </if>
+                    </where>
+    </select>
+    
+    
+    <!--根据ID查详情-->
+    <select id="queryById" parameterType="long" resultMap="OrderVOMap">
+        SELECT
+          order_id, user_id, user_name        
+        FROM t_order
+        WHERE order_id = #{orderId} LIMIT 1
+    </select>
+ 
+ 
+    <!--新增所有列-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="order_id">
+        INSERT INTO t_order(order_id, user_id, user_name)
+        VALUES (#{orderId}, #{userId}, #{userName})
+    </insert>
+    
+ 
+    <!--通过主键修改数据-->
+    <update id="update">
+        UPDATE t_order
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+        </set>
+        WHERE order_id = #{orderId}
+    </update>
+ 
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        DELETE FROM t_order WHERE order_id = #{orderId}
+    </delete>
+ 
+</mapper>
