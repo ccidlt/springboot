@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
- * @Description:
+ * @Description: mybatisPlus动态数据源增加sharding-jdbc
  * @Author lt
  * @Date 2023/4/23 16:23
  */
