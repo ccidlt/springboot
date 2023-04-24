@@ -25,6 +25,11 @@ import java.util.List;
 public class MyWebMvcConfig implements WebMvcConfigurer {
 
     @Bean
+    public LogInterceptor logInterceptor() {
+        return new LogInterceptor();
+    }
+
+    @Bean
     public LoginInterceptor getLoginInterceptor() {
         return new LoginInterceptor();
     }
@@ -59,6 +64,9 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html/**",
                 "/shiro/login", "/shiroToken/login"
         };
+        registry.addInterceptor(logInterceptor())
+                .addPathPatterns("/**")
+                .order(0);
         registry.addInterceptor(getLoginInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePathPatterns)

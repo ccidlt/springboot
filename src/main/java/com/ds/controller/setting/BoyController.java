@@ -489,4 +489,11 @@ public class BoyController {
         return snowflake.nextId();
     }
 
+    @RequestMapping("/logstash")
+    public String logstash() throws Exception {
+        logger.info("logback 访问hello");
+        logger.error("logback 访问hello");
+        return "logback 成功";
+    }
+
 }
