@@ -2,6 +2,7 @@ package com.ds;
 
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateField;
@@ -73,6 +74,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -80,6 +82,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -559,6 +562,92 @@ public class SpringbootApplicationTests {
         System.out.println(jwt.getPayload("expire_time"));
         boolean verify = JWTUtil.verify(rightToken, "1234".getBytes());
         System.out.println(verify);
+
+        //练习
+        //IdUtil
+        String randomUUID = IdUtil.randomUUID();
+        String objectId = IdUtil.objectId();
+        Snowflake snowflakeObject = IdUtil.getSnowflake(0, 0);
+        long snowflakeNextId = snowflakeObject.nextId();
+        //ObjectUtil
+        boolean notNull = ObjectUtil.isNull(null);
+        boolean notEmpty = ObjectUtil.isNotEmpty(null);
+        String defaultIfNull = ObjectUtil.defaultIfNull(null, "");
+        boolean equal = ObjectUtil.equal("a", "b");
+        boolean contains = ObjectUtil.contains("a", "b");
+        //BeanUtil
+        List<String> copyToList = BeanUtil.copyToList(new ArrayList<String>(), String.class);
+        Boy boy11 = BeanUtil.copyProperties(new Boy(), Boy.class);
+        Boy boy12 = new Boy();
+        BeanUtil.copyProperties(new Boy(),boy12);
+        Map<String, Object> beanToMap = BeanUtil.beanToMap(new Boy());
+        Boy boy13 = BeanUtil.mapToBean(beanToMap, Boy.class, false, new CopyOptions());
+        //ReflectUtil
+        Boy boy21 = new Boy();
+        Field[] fields = ReflectUtil.getFields(boy21.getClass());
+        for (Field field : fields) {
+            // 获取属性字段类型
+            String canonicalName = field.getType().getCanonicalName();//java.lang.String
+            // 获取字段值
+            Object fieldValue = ReflectUtil.getFieldValue(boy21, field);
+        }
+        Method[] methodArr = ReflectUtil.getMethods(boy21.getClass());
+        Method method_getId = ReflectUtil.getMethod(boy21.getClass(), "getId");
+        Object invoke = ReflectUtil.invoke(boy21, method_getId);
+        //StrUtil
+        boolean notEmpty21 = StrUtil.isNotEmpty(null);
+        String nullToEmpty22 = StrUtil.nullToEmpty(null);
+        boolean equals23 = StrUtil.equals("a", "b");
+        boolean equalsAny24 = StrUtil.equalsAny("a", "b", "c");
+        boolean contains25 = StrUtil.contains("ab", "a");
+        boolean contains26 = StrUtil.containsAny("ab", "a", "b");
+        boolean startWith27 = StrUtil.startWith("ab", "a");
+        boolean endWith28 = StrUtil.endWith("ab", "b");
+        String sub29 = StrUtil.sub("ab", 0, "ab".length()-1);
+        String subSuf30 = StrUtil.subSuf("ab", 0);
+        String format = StrUtil.format("{}{}", "a", "b");
+        String replace = StrUtil.replace("abc", "c", "");
+        //NumberUtil
+        boolean isNumber31 = NumberUtil.isNumber("1");
+        double add32 = NumberUtil.add(1, 2, 3).doubleValue();
+        double sub33 = NumberUtil.sub(3, 2, 1).doubleValue();
+        double mul34 = NumberUtil.mul(1, 2);
+        double div35 = NumberUtil.div(1, 2, 2);
+        String roundStr36 = NumberUtil.roundStr(div35, 2);
+        String decimalFormat37 = NumberUtil.decimalFormat(",###", 299792458);//299,792,458
+        //DateUtil
+        Date date = DateUtil.date();
+        int year = DateUtil.year(date);
+        int month = DateUtil.month(date)+1;
+        int day = DateUtil.dayOfMonth(date);
+        String format1 = DateUtil.format(date, "yyyy-MM-dd");
+        Date parse = DateUtil.parse(format1, "yyyy-MM-dd");
+        Date offset = DateUtil.offset(date, DateField.DAY_OF_MONTH, 2);
+        long between = DateUtil.between(date, offset, DateUnit.DAY);
+        Date beginOfMonth1 = DateUtil.beginOfMonth(date);
+        Date endOfMonth1 = DateUtil.endOfMonth(date);
+        //FileUtil
+        //TreeUtil
+        //转换
+        String[] stringArr = new String[]{"a", "b", "c"};
+        int[] intArr = Arrays.stream(stringArr).mapToInt(Integer::valueOf).toArray();
+        Integer[] integerArr = Arrays.stream(intArr).boxed().toArray(Integer[]::new);
+        int[] intArr2 = Arrays.stream(integerArr).mapToInt(Integer::intValue).toArray();
+        String[] stringArr2 = Arrays.stream(integerArr).map(String::valueOf).toArray(String[]::new);
+        List<String> stringList = Arrays.stream(stringArr2).collect(Collectors.toList());
+        String[] stringArr3 = stringList.stream().toArray(String[]::new);
+        //交集、差集、并集
+        List<String> copyOnWriteArrayList1 = new CopyOnWriteArrayList<>();
+        copyOnWriteArrayList1.add("a");
+        copyOnWriteArrayList1.add("b");
+        copyOnWriteArrayList1.add("c");
+        List<String> copyOnWriteArrayList2 = new CopyOnWriteArrayList<>();
+        copyOnWriteArrayList2.add("a");
+        copyOnWriteArrayList2.add("b");
+        List<String> copyOnWriteArrayList3 = copyOnWriteArrayList1.stream().filter(copyOnWriteArrayList2::contains).collect(Collectors.toList());
+        List<String> copyOnWriteArrayList4 = copyOnWriteArrayList1.stream().filter(c->!copyOnWriteArrayList2.contains(c)).collect(Collectors.toList());
+        List<String> copyOnWriteArrayList5 = BeanUtil.copyToList(copyOnWriteArrayList3, String.class);
+        copyOnWriteArrayList5.addAll(copyOnWriteArrayList4);
     }
 
     @Resource

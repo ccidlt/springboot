@@ -1,5 +1,8 @@
 package com.ds.utils;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
@@ -68,6 +71,39 @@ public class BeanUtil extends BeanUtils {
         }
         return list;
     }
+
+    /**
+     * String类型 CanonicalName
+     */
+    private static final String STRING_TYPE_NAME = "java.lang.String";
+
+    /**
+     * 去除实体中属性值空格及换行
+     * @param object 实体属性
+     */
+    public static void trimData(Object object) {
+        // 获取实体中所有属性字段
+        Field[] fields = ReflectUtil.getFields(object.getClass());
+        for (Field field : fields) {
+            // 获取属性字段类型
+            String canonicalName = field.getType().getCanonicalName();
+            // 如果字段是String类型,则去除此字段数据的空格
+            if (STRING_TYPE_NAME.equals(canonicalName)) {
+                // 获取字段值
+                Object fieldValue = ReflectUtil.getFieldValue(object, field);
+                if (ObjectUtil.isNotEmpty(fieldValue)){
+                    String fieldValueStr = String.valueOf(fieldValue);
+                    if (StrUtil.isNotBlank(fieldValueStr)) {
+                        // 去掉换行
+                        String fieldValueStrNew = fieldValueStr.replaceAll("\r|\n", "");
+                        // 将去除前中后的空格后的数据 替换 原数据
+                        ReflectUtil.setFieldValue(object, field, fieldValueStrNew.replaceAll(" ", ""));
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @FunctionalInterface

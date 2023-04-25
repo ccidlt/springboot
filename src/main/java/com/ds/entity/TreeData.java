@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class TreeData<T> implements Serializable {
+    private static final long serialVersionUID = -7896496388368740077L;
     private Integer id;
     @TableField(exist = false)
     private String name;
