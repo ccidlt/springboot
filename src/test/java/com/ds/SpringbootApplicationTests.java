@@ -490,7 +490,7 @@ public class SpringbootApplicationTests {
         Method method = ReflectUtil.getMethod(BoyController.class, "getBoys");
         System.out.println(method.getName());
         //获取定义在src/main/resources文件夹中的配置文件
-        ClassPathResource resource = new ClassPathResource("generator.properties");
+        ClassPathResource resource = new ClassPathResource("application.properties");
         Properties properties = new Properties();
         properties.load(resource.getStream());
         System.out.println("/classPath:"+properties);
@@ -629,7 +629,7 @@ public class SpringbootApplicationTests {
         //FileUtil
         //TreeUtil
         //转换
-        String[] stringArr = new String[]{"a", "b", "c"};
+        String[] stringArr = new String[]{"1", "2", "3"};
         int[] intArr = Arrays.stream(stringArr).mapToInt(Integer::valueOf).toArray();
         Integer[] integerArr = Arrays.stream(intArr).boxed().toArray(Integer[]::new);
         int[] intArr2 = Arrays.stream(integerArr).mapToInt(Integer::intValue).toArray();
@@ -648,6 +648,35 @@ public class SpringbootApplicationTests {
         List<String> copyOnWriteArrayList4 = copyOnWriteArrayList1.stream().filter(c->!copyOnWriteArrayList2.contains(c)).collect(Collectors.toList());
         List<String> copyOnWriteArrayList5 = BeanUtil.copyToList(copyOnWriteArrayList3, String.class);
         copyOnWriteArrayList5.addAll(copyOnWriteArrayList4);
+        Boy boy31 = new Boy(1, "zhangsan");
+        Boy boy32 = new Boy(2, "lisi");
+        Boy boy33 = new Boy(3, "wangwu");
+        List<Boy> copyOnWriteArrayList6 = new CopyOnWriteArrayList<>();
+        copyOnWriteArrayList6.add(boy31);
+        copyOnWriteArrayList6.add(boy32);
+        copyOnWriteArrayList6.add(boy33);
+        copyOnWriteArrayList6.add(boy33);
+        log.info("{}",copyOnWriteArrayList6);
+        List<Boy> copyOnWriteArrayList7 = new CopyOnWriteArrayList<>();
+        copyOnWriteArrayList7.add(boy31);
+        copyOnWriteArrayList7.add(boy32);
+        log.info("{}",copyOnWriteArrayList6.stream().distinct().collect(Collectors.toList()));
+        List<Boy> copyOnWriteArrayList8 = copyOnWriteArrayList6.stream().distinct().collect(Collectors.toList());
+        List<Boy> copyOnWriteArrayList9 = copyOnWriteArrayList8.stream().filter(copyOnWriteArrayList7::contains).collect(Collectors.toList());
+        log.info("{}",copyOnWriteArrayList9);
+        List<Boy> copyOnWriteArrayList10 = copyOnWriteArrayList8.stream().filter(c->!copyOnWriteArrayList7.contains(c)).collect(Collectors.toList());
+        log.info("{}",copyOnWriteArrayList10);
+        List<Boy> copyOnWriteArrayList11 = BeanUtil.copyToList(copyOnWriteArrayList9, Boy.class);
+        copyOnWriteArrayList11.addAll(copyOnWriteArrayList10);
+        Map<String, Boy> linkedHashMap = copyOnWriteArrayList11.stream().collect(Collectors.toMap(c -> c.getId() + "-" + c.getName(), Function.identity(), (v1, v2) -> v1, LinkedHashMap::new));
+        List<Boy> arrayList = new ArrayList<>(linkedHashMap.values());
+        Map<String, Boy> boyGroupMap = copyOnWriteArrayList11.stream()
+                .collect(Collectors.groupingBy(c->c.getId() + "-" + c.getName(), HashMap::new, Collectors.collectingAndThen(Collectors.toList(), c -> c.get(0))));
+        arrayList = new ArrayList<>(boyGroupMap.values());
+        arrayList = copyOnWriteArrayList11.stream()
+                .collect(Collectors.collectingAndThen(Collectors.toCollection(() ->
+                                new TreeSet<>(Comparator.comparing(c -> c.getId() + "-" + c.getName()))),
+                        ArrayList::new));
     }
 
     @Resource
