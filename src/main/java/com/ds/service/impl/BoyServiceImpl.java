@@ -136,7 +136,7 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         PageInfo<Boy> boyPageInfo = new PageInfo<>(boys);
         return boyPageInfo.getList();*/
         Page<Boy> boyPage = new Page<>(pagenum, pagesize);
-        boyDao.selectPage(boyPage, null);
+        boyDao.selectPage(boyPage, new QueryWrapper<>());
         return boyPage;
     }
 
