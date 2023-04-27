@@ -1,10 +1,19 @@
 package com.ds.config.redis;
 
+import com.ds.SpringbootApplication;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -34,8 +43,27 @@ public class NumberGenServiceImpl implements NumberGenService {
 
     private String getNumber(String code, String month) {
         code += month;
-        Long number = stringRedisTemplate.opsForValue().increment("" + ":" + code);
+        Long number = stringRedisTemplate.opsForValue().increment("abc" + ":" + code);
         return code + StringUtils.leftPad(number.toString(), LENGTH, '0');
+    }
+
+
+    @Autowired
+    public NumberGenServiceImpl(RedisTemplate redisTemplate) {
+        RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
+        redisConnection.subscribe(new MessageListener() {
+            @Override
+            public void onMessage(Message message, byte[] bytes) {
+                // 收到消息的处理逻辑
+                System.out.println("Receive message : " + message);
+            }
+        }, "redisMessage".getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static void main(String[] args) {
+        ConfigurableApplicationContext context = SpringApplication.run(SpringbootApplication.class, args);
+        RedisTemplate redisTemplate = (RedisTemplate)context.getBean("redisTemplate");
+        redisTemplate.convertAndSend("redisMessage", "hello!");
     }
 
 }
