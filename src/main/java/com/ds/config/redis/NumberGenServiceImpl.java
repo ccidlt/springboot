@@ -47,7 +47,7 @@ public class NumberGenServiceImpl implements NumberGenService {
         return code + StringUtils.leftPad(number.toString(), LENGTH, '0');
     }
 
-
+    private static String REDIS_MESSAGE = "redisMessage";
     @Autowired
     public NumberGenServiceImpl(RedisTemplate redisTemplate) {
         RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
@@ -57,13 +57,13 @@ public class NumberGenServiceImpl implements NumberGenService {
                 // 收到消息的处理逻辑
                 System.out.println("Receive message : " + message);
             }
-        }, "redisMessage".getBytes(StandardCharsets.UTF_8));
+        }, REDIS_MESSAGE.getBytes(StandardCharsets.UTF_8));
     }
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SpringbootApplication.class, args);
         RedisTemplate redisTemplate = (RedisTemplate)context.getBean("redisTemplate");
-        redisTemplate.convertAndSend("redisMessage", "hello!");
+        redisTemplate.convertAndSend(REDIS_MESSAGE, "hello!");
     }
 
 }
