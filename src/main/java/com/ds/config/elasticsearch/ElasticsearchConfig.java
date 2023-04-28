@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description: TODO ES搜索引擎配置类
+ * @Description: ES搜索引擎配置类
  * @Author lt
  * @Date 2023/4/18 16:40
  */

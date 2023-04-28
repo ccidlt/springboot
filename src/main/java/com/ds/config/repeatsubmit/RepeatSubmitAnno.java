@@ -3,7 +3,7 @@ package com.ds.config.repeatsubmit;
 import java.lang.annotation.*;
 
 /**
- * @Description: TODO 重复提交注解
+ * @Description: 重复提交注解
  * @Author lt
  * @Date 2023/4/10 11:51
  */

@@ -401,7 +401,7 @@ public class BoyController {
      * 每个子线程事务 在外部事务完成后 提交或者回滚
      *
      * @param tasks           实际任务接口列表
-     * @throws Exception TODO: 当前tasks.size() 必须<=核心线程数，否则死锁
+     * @throws Exception: 当前tasks.size() 必须<=核心线程数，否则死锁
      */
 //    @Transactional
     public void execTasks(List<Integer> tasks) throws Exception {

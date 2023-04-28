@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @Description: TODO 重复提交interceptor
+ * @Description: 重复提交interceptor
  * @Author lt
  * @Date 2023/4/14 10:22
  */
