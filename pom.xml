@@ -400,6 +400,7 @@
         <filters>
             <filter>src/main/filters/config-${profile.active}.properties</filter>
         </filters>
+        <!--1、打包编译作用 2、resources中的文件使用pom当中的值-->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
