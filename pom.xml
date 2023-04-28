@@ -406,6 +406,13 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
         </resources>
         <!--设置最终打包的名称，jenkins部署需去除版本号-->
         <finalName>${project.artifactId}</finalName>
