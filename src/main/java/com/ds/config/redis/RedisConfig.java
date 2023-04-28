@@ -38,7 +38,7 @@ import java.util.Set;
  * Json序列化 - Json对象被缓存时的序列化
  * @Cacheable - 表明对应方法的返回结果可以被缓存，首次调用后，下次就从缓存中读取结果，方法不会再被执行了。
  * @CachePut - 更新缓存，方法每次都会执行
- * @CacheEvict - 清除缓存，方法每次都会执行
+ * @CacheEvict - 更新数据库后清除缓存，方法每次都会执行
  * 例如：@Cacheable(value = "user", key= "#userId") 不写key可以使用KeyGenerator="keyGenerator"定义的键
  */
 @Configuration
