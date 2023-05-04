@@ -592,6 +592,17 @@ public class SpringbootApplicationTests {
         Method[] methodArr = ReflectUtil.getMethods(boy21.getClass());
         Method method_getId = ReflectUtil.getMethod(boy21.getClass(), "getId");
         Object invoke = ReflectUtil.invoke(boy21, method_getId);
+        Class<? extends SpringbootApplicationTests> aClass = this.getClass();
+        log.info("className：{}", aClass.getName());
+        log.info("classSimpleName：{}", aClass.getSimpleName());
+        Method[] declaredMethods = aClass.getDeclaredMethods();
+        for (Method declaredMethod : declaredMethods) {
+            log.info("methodName：{}，methodAnnotations：{}", declaredMethod.getName(), StrUtil.join(",", declaredMethod.getDeclaredAnnotations()));
+        }
+        Field[] declaredFields = aClass.getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+            log.info("fieldName：{}，fieldType：{}", declaredField.getName(), declaredField.getType());
+        }
         //StrUtil
         boolean notEmpty21 = StrUtil.isNotEmpty(null);
         String nullToEmpty22 = StrUtil.nullToEmpty(null);
