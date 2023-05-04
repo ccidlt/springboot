@@ -17,8 +17,8 @@ public class ClassUtil<T> {
     /**
      * 新增时排重
      *
-     * @param <T>
-     * @param u
+     * @param o
+     * @param service
      * @return
      * @throws IllegalAccessException
      * @throws IllegalArgumentException

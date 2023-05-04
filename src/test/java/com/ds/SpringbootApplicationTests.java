@@ -624,7 +624,7 @@ public class SpringbootApplicationTests {
         long between = DateUtil.between(date, offset, DateUnit.DAY);
         Date beginOfMonth1 = DateUtil.beginOfMonth(date);
         Date endOfMonth1 = DateUtil.endOfMonth(date);
-        //FileUtil
+        //FileUtil 用spring的MultipartFile表单接收文件
         //TreeUtil
         TreeStructure ts1 = new TreeStructure(1L,0L,"1",1);
         TreeStructure ts11 = new TreeStructure(11L,1L,"11",11);
