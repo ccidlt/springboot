@@ -4,6 +4,7 @@ import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUnit;
@@ -27,10 +28,7 @@ import com.ds.config.async.ReentrantLockOperate;
 import com.ds.config.webmvc.MyEvent;
 import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
-import com.ds.entity.Boy;
-import com.ds.entity.FatherAndSon;
-import com.ds.entity.Person;
-import com.ds.entity.User;
+import com.ds.entity.*;
 import com.ds.service.PersonFactory;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -628,6 +626,29 @@ public class SpringbootApplicationTests {
         Date endOfMonth1 = DateUtil.endOfMonth(date);
         //FileUtil
         //TreeUtil
+        TreeStructure ts1 = new TreeStructure(1L,0L,"1",1);
+        TreeStructure ts11 = new TreeStructure(11L,1L,"11",11);
+        TreeStructure ts111 = new TreeStructure(111L,11L,"111",111);
+        TreeStructure ts112 = new TreeStructure(112L,11L,"112",112);
+        TreeStructure ts12 = new TreeStructure(12L,1L,"12",12);
+        TreeStructure ts121 = new TreeStructure(121L,12L,"121",121);
+        TreeStructure ts2 = new TreeStructure(2L,0L,"2",2);
+        List<TreeStructure> treeStructureList = ListUtil.of(ts1, ts11, ts111, ts112, ts12, ts121, ts2);
+        List<TreeStructure> treeStructures = treeStructureList.stream().filter(ts -> ObjectUtil.equal(0L, ts.getPid())).collect(Collectors.toList());
+        List<TreeStructure> tsList = JSON.parseArray(JSON.toJSONString(treeStructureList),TreeStructure.class);
+        List<TreeStructure> rootList = JSON.parseArray(JSON.toJSONString(treeStructures),TreeStructure.class);
+        rootList.forEach(root->{
+            treeBuild(root, tsList);
+        });
+        log.info("构造树：{}", JSON.toJSONString(rootList));
+        List<Long> treeChildList = new ArrayList<>();
+        treeChildList.add(1L);
+        treeChild(1L, treeStructureList, treeChildList);
+        log.info("节点下属：{}", treeChildList);
+        List<Long> treeParentList = new ArrayList<>();
+        treeParentList.add(111L);
+        treeParent(11L, treeStructureList, treeParentList);
+        log.info("节点上级：{}", treeParentList);
         //转换
         String[] stringArr = new String[]{"1", "2", "3"};
         int[] intArr = Arrays.stream(stringArr).mapToInt(Integer::valueOf).toArray();
@@ -677,6 +698,30 @@ public class SpringbootApplicationTests {
                 .collect(Collectors.collectingAndThen(Collectors.toCollection(() ->
                                 new TreeSet<>(Comparator.comparing(c -> c.getId() + "-" + c.getName()))),
                         ArrayList::new));
+    }
+    public void treeBuild(TreeStructure root, List<TreeStructure> tsList){
+        for (TreeStructure ts : tsList) {
+            if(ObjectUtil.equal(ts.getPid(),root.getId())){
+                root.getChildren().add(ts);
+                treeBuild(ts, tsList);
+            }
+        }
+    }
+    public void treeChild(Long id, List<TreeStructure> tsList, List<Long> ids){
+        for (TreeStructure ts : tsList) {
+            if(ObjectUtil.equal(ts.getPid(),id)){
+                ids.add(ts.getId());
+                treeChild(ts.getId(), tsList, ids);
+            }
+        }
+    }
+    public void treeParent(Long id, List<TreeStructure> tsList, List<Long> ids){
+        for (TreeStructure ts : tsList) {
+            if(ObjectUtil.equal(ts.getId(),id)){
+                ids.add(ts.getId());
+                treeParent(ts.getPid(), tsList, ids);
+            }
+        }
     }
 
     @Resource
