@@ -204,14 +204,14 @@ public class HttpClientUtil {
      */
     public static void getFile(String url, String destFileName) throws ClientProtocolException, IOException{
         // 生成一个httpclient对象
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
         //httpClient配置
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(60000)		//设置连接超时时间
                 .setSocketTimeout(60000).build();		//设置响应超时时间
         httpGet.setConfig(config);
-        HttpResponse response = httpclient.execute(httpGet);
+        HttpResponse response = httpClient.execute(httpGet);
         HttpEntity entity = response.getEntity();
         InputStream in = entity.getContent();
         File file = new File(destFileName);
@@ -229,7 +229,7 @@ public class HttpClientUtil {
             // 关闭低层流。
             in.close();
         }
-        httpclient.close();
+        httpClient.close();
     }
 
 }
