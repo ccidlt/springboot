@@ -18,10 +18,15 @@ public class ElasticsearchConfig {
 
     @Value("${spring.elasticsearch.rest.uris}")
     private String url;
+    @Value("${spring.elasticsearch.rest.host}")
+    private String host;
+    @Value("${spring.elasticsearch.rest.port}")
+    private String port;
 
     @Bean
     public RestHighLevelClient restHighLevelClient(){
         RestClientBuilder builder = RestClient.builder(HttpHost.create(url));
+//        RestClientBuilder builder = RestClient.builder(new HttpHost(host,Integer.valueOf(port),HttpHost.DEFAULT_SCHEME_NAME));
         return new RestHighLevelClient(builder);
     }
 
