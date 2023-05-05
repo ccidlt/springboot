@@ -22,7 +22,9 @@ public class Girl implements Serializable {
 
     private String name;
 
-    private String boyId;
+    private int boyId;
+
+    private String createUser;
 
     //自动回填创建时间
     @TableField(value = "create_time", fill = FieldFill.INSERT)
@@ -40,7 +42,7 @@ public class Girl implements Serializable {
     @TableLogic
     private Integer isdelete;
 
-    public Girl(int id, String name, String boyId) {
+    public Girl(int id, String name, int boyId) {
         this.id = id;
         this.name = name;
         this.boyId = boyId;

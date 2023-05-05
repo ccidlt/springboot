@@ -24,11 +24,16 @@ import cn.hutool.jwt.JWTHeader;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ds.config.async.ReentrantLockOperate;
 import com.ds.config.webmvc.MyEvent;
 import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
+import com.ds.dao.GirlDao;
 import com.ds.entity.*;
+import com.ds.entity.dto.BoyDTO;
+import com.ds.entity.dto.GirlDTO;
+import com.ds.service.GirlService;
 import com.ds.service.PersonFactory;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -1073,6 +1078,34 @@ public class SpringbootApplicationTests {
             String source = hit.getSourceAsString();
             Boy boy = JSON.parseObject(source, Boy.class);
             log.info(boy.toString());
+        }
+    }
+
+    @Resource
+    private GirlService girlService;
+    @Resource
+    private GirlDao girlDao;
+    @Test
+    public void crud(){
+        BoyDTO boyDTO = BoyDTO.builder().id(4).name("令狐冲").build();
+        GirlDTO girlDTO1 = GirlDTO.builder().id(8).name("任盈盈").build();
+        GirlDTO girlDTO3 = GirlDTO.builder().name("岳灵珊").build();
+        List<GirlDTO> girlDTOList = ListUtil.of(girlDTO1, girlDTO3);
+        boyDTO.setGirlList(girlDTOList);
+        Boy boy = BeanUtil.copyProperties(boyDTO, Boy.class);
+        int i = boyDao.updateById(boy);
+        if(i > 0){
+            List<Girl> girls = girlDao.selectList(new QueryWrapper<Girl>().lambda().eq(Girl::getBoyId, boyDTO.getId()));
+            List<GirlDTO> addList = girlDTOList.stream().filter(girl -> 0 == girl.getId()).collect(Collectors.toList());
+            List<Girl> girlAddList = BeanUtil.copyToList(addList, Girl.class);
+            girlAddList.forEach(girl -> girl.setBoyId(boy.getId()));
+            girlService.saveBatch(girlAddList);
+            List<GirlDTO> updateList = girlDTOList.stream().filter(girl -> 0 != girl.getId()).collect(Collectors.toList());
+            List<Girl> girlUpdateList = BeanUtil.copyToList(updateList, Girl.class);
+            girlUpdateList.forEach(girl -> girl.setBoyId(boy.getId()));
+            girlService.updateBatchById(girlUpdateList);
+            List<Girl> girlDeleteList = girls.stream().filter(girl -> !girlUpdateList.stream().map(Girl::getId).collect(Collectors.toList()).contains(girl.getId())).collect(Collectors.toList());
+            girlService.removeByIds(girlDeleteList.stream().map(Girl::getId).collect(Collectors.toList()));
         }
     }
 
