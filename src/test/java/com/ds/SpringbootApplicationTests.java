@@ -1094,6 +1094,7 @@ public class SpringbootApplicationTests {
         boyDTO.setGirlList(girlDTOList);
         Boy boy = BeanUtil.copyProperties(boyDTO, Boy.class);
         int mainbool = boyDao.updateById(boy);
+        List<Boy> boys = boyDao.getBoys();
         if(mainbool > 0){
             List<Girl> girls = girlDao.selectList(new QueryWrapper<Girl>().lambda().eq(Girl::getBoyId, boyDTO.getId()));
             List<GirlDTO> addList = girlDTOList.stream().filter(girl -> 0 == girl.getId()).collect(Collectors.toList());

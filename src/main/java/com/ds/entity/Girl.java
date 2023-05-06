@@ -1,9 +1,6 @@
 package com.ds.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Girl implements Serializable {
 
+    @TableId(type = IdType.AUTO)
     private int id;
 
     private String name;
@@ -36,10 +34,12 @@ public class Girl implements Serializable {
 
     //乐观锁
     @Version
+    @TableField(fill = FieldFill.INSERT)
     private Integer version;
 
     //逻辑删除
     @TableLogic
+    @TableField(fill = FieldFill.INSERT)
     private Integer isdelete;
 
     public Girl(int id, String name, int boyId) {
