@@ -222,6 +222,12 @@
             <artifactId>swagger-models</artifactId>
             <version>1.5.21</version>
         </dependency>
+        <!-- 导出markdown文档 -->
+        <dependency>
+            <groupId>io.github.swagger2markup</groupId>
+            <artifactId>swagger2markup</artifactId>
+            <version>1.3.3</version>
+        </dependency>
         <!--swagger-api 依赖结束-->
 
         <!--kafka 依赖开始-->
