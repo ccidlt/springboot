@@ -143,6 +143,11 @@
             <appender-ref ref="ERROR_FILE"/>
             <appender-ref ref="LOGSTASH"/>
         </logger>
+        <logger name="org.springframework.data.mongodb.core" level="debug" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC-FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
         <root level="info">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ASYNC-FILE"/>

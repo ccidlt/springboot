@@ -68,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -1081,6 +1082,20 @@ public class SpringbootApplicationTests {
         }
     }
 
+    /**
+     * mongodb
+     */
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Test
+    public void mongodb(){
+        Mongodb mongodb = Mongodb.builder().name("狄云").build();
+        Mongodb mongodb1 = mongoTemplate.save(mongodb);
+        log.info("{}",mongodb1);
+        List<Mongodb> all = mongoTemplate.findAll(Mongodb.class);
+        log.info("{}",all);
+    }
+
     @Resource
     private GirlService girlService;
     @Resource
@@ -1094,7 +1109,6 @@ public class SpringbootApplicationTests {
         boyDTO.setGirlList(girlDTOList);
         Boy boy = BeanUtil.copyProperties(boyDTO, Boy.class);
         int mainbool = boyDao.updateById(boy);
-        List<Boy> boys = boyDao.getBoys();
         if(mainbool > 0){
             List<Girl> girls = girlDao.selectList(new QueryWrapper<Girl>().lambda().eq(Girl::getBoyId, boyDTO.getId()));
             List<GirlDTO> addList = girlDTOList.stream().filter(girl -> 0 == girl.getId()).collect(Collectors.toList());

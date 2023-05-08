@@ -48,3 +48,5 @@ spring:
             refresh: true
           - dataId: shardingjdbc.yml
             refresh: true
+          - dataId: mongodb.yml
+            refresh: true

@@ -374,6 +374,12 @@
             <version>4.1.1</version>
         </dependency>
 
+        <!-- 引入mongodb-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
     </dependencies>
 
     <!--jenkins环境打包配置-->
