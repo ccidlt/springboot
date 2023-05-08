@@ -56,7 +56,7 @@ public class SwaggerConfig {
         List<ResponseMessage> responseMessageList = new ArrayList<>();
         Arrays.stream(ResultCodeEnum.values()).forEach(resultCode -> {
             responseMessageList.add(
-                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).build()
+                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).responseModel(new ModelRef("Result")).build()
             );
         });
 
@@ -109,7 +109,7 @@ public class SwaggerConfig {
         List<ResponseMessage> responseMessageList = new ArrayList<>();
         Arrays.stream(ResultCodeEnum.values()).forEach(resultCode -> {
             responseMessageList.add(
-                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).build()
+                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).responseModel(new ModelRef("Result")).build()
             );
         });
 
@@ -151,7 +151,7 @@ public class SwaggerConfig {
         List<ResponseMessage> responseMessageList = new ArrayList<>();
         Arrays.stream(ResultCodeEnum.values()).forEach(resultCode -> {
             responseMessageList.add(
-                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).build()
+                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).responseModel(new ModelRef("Result")).build()
             );
         });
 
