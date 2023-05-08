@@ -55,7 +55,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/")
-@Api(tags = "接口")
+@Api(value = "boyController", tags = "好汉操作")
 @Slf4j
 @RefreshScope
 @RepeatSubmitAnno(seconds = 5)
@@ -86,7 +86,7 @@ public class BoyController {
     @RequestMapping(value = "/getBoysById", method = RequestMethod.GET)
     @ApiOperation("获取Boy表数据(通过id)")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query", dataType = "int", example = "1")
+            @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query", dataType = "int")
     })
     public List<Boy> getBoysByParam(@RequestParam(value = "id",required = true) Integer id) {
         Boy boy = new Boy();

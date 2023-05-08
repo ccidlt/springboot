@@ -19,7 +19,7 @@ import java.util.List;
  * @author lt
  * @since 2023-05-05
  */
-@Api(value = "GirlController", tags = "")
+@Api(value = "girlController", tags = "豪杰操作")
 @RestController
 @RequestMapping("/girl")
 public class GirlController {

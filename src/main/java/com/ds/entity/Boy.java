@@ -21,7 +21,7 @@ import java.util.Date;
 public class Boy implements Serializable {
 
     private static final long serialVersionUID = -2601915151478860998L;
-    @ApiModelProperty("主键")
+    @ApiModelProperty(value = "主键")
     @TableId(type = IdType.AUTO)
     private int id;
 

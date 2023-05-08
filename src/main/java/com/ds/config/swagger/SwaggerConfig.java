@@ -55,7 +55,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2) //swagger版本
                 .pathMapping("/")
                 .apiInfo(apiInfoDefault())
-                .groupName("1.0版本")
+                .groupName("1.0")
                 .select()
                 //扫描那些controller
                 .apis(RequestHandlerSelectors.basePackage("com.ds.controller"))
@@ -101,7 +101,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2) //swagger版本
                 .pathMapping("/")
                 .apiInfo(apiInfoDefault())
-                .groupName("系统设置")
+                .groupName("system")
                 .select()
                 //扫描那些controller
                 .apis(RequestHandlerSelectors.basePackage("com.ds.controller.setting"))
@@ -137,7 +137,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2) //swagger版本
                 .pathMapping("/")
                 .apiInfo(apiInfoDefault())
-                .groupName("消息队列设置")
+                .groupName("mq")
                 .select()
                 //扫描那些controller
                 .apis(RequestHandlerSelectors.basePackage("com.ds.controller.mq"))

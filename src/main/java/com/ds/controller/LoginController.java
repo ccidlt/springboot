@@ -6,9 +6,11 @@ import com.ds.service.UserService;
 import com.ds.utils.JWTUtils;
 import com.ds.utils.RedisUtils;
 import com.ds.utils.StringUtil;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Api(tags = "登录操作", hidden = true)
+@ApiIgnore
 @RestController
 @RequestMapping("")
 public class LoginController {

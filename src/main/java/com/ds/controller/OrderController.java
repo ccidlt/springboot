@@ -1,23 +1,26 @@
 package com.ds.controller;
- 
-import com.ds.entity.Order;
-import com.ds.entity.OrderVO;
-import com.ds.entity.OrderDTO;
-import com.ds.service.OrderService;
-import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.ds.entity.Order;
+import com.ds.entity.OrderDTO;
+import com.ds.entity.OrderVO;
+import com.ds.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
  
 /**
  * @Author makejava
  * @Desc (Order)表控制层
  * @Date 2023-04-24 08:50:05
  */
-@Api(tags = "")
+@Api(tags = "分库分表操作", hidden = true)
+@ApiIgnore
 @RestController
 @RequestMapping("order")
 public class OrderController {
