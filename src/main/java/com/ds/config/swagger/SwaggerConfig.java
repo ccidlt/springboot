@@ -15,7 +15,7 @@ import springfox.documentation.service.Parameter;
 import springfox.documentation.service.ResponseMessage;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +27,8 @@ import java.util.List;
  * http://ip地址:端口/项目名/doc.html
  */
 @Configuration
-@EnableSwagger2
+//@EnableSwagger2
+@EnableSwagger2WebMvc
 @Profile({"dev","test"})
 //@ConditionalOnProperty(name = "swagger.enable", havingValue = "true")
 public class SwaggerConfig {
