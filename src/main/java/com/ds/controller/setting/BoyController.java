@@ -99,7 +99,8 @@ public class BoyController {
 
     @RequestMapping(value = "/getBoysByParam", method = RequestMethod.GET)
     @ApiOperation("获取Boy表数据")
-    public List<Boy> getBoysByParam() {
+    @ApiOperationSupport(ignoreParameters = {"version","isdelete"})
+    public List<Boy> getBoysByParam(Boy boyDTO) {
         Boy boy = new Boy();
         boy.setName("杨过");
         return boyService.queryBoy(boy);
