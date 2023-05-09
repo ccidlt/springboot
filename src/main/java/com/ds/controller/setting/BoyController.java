@@ -12,6 +12,8 @@ import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.seata.core.context.RootContext;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RestController
 @RequestMapping("/")
 @Api(value = "boyController", tags = "好汉操作")
+@ApiSupport(author = "lt")
 @Slf4j
 @RefreshScope
 @RepeatSubmitAnno(seconds = 5)
@@ -116,7 +119,8 @@ public class BoyController {
 
     @RequestMapping(value = "/saveBoy", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation("新增/修改")
+    @ApiOperation("新增")
+    @ApiOperationSupport(ignoreParameters = {"boy.id"})
     @SentinelResource(value = "saveBoy") //热点参数限流：value对应资源名
     public Boy saveBoy(
             @ApiParam(name = "boy", value = "Boy", required = true)
