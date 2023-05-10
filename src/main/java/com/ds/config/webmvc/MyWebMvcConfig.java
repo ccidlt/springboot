@@ -145,8 +145,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 后端返回给前端时间格式字符串，也可以用@JsonFormat
-     *
+     * 自定义类型转换, @RequestBody参数格式化
      * @param converters
      */
     @Override
@@ -158,9 +157,10 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         //设置日期格式
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //@RequestBody前端向后端或后端向前端日期传参格式化
         objectMapper.setDateFormat(GlobalJsonDateConvert.instance);
         SimpleModule simpleModule = new SimpleModule();
-        // Json Long --> String
+        // Json Long --> String 避免雪花等生成的id过长到前端自动截断
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         objectMapper.registerModule(simpleModule);
         mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
@@ -172,8 +172,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 前端给后端时间字符串转换成Date，也可以用@DateTimeFormat
-     *
+     * 自定义类型转换, @RequestParam/@PathVariable的日期字符串转换对应日期类型
      * @param registry
      */
     @Override

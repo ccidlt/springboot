@@ -8,9 +8,14 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * parse方法用来将日期字符串转换为Date(前台向后台传数据)
+ * format方法用来将Date格式的数据转换为指定格式的字符串(后台向前台传数据)。
+ */
 public class GlobalJsonDateConvert extends StdDateFormat {
     //静态初始化final，共享
     public static final GlobalJsonDateConvert instance = new GlobalJsonDateConvert();
+    private static final long serialVersionUID = -8229056743678077113L;
 
     //覆盖parse(String)这个方法即可实现
     @Override
