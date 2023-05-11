@@ -4,6 +4,7 @@ import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateField;
@@ -72,6 +73,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -450,6 +452,8 @@ public class SpringbootApplicationTests {
         System.out.println(StrUtil.sub("abc",0,"abc".length()));//截取
         System.out.println(StrUtil.format("{}+{}=2","1","1"));//格式化
         System.out.println(StrUtil.replace("{}+{}=2","{}","1"));//替换
+        System.out.println(StrUtil.join(",","a","b"));
+        System.out.println(StrUtil.fillBefore("ab",'c',5));
         //数字工具
         System.out.println(NumberUtil.isNumber("1.2"));
         System.out.println(NumberUtil.add(1, 1.2, 1.3));
@@ -622,6 +626,8 @@ public class SpringbootApplicationTests {
         String subSuf30 = StrUtil.subSuf("ab", 0);
         String format = StrUtil.format("{}{}", "a", "b");
         String replace = StrUtil.replace("abc", "c", "");
+        String join = StrUtil.join(",", "a", "b", "c");
+        String fillBefore = StrUtil.fillBefore("ab", 'c', 5);
         //NumberUtil
         boolean isNumber31 = NumberUtil.isNumber("1");
         double add32 = NumberUtil.add(1, 2, 3).doubleValue();
@@ -1122,6 +1128,34 @@ public class SpringbootApplicationTests {
             List<Girl> girlDeleteList = girls.stream().filter(girl -> !girlUpdateList.stream().map(Girl::getId).collect(Collectors.toList()).contains(girl.getId())).collect(Collectors.toList());
             girlService.removeByIds(girlDeleteList.stream().map(Girl::getId).collect(Collectors.toList()));
         }
+    }
+
+    @Resource(name = "tptScheduler")
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+    @Test
+    public void optimisticLock() throws InterruptedException {
+        ThreadLocal<String> threadLocal = new ThreadLocal<>();
+        List<String> childrenList = CollectionUtil.toList("a_1000", "b_3000", "c_2000", "d_1500", "e_5000");
+        CountDownLatch maincdl = new CountDownLatch(childrenList.size());
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        for (String child : childrenList) {
+            threadPoolTaskScheduler.submit(()->{
+                try {
+                    threadLocal.set(child);
+                    log.info("thread：thread_{}", StrUtil.split(child, "_").get(0));
+                    Thread.sleep(Integer.valueOf(StrUtil.split(child, "_").get(1)));
+                    log.info("threadLocal：{}", threadLocal.get());
+                    log.info("atomicInteger：{}", atomicInteger.incrementAndGet());
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage());
+                }finally {
+                    maincdl.countDown();
+                }
+            });
+        }
+        maincdl.await();
+        log.info("atomicInteger：{}", atomicInteger.get());
+        log.info("{}", "main前进！");
     }
 
 }
