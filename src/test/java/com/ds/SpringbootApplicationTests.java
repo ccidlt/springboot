@@ -36,6 +36,7 @@ import com.ds.entity.dto.BoyDTO;
 import com.ds.entity.dto.GirlDTO;
 import com.ds.service.GirlService;
 import com.ds.service.PersonFactory;
+import com.ds.service.TestStarterService;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -1156,6 +1157,16 @@ public class SpringbootApplicationTests {
         maincdl.await();
         log.info("atomicInteger：{}", atomicInteger.get());
         log.info("{}", "main前进！");
+    }
+
+    /**
+     * 自定义starter
+     */
+    @Autowired
+    private TestStarterService testStarterService;
+    @Test
+    public void testStarter(){
+        log.info("{}", testStarterService.getName());
     }
 
 }
