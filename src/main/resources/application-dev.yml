@@ -343,3 +343,8 @@ redislist:
 snow-flake:
   dataCenterId: 0 #数据中心
   machineId: 0 #机器标识
+
+ccid:
+  starter:
+    enable: true
+    name: "starter is ok"
