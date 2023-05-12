@@ -38,6 +38,7 @@ import com.ds.service.GirlService;
 import com.ds.service.PersonFactory;
 import com.ds.service.TestStarterService;
 import com.ds.service.impl.BoyFeignServiceImpl;
+import com.ds.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -1164,9 +1165,15 @@ public class SpringbootApplicationTests {
      */
     @Autowired
     private TestStarterService testStarterService;
+    @Autowired
+    RedisUtils redisUtils;
     @Test
-    public void testStarter(){
+    public void testStarter() throws NoSuchMethodException {
         log.info("{}", testStarterService.getName());
+        redisUtils.set(this.getClass().getSimpleName()+":"+this.getClass().getDeclaredMethod("testStarter").getName(),new Boy(1,"张三"));
+        Boy o = (Boy)redisUtils.get(this.getClass().getSimpleName()+":"+this.getClass().getDeclaredMethod("testStarter").getName());
+        log.info("{}", o);
+        log.info("{},{}", o.getId(), o.getName());
     }
 
 }
