@@ -37,7 +37,7 @@
 
     #end
 
-    <select id="select" parameterType="${package.Entity}.${entity}" resultMap="BaseResultMap">
+    <select id="selectAll" parameterType="${package.Entity}.${entity}" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from ${table.name}
@@ -48,9 +48,9 @@
         <include refid="Base_Column_List"/>
         from ${table.name}
         where id = #{id}
-    </select>
+    </select>单个
 
-    <insert id="insert" parameterType="${package.Entity}.${entity}">
+    <insert id="add" parameterType="${package.Entity}.${entity}">
         insert into ${table.name} (
         #foreach($field in ${table.fields})
         ${field.name}#if($foreach.hasNext),#end

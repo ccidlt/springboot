@@ -18,9 +18,9 @@ interface ${table.mapperName} : ${superMapperClass}<${entity}>
 public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
 
     /**
-     *  根据指定主键获取一条数据库记录, ${table.name}
+     *  获取数据库记录, ${table.name}
      */
-    List<${table.entityName}> select(${table.entityName} ${table.entityPath});
+    List<${table.entityName}> selectAll(${table.entityName} ${table.entityPath});
 
     /**
      *  根据指定主键获取一条数据库记录, ${table.name}
@@ -30,7 +30,7 @@ public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
     /**
      *  新写入数据库记录, ${table.name}
      */
-    int insert(${table.entityName} ${table.entityPath});
+    int add(${table.entityName} ${table.entityPath});
 
     /**
      *  根据主键来更新符合条件的数据库记录, ${table.name}

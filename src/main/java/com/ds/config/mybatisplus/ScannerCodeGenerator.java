@@ -102,7 +102,7 @@ public class ScannerCodeGenerator {
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名
                 return properties + "/src/main/resources/mapper"
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                        + "/" + tableInfo.getEntityName() + "Dao" + StringPool.DOT_XML;
             }
         });
 

@@ -25,6 +25,7 @@ import cn.hutool.jwt.JWTHeader;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ds.config.async.ReentrantLockOperate;
 import com.ds.config.webmvc.MyEvent;
@@ -34,9 +35,9 @@ import com.ds.dao.GirlDao;
 import com.ds.entity.*;
 import com.ds.entity.dto.BoyDTO;
 import com.ds.entity.dto.GirlDTO;
-import com.ds.service.GirlService;
-import com.ds.service.PersonFactory;
-import com.ds.service.TestStarterService;
+import com.ds.enums.ProcessLineEnum;
+import com.ds.enums.ProcessNodeEnum;
+import com.ds.service.*;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import com.ds.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -1174,6 +1175,127 @@ public class SpringbootApplicationTests {
         Boy o = (Boy)redisUtils.get(this.getClass().getSimpleName()+":"+this.getClass().getDeclaredMethod("testStarter").getName());
         log.info("{}", o);
         log.info("{},{}", o.getId(), o.getName());
+    }
+
+    /**
+     * 审批流程
+     */
+    @Resource
+    private ProcessBusinessService processBusinessService;
+    @Resource
+    private ProcessRecordService processRecordService;
+    @Resource
+    private ProcessLineService processLineService;
+    @Resource
+    private ProcessApprovalService processApprovalService;
+    @Test
+    public void processTest(){
+        ProcessBusiness processBusiness = new ProcessBusiness();
+        processBusiness.setMoney(NumberUtil.toBigDecimal(200));
+        processBusiness.setUserId(1L);
+        apply(processBusiness);
+    }
+    //申请人列表
+    public void queryApplyList(Long userId){
+        List<ProcessBusiness> list = processBusinessService.list(
+                new LambdaQueryWrapper<ProcessBusiness>()
+                        .eq(ProcessBusiness::getId, userId)
+        );
+        list.forEach(processBusiness->{
+            ProcessRecord processRecord = processRecordService.getOne(
+                    new LambdaQueryWrapper<ProcessRecord>()
+                            .eq(ProcessRecord::getBusinessId, processBusiness.getId())
+                            .orderByDesc(ProcessRecord::getApprovalTime)
+                            .last("limit 1")
+            );
+            ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processRecord.getLineCode());
+            if(ObjectUtil.isNotNull(processLineEnum)){
+                processBusiness.setState(processLineEnum.getStateBigDesc());
+            }
+        });
+        log.info("申请人列表：{}", list);
+    }
+    //申请记录详情
+    public void queryApplyDetails(Long businessId){
+        List<ProcessRecord> list = processRecordService.list(
+                new LambdaQueryWrapper<ProcessRecord>()
+                        .eq(ProcessRecord::getBusinessId, businessId)
+                        .orderByAsc(ProcessRecord::getApprovalTime)
+        );
+        log.info("申请记录详情：{}", list);
+    }
+    //待审批列表、已通过列表、已驳回列表
+    public void queryApprovalList(Long userId){
+        //待审批列表
+        List<ProcessBusiness> dshList = new ArrayList<>();
+        List<ProcessBusiness> processBusinessList = processBusinessService.list();
+        for (ProcessBusiness processBusiness : processBusinessList) {
+            ProcessRecord processRecordLast = processRecordService.getOne(
+                    new LambdaQueryWrapper<ProcessRecord>()
+                            .eq(ProcessRecord::getBusinessId, processBusiness.getId())
+                            .orderByDesc(ProcessRecord::getApprovalTime)
+                            .last("limit 1")
+            );
+            if(ObjectUtil.isNotNull(processRecordLast)){
+                ProcessLine processLine = processLineService.getOne(
+                        new LambdaQueryWrapper<ProcessLine>()
+                                .eq(ProcessLine::getCode, processRecordLast.getLineCode())
+                                .last("limit 1")
+                );
+                ProcessApproval processApproval = processApprovalService.getOne(
+                        new LambdaQueryWrapper<ProcessApproval>()
+                                .eq(ProcessApproval::getNodeCode, processLine.getNodeCodeNext())
+                                .apply("find_in_set('"+userId+"', user)")
+                );
+                if(ObjectUtil.isNotNull(processApproval)){
+                    processBusiness.setNodeCode(processLine.getNodeCodeNext());
+                    if(StrUtil.equals(processBusiness.getNodeCode(), ProcessNodeEnum.BX_XMJL.getCode())){
+                        ProcessLine pl = processLineService.getOne(
+                                new LambdaQueryWrapper<ProcessLine>()
+                                        .eq(ProcessLine::getNodeCodePre, processBusiness.getNodeCode())
+                                        .eq(ProcessLine::getCondition, "1")
+                        );
+                        processBusiness.setLineCode(pl.getCode());
+                        ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processBusiness.getLineCode());
+                        if(ObjectUtil.isNotNull(processLineEnum)){
+                            processBusiness.setState(processLineEnum.getStateSmallDesc());
+                        }
+                    }
+                    dshList.add(processBusiness);
+                }
+            }
+
+        }
+        log.info("待审批列表：{}", dshList);
+        //已通过列表
+        List<ProcessBusiness> tgList = processBusinessService.list(
+                new LambdaQueryWrapper<ProcessBusiness>()
+                        .apply("(select process_record.approval_state from process_record where process_business.id=process_record.business_id and process_record.approval_user='"+userId+"' order by process_record.approval_time desc limit 1)='2'")
+        );
+        log.info("已通过列表：{}", dshList);
+        //已驳回列表
+        List<ProcessBusiness> bhList = processBusinessService.list(
+                new LambdaQueryWrapper<ProcessBusiness>()
+                        .apply("(select process_record.approval_state from process_record where process_business.id=process_record.business_id and process_record.approval_user='"+userId+"' order by process_record.approval_time desc limit 1)='2'")
+        );
+        log.info("已驳回列表：{}", dshList);
+    }
+    //发起申请
+    public void apply(ProcessBusiness processBusiness){
+        processBusinessService.save(processBusiness);
+        ProcessRecord processRecord = new ProcessRecord();
+        processRecord.setNodeCode(ProcessNodeEnum.BX_SQR.getCode());
+        processRecord.setLineCode(ProcessLineEnum.BX_SQRTOXMJL.getCode());
+        processRecord.setBusinessId(processBusiness.getId());
+        processRecord.setApprovalUser(processBusiness.getUserId());
+        processRecord.setApprovalResult("申请");
+        processRecord.setApprovalTime(new Date());
+        processRecord.setApprovalState("1");
+        approval(processRecord);
+    }
+    //审批
+    public void approval(ProcessRecord processRecord){
+        processRecordService.save(processRecord);
     }
 
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ds.dao.ProcessApprovalDao">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.ds.entity.ProcessApproval">
+                    <id column="id" property="id"/>
+                    <result column="process_code" property="processCode"/>
+                    <result column="node_code" property="nodeCode"/>
+                    <result column="user" property="user"/>
+                    <result column="group" property="group"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, process_code, node_code, user, group
+        </sql>
+
+
+    <select id="selectAll" parameterType="com.ds.entity.ProcessApproval" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process_approval
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process_approval
+        where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.ds.entity.ProcessApproval">
+        insert into process_approval (
+        id,
+        process_code,
+        node_code,
+        user,
+        group
+        )
+        values (
+            #{id},
+            #{processCode},
+            #{nodeCode},
+            #{user},
+            #{group}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.ds.entity.ProcessApproval">
+        update process_approval
+        set
+            process_code = #{processCode} ,
+            node_code = #{nodeCode} ,
+            user = #{user} ,
+            group = #{group} 
+        where
+                id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from process_approval
+        where
+            id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ds.dao.ProcessDao">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.ds.entity.Process">
+                    <id column="id" property="id"/>
+                    <result column="code" property="code"/>
+                    <result column="name" property="name"/>
+                    <result column="description" property="description"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, code, name, description
+        </sql>
+
+
+    <select id="selectAll" parameterType="com.ds.entity.Process" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process
+        where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.ds.entity.Process">
+        insert into process (
+        id,
+        code,
+        name,
+        description
+        )
+        values (
+            #{id},
+            #{code},
+            #{name},
+            #{description}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.ds.entity.Process">
+        update process
+        set
+            code = #{code} ,
+            name = #{name} ,
+            description = #{description} 
+        where
+                id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from process
+        where
+            id = #{id}
+    </delete>
+
+</mapper>

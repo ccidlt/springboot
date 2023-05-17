@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ds.dao.ProcessRecordDao">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.ds.entity.ProcessRecord">
+                    <id column="id" property="id"/>
+                    <result column="process_code" property="processCode"/>
+                    <result column="node_code" property="nodeCode"/>
+                    <result column="line_code" property="lineCode"/>
+                    <result column="business_id" property="businessId"/>
+                    <result column="approval_state" property="approvalState"/>
+                    <result column="approval_result" property="approvalResult"/>
+                    <result column="approval_user" property="approvalUser"/>
+                    <result column="approval_time" property="approvalTime"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, process_code, node_code, line_code, business_id, approval_state, approval_result, approval_user, approval_time
+        </sql>
+
+
+    <select id="selectAll" parameterType="com.ds.entity.ProcessRecord" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process_record
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process_record
+        where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.ds.entity.ProcessRecord">
+        insert into process_record (
+        id,
+        process_code,
+        node_code,
+        line_code,
+        business_id,
+        approval_state,
+        approval_result,
+        approval_user,
+        approval_time
+        )
+        values (
+            #{id},
+            #{processCode},
+            #{nodeCode},
+            #{lineCode},
+            #{businessId},
+            #{approvalState},
+            #{approvalResult},
+            #{approvalUser},
+            #{approvalTime}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.ds.entity.ProcessRecord">
+        update process_record
+        set
+            process_code = #{processCode} ,
+            node_code = #{nodeCode} ,
+            line_code = #{lineCode} ,
+            business_id = #{businessId} ,
+            approval_state = #{approvalState} ,
+            approval_result = #{approvalResult} ,
+            approval_user = #{approvalUser} ,
+            approval_time = #{approvalTime} 
+        where
+                id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from process_record
+        where
+            id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ds.dao.ProcessLineDao">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.ds.entity.ProcessLine">
+                    <id column="id" property="id"/>
+                    <result column="code" property="code"/>
+                    <result column="name" property="name"/>
+                    <result column="process_code" property="processCode"/>
+                    <result column="node_code_pre" property="nodeCodePre"/>
+                    <result column="node_code_next" property="nodeCodeNext"/>
+                    <result column="condition" property="condition"/>
+                    <result column="description" property="description"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, code, name, process_code, node_code_pre, node_code_next, condition, description
+        </sql>
+
+
+    <select id="selectAll" parameterType="com.ds.entity.ProcessLine" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process_line
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from process_line
+        where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.ds.entity.ProcessLine">
+        insert into process_line (
+        id,
+        code,
+        name,
+        process_code,
+        node_code_pre,
+        node_code_next,
+        condition,
+        description
+        )
+        values (
+            #{id},
+            #{code},
+            #{name},
+            #{processCode},
+            #{nodeCodePre},
+            #{nodeCodeNext},
+            #{condition},
+            #{description}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.ds.entity.ProcessLine">
+        update process_line
+        set
+            code = #{code} ,
+            name = #{name} ,
+            process_code = #{processCode} ,
+            node_code_pre = #{nodeCodePre} ,
+            node_code_next = #{nodeCodeNext} ,
+            condition = #{condition} ,
+            description = #{description}
+        where
+                id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from process_line
+        where
+            id = #{id}
+    </delete>
+
+</mapper>
