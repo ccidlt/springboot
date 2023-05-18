@@ -1,6 +1,5 @@
 package com.ds.controller.setting;
 
-import cn.hutool.core.util.NumberUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -46,6 +45,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -513,7 +513,7 @@ public class BoyController {
     public ProcessBusiness process1() {
         ProcessBusiness processBusiness = new ProcessBusiness();
         processBusiness.setId(1L);
-        processBusiness.setMoney(NumberUtil.toBigDecimal(300.00));
+        processBusiness.setMoney(new BigDecimal(300));
         processBusiness.setUserId(1L);
         return processBusiness;
 //        return processBusinessService.getById(8);
