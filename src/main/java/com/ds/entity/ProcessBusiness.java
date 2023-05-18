@@ -3,6 +3,8 @@ package com.ds.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.ds.config.webmvc.Decimal2Serializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -34,6 +36,7 @@ public class ProcessBusiness implements Serializable {
     private Long userId;
 
     @ApiModelProperty(value = "报销费用")
+    @JsonSerialize(using = Decimal2Serializer.class)
     private BigDecimal money;
 
     @TableField(exist = false)

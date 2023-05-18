@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +21,13 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Configuration
@@ -148,11 +157,20 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
      * 自定义类型转换, @RequestBody参数格式化
      * @param converters
      */
+    /**
+     * Date格式化字符串
+     */
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /**
+     * DateTime格式化字符串
+     */
+    private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    /**
+     * Time格式化字符串
+     */
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-        converters.add(converter);
-
         MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
         //设置日期格式
         ObjectMapper objectMapper = new ObjectMapper();
@@ -162,13 +180,22 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         SimpleModule simpleModule = new SimpleModule();
         // Json Long --> String 避免雪花等生成的id过长到前端自动截断
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+        // 浮点型使用字符串
+        simpleModule.addSerializer(Double.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Double.TYPE, ToStringSerializer.instance);
+        simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
+        // java8 时间格式化
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DATETIME_FORMAT));
+        simpleModule.addSerializer(LocalDate.class, new LocalDateSerializer(DATE_FORMAT));
+        simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(TIME_FORMAT));
         objectMapper.registerModule(simpleModule);
         mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
-        //设置中文编码格式
-        List<MediaType> list = new ArrayList<>();
-        list.add(MediaType.APPLICATION_JSON_UTF8);
-        mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
-        converters.add(0, mappingJackson2HttpMessageConverter);
+        // 处理中文乱码问题
+        mappingJackson2HttpMessageConverter.setSupportedMediaTypes(ImmutableList.of(MediaType.APPLICATION_JSON_UTF8));
+        converters.add(0,mappingJackson2HttpMessageConverter);
+        converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
     }
 
     /**

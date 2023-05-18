@@ -1,5 +1,6 @@
 package com.ds.controller.setting;
 
+import cn.hutool.core.util.NumberUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -10,8 +11,10 @@ import com.ds.config.snowflake.SnowflakeProperties;
 import com.ds.config.swagger.SwaggerProperties;
 import com.ds.dao.BoyDao;
 import com.ds.entity.Boy;
+import com.ds.entity.ProcessBusiness;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
+import com.ds.service.ProcessBusinessService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.seata.core.context.RootContext;
@@ -502,6 +505,22 @@ public class BoyController {
 //        logger.error("logback 访问hello");
         logger.info(JSON.toJSONString(new Boy(99,"张三丰"), SerializerFeature.WriteMapNullValue));
         return "logback 成功";
+    }
+
+    @Resource
+    private ProcessBusinessService processBusinessService;
+    @RequestMapping("/toJava")
+    public ProcessBusiness process1() {
+        ProcessBusiness processBusiness = new ProcessBusiness();
+        processBusiness.setId(1L);
+        processBusiness.setMoney(NumberUtil.toBigDecimal(300.00));
+        processBusiness.setUserId(1L);
+        return processBusiness;
+//        return processBusinessService.getById(8);
+    }
+    @RequestMapping("/toWeb")
+    public void process2(ProcessBusiness processBusiness) {
+        log.info("{},{}", processBusiness, processBusiness.getMoney().toString());
     }
 
 }
