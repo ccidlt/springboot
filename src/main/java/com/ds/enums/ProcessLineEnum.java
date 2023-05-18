@@ -18,7 +18,7 @@ public enum ProcessLineEnum {
     BX_XMJLBH ("BX_XMJLBH", "项目经理驳回", "4", "已驳回", "5", "项目经理驳回"),
     BX_ZJLBH ("BX_ZJLBH", "总经理驳回", "4", "已驳回", "6", "总经理驳回"),
     BX_CWBH ("BX_CWBH", "财务驳回", "4", "已驳回", "7", "财务驳回"),
-    BX_END ("BX_END", "结束", "3", "审核通过", "8", "审核通过");
+    BX_TOEND ("BX_TOEND", "结束", "3", "审核通过", "8", "审核通过");
 
     private String code;
     private String codeDesc;

@@ -35,10 +35,10 @@ public class ProcessApproval implements Serializable {
     private String nodeCode;
 
     @ApiModelProperty(value = "分配人")
-    private String user;
+    private String userId;
 
     @ApiModelProperty(value = "分配组(角色)")
-    private String group;
+    private String userGroup;
 
 
 }

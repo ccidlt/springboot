@@ -7,13 +7,13 @@
                     <id column="id" property="id"/>
                     <result column="process_code" property="processCode"/>
                     <result column="node_code" property="nodeCode"/>
-                    <result column="user" property="user"/>
-                    <result column="group" property="group"/>
+                    <result column="user" property="userId"/>
+                    <result column="group" property="userGroup"/>
         </resultMap>
 
         <!-- 通用查询结果列 -->
         <sql id="Base_Column_List">
-            id, process_code, node_code, user, group
+            id, process_code, node_code, user_id, user_group
         </sql>
 
 
@@ -35,15 +35,15 @@
         id,
         process_code,
         node_code,
-        user,
-        group
+        user_id,
+        user_group
         )
         values (
             #{id},
             #{processCode},
             #{nodeCode},
-            #{user},
-            #{group}
+            #{userId},
+            #{userGroup}
         )
     </insert>
 
@@ -52,8 +52,8 @@
         set
             process_code = #{processCode} ,
             node_code = #{nodeCode} ,
-            user = #{user} ,
-            group = #{group} 
+            user_id = #{userId} ,
+            user_group = #{userGroup}
         where
                 id = #{id}
     </update>

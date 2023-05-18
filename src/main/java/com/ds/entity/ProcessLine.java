@@ -44,7 +44,7 @@ public class ProcessLine implements Serializable {
     private String nodeCodeNext;
 
     @ApiModelProperty(value = "条件")
-    private String condition;
+    private String judge;
 
     @ApiModelProperty(value = "说明")
     private String description;

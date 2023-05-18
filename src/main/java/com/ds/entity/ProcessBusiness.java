@@ -43,10 +43,13 @@ public class ProcessBusiness implements Serializable {
     @ApiModelProperty(value = "流程编号")
     private String processCode = "BX";
     @TableField(exist = false)
-    @ApiModelProperty(value = "流程节点编号")
-    private String nodeCode;
+    @ApiModelProperty(value = "上一个流程节点编号")
+    private String preNodeCode;
     @TableField(exist = false)
-    @ApiModelProperty(value = "流程线编号")
+    @ApiModelProperty(value = "当前流程线编号")
     private String lineCode;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "下一个流程节点编号")
+    private String nextNodeCode;
 
 }

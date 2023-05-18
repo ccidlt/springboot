@@ -1190,16 +1190,33 @@ public class SpringbootApplicationTests {
     private ProcessApprovalService processApprovalService;
     @Test
     public void processTest(){
-        ProcessBusiness processBusiness = new ProcessBusiness();
-        processBusiness.setMoney(NumberUtil.toBigDecimal(200));
-        processBusiness.setUserId(1L);
-        apply(processBusiness);
+//        ProcessBusiness processBusiness = new ProcessBusiness();
+//        processBusiness.setMoney(NumberUtil.toBigDecimal(500));
+//        processBusiness.setUserId(1L);
+//        apply(processBusiness);
+
+        queryApplyList(1L);
+
+//        queryApplyDetails(5L);
+
+//        queryApprovalList(2L);
+
+//        ProcessRecord processRecord = new ProcessRecord();
+//        processRecord.setNodeCode(ProcessNodeEnum.BX_ZJL.getCode());
+//        processRecord.setLineCode(ProcessLineEnum.BX_ZJLBH.getCode());
+//        processRecord.setBusinessId(6L);
+//        processRecord.setApprovalUser(3L);
+//        processRecord.setApprovalResult("不同意");
+//        processRecord.setApprovalTime(new Date());
+//        processRecord.setApprovalState("3");
+//        approval(processRecord);
+
     }
     //申请人列表
     public void queryApplyList(Long userId){
         List<ProcessBusiness> list = processBusinessService.list(
                 new LambdaQueryWrapper<ProcessBusiness>()
-                        .eq(ProcessBusiness::getId, userId)
+                        .eq(ProcessBusiness::getUserId, userId)
         );
         list.forEach(processBusiness->{
             ProcessRecord processRecord = processRecordService.getOne(
@@ -1208,7 +1225,14 @@ public class SpringbootApplicationTests {
                             .orderByDesc(ProcessRecord::getApprovalTime)
                             .last("limit 1")
             );
-            ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processRecord.getLineCode());
+            processBusiness.setPreNodeCode(processRecord.getNodeCode());
+            processBusiness.setLineCode(processRecord.getLineCode());
+            ProcessLine processLine = processLineService.getOne(
+                    new LambdaQueryWrapper<ProcessLine>()
+                            .eq(ProcessLine::getCode, processBusiness.getLineCode())
+            );
+            processBusiness.setNextNodeCode(processLine.getNodeCodeNext());
+            ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processBusiness.getLineCode());
             if(ObjectUtil.isNotNull(processLineEnum)){
                 processBusiness.setState(processLineEnum.getStateBigDesc());
             }
@@ -1240,26 +1264,19 @@ public class SpringbootApplicationTests {
                 ProcessLine processLine = processLineService.getOne(
                         new LambdaQueryWrapper<ProcessLine>()
                                 .eq(ProcessLine::getCode, processRecordLast.getLineCode())
-                                .last("limit 1")
                 );
-                ProcessApproval processApproval = processApprovalService.getOne(
+                List<ProcessApproval> processApprovalList = processApprovalService.list(
                         new LambdaQueryWrapper<ProcessApproval>()
                                 .eq(ProcessApproval::getNodeCode, processLine.getNodeCodeNext())
-                                .apply("find_in_set('"+userId+"', user)")
+                                .apply("(find_in_set('"+userId+"', user_id) or find_in_set('"+userId+"', user_group))")
                 );
-                if(ObjectUtil.isNotNull(processApproval)){
-                    processBusiness.setNodeCode(processLine.getNodeCodeNext());
-                    if(StrUtil.equals(processBusiness.getNodeCode(), ProcessNodeEnum.BX_XMJL.getCode())){
-                        ProcessLine pl = processLineService.getOne(
-                                new LambdaQueryWrapper<ProcessLine>()
-                                        .eq(ProcessLine::getNodeCodePre, processBusiness.getNodeCode())
-                                        .eq(ProcessLine::getCondition, "1")
-                        );
-                        processBusiness.setLineCode(pl.getCode());
-                        ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processBusiness.getLineCode());
-                        if(ObjectUtil.isNotNull(processLineEnum)){
-                            processBusiness.setState(processLineEnum.getStateSmallDesc());
-                        }
+                if(ObjectUtil.isNotEmpty(processApprovalList)){
+                    processBusiness.setPreNodeCode(processRecordLast.getNodeCode());
+                    processBusiness.setLineCode(processRecordLast.getLineCode());
+                    processBusiness.setNextNodeCode(processLine.getNodeCodeNext());
+                    ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processBusiness.getLineCode());
+                    if(ObjectUtil.isNotNull(processLineEnum)){
+                        processBusiness.setState(processLineEnum.getStateSmallDesc());
                     }
                     dshList.add(processBusiness);
                 }
@@ -1272,13 +1289,55 @@ public class SpringbootApplicationTests {
                 new LambdaQueryWrapper<ProcessBusiness>()
                         .apply("(select process_record.approval_state from process_record where process_business.id=process_record.business_id and process_record.approval_user='"+userId+"' order by process_record.approval_time desc limit 1)='2'")
         );
-        log.info("已通过列表：{}", dshList);
+        for (ProcessBusiness processBusiness : tgList) {
+            ProcessRecord processRecordLast = processRecordService.getOne(
+                    new LambdaQueryWrapper<ProcessRecord>()
+                            .eq(ProcessRecord::getBusinessId, processBusiness.getId())
+                            .orderByDesc(ProcessRecord::getApprovalTime)
+                            .last("limit 1")
+            );
+            if(ObjectUtil.isNotNull(processRecordLast)){
+                processBusiness.setPreNodeCode(processRecordLast.getNodeCode());
+                processBusiness.setLineCode(processRecordLast.getLineCode());
+                ProcessLine processLine = processLineService.getOne(
+                        new LambdaQueryWrapper<ProcessLine>()
+                                .eq(ProcessLine::getCode, processRecordLast.getLineCode())
+                );
+                processBusiness.setNextNodeCode(processLine.getNodeCodeNext());
+                ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processBusiness.getLineCode());
+                if(ObjectUtil.isNotNull(processLineEnum)){
+                    processBusiness.setState(processLineEnum.getStateSmallDesc());
+                }
+            }
+        }
+        log.info("已通过列表：{}", tgList);
         //已驳回列表
         List<ProcessBusiness> bhList = processBusinessService.list(
                 new LambdaQueryWrapper<ProcessBusiness>()
-                        .apply("(select process_record.approval_state from process_record where process_business.id=process_record.business_id and process_record.approval_user='"+userId+"' order by process_record.approval_time desc limit 1)='2'")
+                        .apply("(select process_record.approval_state from process_record where process_business.id=process_record.business_id and process_record.approval_user='"+userId+"' order by process_record.approval_time desc limit 1)='3'")
         );
-        log.info("已驳回列表：{}", dshList);
+        for (ProcessBusiness processBusiness : bhList) {
+            ProcessRecord processRecordLast = processRecordService.getOne(
+                    new LambdaQueryWrapper<ProcessRecord>()
+                            .eq(ProcessRecord::getBusinessId, processBusiness.getId())
+                            .orderByDesc(ProcessRecord::getApprovalTime)
+                            .last("limit 1")
+            );
+            if(ObjectUtil.isNotNull(processRecordLast)){
+                processBusiness.setPreNodeCode(processRecordLast.getNodeCode());
+                processBusiness.setLineCode(processRecordLast.getLineCode());
+                ProcessLine processLine = processLineService.getOne(
+                        new LambdaQueryWrapper<ProcessLine>()
+                                .eq(ProcessLine::getCode, processRecordLast.getLineCode())
+                );
+                processBusiness.setNextNodeCode(processLine.getNodeCodeNext());
+                ProcessLineEnum processLineEnum = ProcessLineEnum.getProcessStateEnum(processBusiness.getLineCode());
+                if(ObjectUtil.isNotNull(processLineEnum)){
+                    processBusiness.setState(processLineEnum.getStateSmallDesc());
+                }
+            }
+        }
+        log.info("已驳回列表：{}", bhList);
     }
     //发起申请
     public void apply(ProcessBusiness processBusiness){
