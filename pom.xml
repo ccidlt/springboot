@@ -435,12 +435,12 @@
     </profiles>
 
     <build>
-        <!--上述配置表示要对src/main/resources下的资源进行过滤替换，过滤时采用的过滤文件为src/main/filters/config-${profile.active}.properties文件-->
+        <!--该配置表示要对src/main/resources下的资源进行过滤替换，过滤时采用的过滤文件为src/main/filters/config-${profile.active}.properties文件-->
         <!--读取不同环境的配置文件-->
         <filters>
             <filter>src/main/filters/config-${profile.active}.properties</filter>
         </filters>
-        <!--1、打包编译作用 2、resources中的文件使用pom当中的值-->
+        <!--1、maven加载静态资源,打包编译 2、resources中的文件使用pom.xml当中的值-->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -480,6 +480,25 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <!--过滤掉不需要编码的文件：过滤后缀为 .doc、.xlsx。。。 的所有文件，不对其进行统一编码-->
+                        <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>vsd</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>txt</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ftl</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
         </plugins>
