@@ -363,6 +363,24 @@
         </dependency>
 
         <!--ES搜索引擎-->
+        <!-- Low Level Client -->
+        <!--
+            spring:
+              elasticsearch:
+                rest:
+                  uris: http://localhost:9200
+                  username:
+                  password:
+                  # 连接超时时间(默认1s)
+                  connection-timeout: 1000
+                  # 读取超时时间(默认30s)
+                  read-timeout: 1000
+         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+        <!-- High Level Client -->
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>

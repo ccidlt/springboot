@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Document(collection = "test")
 public class Mongodb {
+    // @Id springboot-jpa定义了一组Java类和注解，可以将Java对象映射到数据库表，从而方便地进行CRUD操作
     @Id
     private String id;
     private String name;

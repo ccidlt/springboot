@@ -899,6 +899,8 @@ public class SpringbootApplicationTests {
         System.out.println(personFactory.create("李四","13800000000"));
     }
 
+
+    //High Level Client
     @Autowired
     private RestHighLevelClient restHighLevelClient;
     /**
