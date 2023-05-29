@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ds.config.async.ReentrantLockOperate;
 import com.ds.config.webmvc.MyEvent;
+import com.ds.controller.ElasticsearchController;
 import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
 import com.ds.dao.GirlDao;
@@ -1092,6 +1093,47 @@ public class SpringbootApplicationTests {
             log.info(boy.toString());
         }
     }
+
+    //Low Level Client
+    /*
+    spring:
+      elasticsearch:
+        rest:
+          uris: http://localhost:9200
+          username:
+          password:
+          # 连接超时时间(默认1s)
+          connection-timeout: 1000
+          # 读取超时时间(默认30s)
+          read-timeout: 1000
+     */
+    @Autowired
+    private ElasticsearchController elasticsearchController;
+    @Test
+    public void createIndexAndMapping() {
+        boolean indexAndMapping = elasticsearchController.createIndexAndMapping(Elasticsearch.class);
+        System.err.println(indexAndMapping);
+    }
+    @Test
+    public void deleteIndex() {
+        Boolean aBoolean = elasticsearchController.deleteIndex(Elasticsearch.class);
+        System.err.println(aBoolean);
+    }
+    @Test
+    public void save() {
+        Elasticsearch elasticsearch = new Elasticsearch("1", "lt", "南京", 20, new Date());
+        System.err.println(elasticsearchController.save(elasticsearch));
+    }
+    @Test
+    public void delete() {
+        elasticsearchController.deleteById("1");
+    }
+    @Test
+    public void search() {
+        List<Elasticsearch> teacherList = elasticsearchController.search("address", "南京");
+        System.err.println(teacherList);
+    }
+
 
     /**
      * mongodb
