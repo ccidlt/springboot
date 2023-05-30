@@ -4,6 +4,12 @@ import com.ds.enums.ResultCodeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 全局统一返回结果类
@@ -92,5 +98,18 @@ public class Result<T> {
             return true;
         }
         return false;
+    }
+
+    public static Result failure(BindingResult result) {
+        if(null!= result && result.hasErrors()) {
+            Map<String, String> map = new HashMap<String, String>();
+            List<FieldError> list = result.getFieldErrors();
+            for (FieldError error : list) {
+                map.put(error.getField(), error.getDefaultMessage());
+            }
+            return Result.build(ResultCodeEnum.BAD_REQUEST.getCode(), ResultCodeEnum.BAD_REQUEST.getValue()+"["+map.toString()+"]");
+        }  else {
+            return Result.build(ResultCodeEnum.INTERNAL_SERVER_ERROR.getCode(),ResultCodeEnum.INTERNAL_SERVER_ERROR.getValue());
+        }
     }
 }
