@@ -130,7 +130,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         /*例子：前台传了 (山东省:粗粒度分为山东省 细粒度分为：山东省,山东,省)
             es索引库里(山东省济南市 粗粒度分为 山东省,济南市  细粒度分为:山东省,山东,省,济南市,济南,市)
             只有当前台分的词和后台分的词能有一个匹配上就可以*/
-//        QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value).analyzer("ik_smart");
+//        QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value).analyzer("ik_max_word");
         QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value);
         Iterable<Elasticsearch> iterable = elasticsearchDao.search(queryBuilder);
         List<Elasticsearch> result = new ArrayList<>();
@@ -150,7 +150,8 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Override
     public List<Elasticsearch> searchByPage(Integer pageNo, Integer pageSize, String key, String value) {
         //设置查询分页
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, sort);
         QueryBuilder queryBuilder = QueryBuilders.termQuery(key, value);
         Page<Elasticsearch> page = elasticsearchDao.search(queryBuilder, pageRequest);
         List<Elasticsearch> result = new ArrayList<>();
