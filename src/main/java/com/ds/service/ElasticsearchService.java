@@ -17,7 +17,7 @@ public interface ElasticsearchService {
      * @Author lt
      * @Date 2021/12/9 10:43
      */
-    public boolean createIndexAndMapping(Class<?> classType);
+    public Boolean createIndexAndMapping(Class<?> classType);
 
     /**
      * @param clazz : 删除的哪个索引(从传入对象中的@Document注解中indexName属性获取)
@@ -27,6 +27,8 @@ public interface ElasticsearchService {
      * @Date 2021/12/27 14:27
      */
     public Boolean deleteIndex(Class<?> clazz);
+
+    public Boolean existsIndex(Class<?> clazz);
 
     public Elasticsearch save(Elasticsearch elasticsearch);
 
@@ -46,6 +48,6 @@ public interface ElasticsearchService {
 
     public List<Elasticsearch> search(String key, String value);
 
-    public void searchByPage(Integer pageNum, Integer pageSize, String key, String value);
+    public List<Elasticsearch> searchByPage(Integer pageNo, Integer pageSize, String key, String value);
 
 }

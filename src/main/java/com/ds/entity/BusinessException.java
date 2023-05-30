@@ -5,8 +5,8 @@ package com.ds.entity;
  * @Author lt
  * @Date 2023/5/22 14:27
  */
-public class businessException extends RuntimeException{
-    private String code;
+public class BusinessException extends RuntimeException{
+    private Integer code;
 
     /**
      * 用户展示看到的msg
@@ -19,23 +19,23 @@ public class businessException extends RuntimeException{
      */
     private String sysMsg = "";
 
-    public businessException(String code,String msg) {
+    public BusinessException(Integer code, String msg) {
         super(msg);
         this.code = code;
         this.msg = msg;
     }
 
-    public businessException(String code,String msg,String sysMsg) {
+    public BusinessException(Integer code, String msg, String sysMsg) {
         this.code = code;
         this.msg = msg;
         this.sysMsg = sysMsg;
     }
 
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 

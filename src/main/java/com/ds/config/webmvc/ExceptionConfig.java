@@ -1,5 +1,6 @@
 package com.ds.config.webmvc;
 
+import com.ds.entity.BusinessException;
 import com.ds.entity.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class ExceptionConfig {
      * 捕捉其他所有异常
      */
     @ExceptionHandler(Throwable.class)
-    public Result globalException(HttpServletRequest request, Throwable e) {
+    public Result throwGlobalException(HttpServletRequest request, Throwable e) {
         if (e instanceof NoHandlerFoundException) {
             return Result.build(HttpStatus.NOT_FOUND.value(), "找不到资源");
         } else if (e instanceof TypeMismatchException) {
@@ -50,6 +51,11 @@ public class ExceptionConfig {
         } else {
             return Result.build(HttpStatus.SERVICE_UNAVAILABLE.value(), e.getMessage());
         }
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public Result throwBusinessException(BusinessException e) {
+        return Result.build(e.getCode(), e.getMessage());
     }
 
 }

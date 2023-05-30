@@ -1,6 +1,7 @@
 package com.ds.service.impl;
 
 import com.ds.dao.ElasticsearchDao;
+import com.ds.entity.BusinessException;
 import com.ds.entity.Elasticsearch;
 import com.ds.service.ElasticsearchService;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -34,9 +35,9 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
      * @Date 2021/12/9 10:43
      */
     @Override
-    public boolean createIndexAndMapping(Class<?> classType) {
+    public Boolean createIndexAndMapping(Class<?> classType) {
         if (elasticsearchRestTemplate.indexExists(classType))
-            return true;
+            throw new BusinessException(1, "索引已存在");
         boolean index = elasticsearchRestTemplate.createIndex(classType);
         boolean mapping = elasticsearchRestTemplate.putMapping(classType);
         return index && mapping;
@@ -52,6 +53,11 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Override
     public Boolean deleteIndex(Class<?> clazz) {
         return elasticsearchRestTemplate.deleteIndex(clazz);
+    }
+
+    @Override
+    public Boolean existsIndex(Class<?> clazz) {
+        return elasticsearchRestTemplate.indexExists(clazz);
     }
 
     @Override
@@ -111,13 +117,21 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         page.forEach(System.out::println);
     }
 
+    /**
+     * termQuery：输入的查询内容是什么，就会按照什么去查询，并不会解析查询内容，对它分词
+     * matchQuery：会将搜索词分词，再与目标查询字段进行匹配，若分词中的任意一个词与目标字段匹配上，则可查询到
+     * @param key
+     * @param value
+     * @return
+     */
     @Override
     public List<Elasticsearch> search(String key, String value) {
         //分词查询(这里指定分词只是分传过来的参数)[它是要和es索引里的分词后数据一一对应才能返回]
         /*例子：前台传了 (山东省:粗粒度分为山东省 细粒度分为：山东省,山东,省)
             es索引库里(山东省济南市 粗粒度分为 山东省,济南市  细粒度分为:山东省,山东,省,济南市,济南,市)
             只有当前台分的词和后台分的词能有一个匹配上就可以*/
-        QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value).analyzer("ik_smart");
+//        QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value).analyzer("ik_smart");
+        QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value);
         Iterable<Elasticsearch> iterable = elasticsearchDao.search(queryBuilder);
         List<Elasticsearch> result = new ArrayList<>();
         iterable.forEach(result::add);
@@ -125,21 +139,23 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     /**
+     * termQuery：输入的查询内容是什么，就会按照什么去查询，并不会解析查询内容，对它分词
+     * matchQuery：会将搜索词分词，再与目标查询字段进行匹配，若分词中的任意一个词与目标字段匹配上，则可查询到
      * 分页
-     * @param pageNum 当前页码0开始
+     * @param pageNo 当前页码0开始
      * @param pageSize 每页显示的条数
      * @param pageSize 字段
      * @param pageSize 值
      */
     @Override
-    public void searchByPage(Integer pageNum, Integer pageSize, String key, String value) {
+    public List<Elasticsearch> searchByPage(Integer pageNo, Integer pageSize, String key, String value) {
         //设置查询分页
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
-        QueryBuilder queryBuilder = QueryBuilders.matchQuery(key, value).analyzer("ik_smart");
-        Iterable<Elasticsearch> iterable = elasticsearchDao.search(queryBuilder, pageRequest);
-        for (Elasticsearch elasticsearch : iterable) {
-            System.out.println(elasticsearch);
-        }
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        QueryBuilder queryBuilder = QueryBuilders.termQuery(key, value);
+        Page<Elasticsearch> page = elasticsearchDao.search(queryBuilder, pageRequest);
+        List<Elasticsearch> result = new ArrayList<>();
+        page.forEach(result::add);
+        return result;
     }
 
 }

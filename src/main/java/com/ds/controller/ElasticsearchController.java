@@ -25,27 +25,32 @@ public class ElasticsearchController {
     private ElasticsearchService elasticsearchService;
 
     /**
-     * @param classType : 要创建es的索引及映射(一定要通过这种方法创建，否则都是创建出来的映射都是默认的)基于传入对象中的@Document注解
+     * 要创建es的索引及映射(一定要通过这种方法创建，否则都是创建出来的映射都是默认的)基于传入对象中的@Document注解
      * @return boolean
      * @throws
      * @Author lt
      * @Date 2021/12/9 10:43
      */
     @PostMapping("createIndexAndMapping")
-    public boolean createIndexAndMapping(Class<?> classType) {
-        return elasticsearchService.createIndexAndMapping(classType);
+    public Boolean createIndexAndMapping() {
+        return elasticsearchService.createIndexAndMapping(Elasticsearch.class);
     }
 
     /**
-     * @param clazz : 删除的哪个索引(从传入对象中的@Document注解中indexName属性获取)
+     * 删除的哪个索引(从传入对象中的@Document注解中indexName属性获取)
      * @return java.lang.Boolean
      * @explain : 删除索引
      * @Author lt
      * @Date 2021/12/27 14:27
      */
     @PostMapping("deleteIndex")
-    public Boolean deleteIndex(Class<?> clazz) {
-        return elasticsearchService.deleteIndex(clazz);
+    public Boolean deleteIndex() {
+        return elasticsearchService.deleteIndex(Elasticsearch.class);
+    }
+
+    @PostMapping("existsIndex")
+    public Boolean existsIndex() {
+        return elasticsearchService.existsIndex(Elasticsearch.class);
     }
 
     @PostMapping("save")
@@ -86,6 +91,11 @@ public class ElasticsearchController {
     @PostMapping("search")
     public List<Elasticsearch> search(String key, String value) {
         return elasticsearchService.search(key, value);
+    }
+
+    @PostMapping("searchByPage")
+    public List<Elasticsearch> searchByPage(Integer pageNo, Integer pageSize, String key, String value) {
+        return elasticsearchService.searchByPage(pageNo, pageSize, key, value);
     }
 
 }
