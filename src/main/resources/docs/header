@@ -1,0 +1,70 @@
+#### GET
+```
+//请求首行
+GET /hello/index.jsp?username=hello HTTP/1.1
+//请求头信息，因为GET请求没有正文
+Host: localhost
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-cn,zh;q=0.5
+Accept-Encoding: gzip, deflate
+Accept-Charset: GB2312,utf-8;q=0.7,*;q=0.7
+Connection: keep-alive
+Cookie: JSESSIONID=369766FDF6220F7803433C0B2DE36D98
+//空行
+//因为GET没有正文，所以下面为空
+```
+
+####POST
+```
+// 请求首行
+POST /hello/index.jsp HTTP/1.1
+//请求头信息
+Host: localhost
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-cn,zh;q=0.5
+Accept-Encoding: gzip, deflate
+Accept-Charset: GB2312,utf-8;q=0.7,*;q=0.7
+Connection: keep-alive
+Referer: http://localhost/hello/index.jsp
+Cookie: JSESSIONID=369766FDF6220F7803433C0B2DE36D98
+Content-Type: application/x-www-form-urlencoded 
+Content-Length: 14 
+// 这里是空行
+//POST有请求正文
+username=hello
+```
+
+* Accept：表示浏览器支持的 MIME 类型，如text/html、text/plain、application/json。
+* Accept-Encodin：浏览器支持的压缩编码是gzip和deflate。
+* Accept-Language：浏览器支持的语言分别是中文和简体中文，优先支持简体中文。
+* Accept-Charset：浏览器可接受的字符集。如果在请求消息中没有设置这个域，缺省表示任何字符集都可以接受。
+* Connection：Connection表示客户端与服务连接类型；Keep-Alive表示持久连接；
+* Content-Length：表示请求消息正文的长度。
+* Content-Type：客户机通过这个头告诉服务器，客户端向服务器发送的数据类型。
+* User-Agent：产生请求的浏览器类型。
+* Host：请求的主机名，允许多个域名同处一个IP地址，即虚拟主机。
+* Referer：包含一个URL，用户从该URL代表的页面出发访问当前请求的页面。提供了Request的上下文信息的服务器，告诉服务器我是从哪个链接过来的。
+* Cookie: 缓存的sessionID和浏览器中的缓存。
+* Origin：用来说明请求从哪里发起的，包括且仅仅包括协议和域名。
+这个参数一般只存在于CORS跨域请求中，可以看到response有对应的header：Access-Control-Allow-Origin。
+* Date：客户机通过这个头告诉服务器，客户机当前请求时间。
+* If-Modified-Since：客户机通过这个头告诉服务器，资源的缓存时间。
+
+
+* Connection：服务器通过这个头，响应完是保持链接还是关闭链接。
+* Content-Encoding：服务器通过这个头，告诉浏览器数据采用的压缩格式。
+* Content-Type：服务器通过这个头，回送数据的类型
+* Date：告诉客户机，返回响应的时间。
+* Server：服务器通过这个头，告诉浏览器服务器的类型
+* Transfer-Encoding：HTTP协议头字段Transfer_Encoding，分块传输编码，一般出现在http的响应头中。该头字段存在与HTTP协议的1.1版本中，提供一种数据传输机制。
+通常http协议在传输数据时是整体一起发送的，数据体的长度由Content-Length字段指定，方便判断消息结束。
+服务器通过这个头，告诉浏览器数据的传送格式。
+* varyVary 字段用于列出一个响应字段列表，告诉缓存服务器遇到同一个 URL 对应着不同版本文档的情况时，如何缓存和筛选合适的版本。
+* Location：这个头配合302状态码使用，告诉用户端找谁。
+* Content-Length：服务器通过这个头，告诉浏览器回送数据的长度
+* Content-Language：服务器通过这个头，告诉服务器的语言环境
+* Last-Modified：服务器通过这个头，告诉浏览器当前资源的缓存时间
+* Refresh：服务器通过这个头，告诉浏览器隔多长时间刷新一次
+* Content-Disposition：服务器通过这个头，告诉浏览器以下载的方式打开数据。
