@@ -36,6 +36,8 @@ Content-Length: 14
 username=hello
 ```
 
+```
+请求头
 * Accept：表示浏览器支持的 MIME 类型，如text/html、text/plain、application/json。
 * Accept-Encodin：浏览器支持的压缩编码是gzip和deflate。
 * Accept-Language：浏览器支持的语言分别是中文和简体中文，优先支持简体中文。
@@ -51,16 +53,20 @@ username=hello
 这个参数一般只存在于CORS跨域请求中，可以看到response有对应的header：Access-Control-Allow-Origin。
 * Date：客户机通过这个头告诉服务器，客户机当前请求时间。
 * If-Modified-Since：客户机通过这个头告诉服务器，资源的缓存时间。
+```
 
 
-* Connection：服务器通过这个头，响应完是保持链接还是关闭链接。
-* Content-Encoding：服务器通过这个头，告诉浏览器数据采用的压缩格式。
-* Content-Type：服务器通过这个头，回送数据的类型
+
+```
+简单响应头
+* Connection：服务器通过这个头，响应完是保持链接还是关闭链接，如keep-alive。
+* Content-Encoding：服务器通过这个头，告诉浏览器数据采用的压缩格式，如gzip。
+* Content-Type：服务器通过这个头，回送数据的类型，如application/json;charset=UTF-8。
 * Date：告诉客户机，返回响应的时间。
-* Server：服务器通过这个头，告诉浏览器服务器的类型
+* Server：服务器通过这个头，告诉浏览器服务器的类型，如nginx
 * Transfer-Encoding：HTTP协议头字段Transfer_Encoding，分块传输编码，一般出现在http的响应头中。该头字段存在与HTTP协议的1.1版本中，提供一种数据传输机制。
-通常http协议在传输数据时是整体一起发送的，数据体的长度由Content-Length字段指定，方便判断消息结束。
-服务器通过这个头，告诉浏览器数据的传送格式。
+  通常http协议在传输数据时是整体一起发送的，数据体的长度由Content-Length字段指定，方便判断消息结束。
+  服务器通过这个头，告诉浏览器数据的传送格式。
 * varyVary 字段用于列出一个响应字段列表，告诉缓存服务器遇到同一个 URL 对应着不同版本文档的情况时，如何缓存和筛选合适的版本。
 * Location：这个头配合302状态码使用，告诉用户端找谁。
 * Content-Length：服务器通过这个头，告诉浏览器回送数据的长度
@@ -68,3 +74,12 @@ username=hello
 * Last-Modified：服务器通过这个头，告诉浏览器当前资源的缓存时间
 * Refresh：服务器通过这个头，告诉浏览器隔多长时间刷新一次
 * Content-Disposition：服务器通过这个头，告诉浏览器以下载的方式打开数据。
+
+默认情况下，只显示简单的响应头，如果你想要客户端能够访问其他的请求头，则必须使用Access-Control-Expose-Headers 列出他们
+* Access-Control-Allow-Headers：允许服务器指定哪些自定义请求头可以被浏览器访问。
+* Access-Control-Allow-Methods：头部用于指定在跨域请求中允许的HTTP方法。
+* Access-Control-Allow-Origin：解决资源的跨域权限问题。
+* Access-Control-Expose-Headers：公开响应头或自定义响应头
+* Access-Control-Max-Age：浏览器的同源策略，就是出于安全考虑，浏览器会限制从脚本发起的跨域HTTP请求（比如异步请求GET, POST, PUT, DELETE, OPTIONS等等），所以浏览器会向所请求的服务器发起两次请求，第一次是浏览器使用OPTIONS方法发起一个预检请求，第二次才是真正的异步请求，第一次的预检请求获知服务器是否允许该跨域请求：如果允许，才发起第二次真实的请求；如果不允许，则拦截第二次请求。
+  Access-Control-Max-Age用来指定本次预检请求的有效期，单位为秒，，在此期间不用发出另一条预检请求。
+```
