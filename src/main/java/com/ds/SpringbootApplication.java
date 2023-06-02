@@ -28,7 +28,7 @@ import java.net.UnknownHostException;
 @Slf4j
 @EnableFeignClients(basePackages = {"com.ds.service"})
 @ServletComponentScan//检索@WebFilter、@WebListener
-@EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)
+@EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)// 表示通过aop框架暴露该代理对象,AopContext能够访问
 public class SpringbootApplication {
 
     public static void main(String[] args) throws UnknownHostException {
