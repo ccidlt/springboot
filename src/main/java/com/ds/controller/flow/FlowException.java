@@ -1,11 +1,15 @@
 package com.ds.controller.flow;
 
+import java.io.Serializable;
+
 /**
- * @Description:
+ * @Description: 异常类
  * @Author lt
  * @Date 2023/6/7 11:28
  */
-public class FlowException extends RuntimeException {
+public class FlowException extends RuntimeException implements Serializable {
+
+    private static final long serialVersionUID = -461532980899578676L;
 
     private Integer code;
 
