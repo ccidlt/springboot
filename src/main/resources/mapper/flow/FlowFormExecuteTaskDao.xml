@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ds.dao.flow.FlowFormExecuteTaskDao">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.ds.entity.flow.entity.FlowFormExecuteTask">
+                    <id column="id" property="id"/>
+                    <result column="flow_form_id" property="flowFormId"/>
+                    <result column="flow_form_execute_id" property="flowFormExecuteId"/>
+                    <result column="form_num" property="formNum"/>
+                    <result column="task_status" property="taskStatus"/>
+                    <result column="task_name" property="taskName"/>
+                    <result column="task_desc" property="taskDesc"/>
+                    <result column="is_delete" property="isDelete"/>
+                    <result column="is_disable" property="isDisable"/>
+                    <result column="create_id" property="createId"/>
+                    <result column="create_name" property="createName"/>
+                    <result column="create_time" property="createTime"/>
+                    <result column="update_id" property="updateId"/>
+                    <result column="update_name" property="updateName"/>
+                    <result column="update_time" property="updateTime"/>
+                    <result column="data_version" property="dataVersion"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, flow_form_id, flow_form_execute_id, form_num, task_status, task_name, task_desc, is_delete, is_disable, create_id, create_name, create_time, update_id, update_name, update_time, data_version
+        </sql>
+
+
+    <select id="selectAll" parameterType="com.ds.entity.flow.entity.FlowFormExecuteTask" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from flow_form_execute_task
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from flow_form_execute_task
+        where id = #{id}
+    </select>单个
+
+    <insert id="add" parameterType="com.ds.entity.flow.entity.FlowFormExecuteTask">
+        insert into flow_form_execute_task (
+        id,
+        flow_form_id,
+        flow_form_execute_id,
+        form_num,
+        task_status,
+        task_name,
+        task_desc,
+        is_delete,
+        is_disable,
+        create_id,
+        create_name,
+        create_time,
+        update_id,
+        update_name,
+        update_time,
+        data_version
+        )
+        values (
+            #{id},
+            #{flowFormId},
+            #{flowFormExecuteId},
+            #{formNum},
+            #{taskStatus},
+            #{taskName},
+            #{taskDesc},
+            #{isDelete},
+            #{isDisable},
+            #{createId},
+            #{createName},
+            #{createTime},
+            #{updateId},
+            #{updateName},
+            #{updateTime},
+            #{dataVersion}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.ds.entity.flow.entity.FlowFormExecuteTask">
+        update flow_form_execute_task
+        set
+            flow_form_id = #{flowFormId} ,
+            flow_form_execute_id = #{flowFormExecuteId} ,
+            form_num = #{formNum} ,
+            task_status = #{taskStatus} ,
+            task_name = #{taskName} ,
+            task_desc = #{taskDesc} ,
+            is_delete = #{isDelete} ,
+            is_disable = #{isDisable} ,
+            create_id = #{createId} ,
+            create_name = #{createName} ,
+            create_time = #{createTime} ,
+            update_id = #{updateId} ,
+            update_name = #{updateName} ,
+            update_time = #{updateTime} ,
+            data_version = #{dataVersion} 
+        where
+                id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from flow_form_execute_task
+        where
+            id = #{id}
+    </delete>
+
+</mapper>

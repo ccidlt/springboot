@@ -154,4 +154,39 @@ public class Knife4jConfig {
                 .globalResponseMessage(RequestMethod.DELETE, responseMessageList)
                 .extensions(openApiExtensionResolver.buildExtensions("mq"));
     }
+
+    @Bean
+    public Docket flowApi() {
+        //添加head参数配置
+        ParameterBuilder clientIdTicket = new ParameterBuilder();
+        List<Parameter> pars = new ArrayList<>();
+        clientIdTicket.name("token").description("token令牌")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(false).build(); //设置false，表示clientId参数 非必填,可传可不传！
+        pars.add(clientIdTicket.build());
+
+        List<ResponseMessage> responseMessageList = new ArrayList<>();
+        Arrays.stream(ResultCodeEnum.values()).forEach(resultCode -> {
+            responseMessageList.add(
+                    new ResponseMessageBuilder().code(resultCode.getCode()).message(resultCode.getValue()).responseModel(new ModelRef("Result")).build()
+            );
+        });
+
+        return new Docket(DocumentationType.SWAGGER_2) //swagger版本
+                .pathMapping("/")
+                .apiInfo(apiInfoDefault())
+                .groupName("flow")
+                .select()
+                //扫描那些controller
+                .apis(RequestHandlerSelectors.basePackage("com.ds.controller.flow"))
+                .paths(PathSelectors.any())
+                .build()
+                .globalOperationParameters(pars)// 全局配置
+                .globalResponseMessage(RequestMethod.GET, responseMessageList)
+                .globalResponseMessage(RequestMethod.POST, responseMessageList)
+                .globalResponseMessage(RequestMethod.PUT, responseMessageList)
+                .globalResponseMessage(RequestMethod.DELETE, responseMessageList)
+                .extensions(openApiExtensionResolver.buildExtensions("flow"));
+    }
 }

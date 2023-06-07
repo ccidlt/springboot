@@ -61,6 +61,8 @@ public class MybatisPlusConfig implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "version", Integer.class, 1);
         this.strictInsertFill(metaObject, "isdelete", Integer.class, 0);
         this.strictInsertFill(metaObject, "id", Long.class, snowflake.nextId());
+        this.strictInsertFill(metaObject, "isDelete", Integer.class, 0);
+        this.strictInsertFill(metaObject, "isDisable", Integer.class, 0);
     }
 
     @Override

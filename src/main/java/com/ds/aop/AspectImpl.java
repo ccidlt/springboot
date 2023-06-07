@@ -31,10 +31,8 @@ import java.util.Map;
 public class AspectImpl {
 
     //@Pointcut("execution(public * com.ds.controller.*.*(..)) || execution(public * com.ds.controller.*.*(..))")
-//    @Pointcut("@annotation(com.ds.annotation.AspectService)")
-//    private void cut() {
-//
-//    }
+    @Pointcut("@annotation(com.ds.annotation.AspectService)")
+    private void cut() {}
 
     //环绕增强，是在before前就会触发,目标方法执行前后分别执行一些代码
 //    @Around("cut()")

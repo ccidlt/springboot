@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ds.dao.flow.FlowInfoDao">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.ds.entity.flow.entity.FlowInfo">
+                    <id column="id" property="id"/>
+                    <result column="leave_reason" property="leaveReason"/>
+                    <result column="is_delete" property="isDelete"/>
+                    <result column="is_disable" property="isDisable"/>
+                    <result column="create_id" property="createId"/>
+                    <result column="create_name" property="createName"/>
+                    <result column="create_time" property="createTime"/>
+                    <result column="update_id" property="updateId"/>
+                    <result column="update_name" property="updateName"/>
+                    <result column="update_time" property="updateTime"/>
+                    <result column="data_version" property="dataVersion"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, leave_reason, is_delete, is_disable, create_id, create_name, create_time, update_id, update_name, update_time, data_version
+        </sql>
+
+
+    <select id="selectAll" parameterType="com.ds.entity.flow.entity.FlowInfo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from flow_info
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from flow_info
+        where id = #{id}
+    </select>单个
+
+    <insert id="add" parameterType="com.ds.entity.flow.entity.FlowInfo">
+        insert into flow_info (
+        id,
+        leave_reason,
+        is_delete,
+        is_disable,
+        create_id,
+        create_name,
+        create_time,
+        update_id,
+        update_name,
+        update_time,
+        data_version
+        )
+        values (
+            #{id},
+            #{leaveReason},
+            #{isDelete},
+            #{isDisable},
+            #{createId},
+            #{createName},
+            #{createTime},
+            #{updateId},
+            #{updateName},
+            #{updateTime},
+            #{dataVersion}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.ds.entity.flow.entity.FlowInfo">
+        update flow_info
+        set
+            leave_reason = #{leaveReason} ,
+            is_delete = #{isDelete} ,
+            is_disable = #{isDisable} ,
+            create_id = #{createId} ,
+            create_name = #{createName} ,
+            create_time = #{createTime} ,
+            update_id = #{updateId} ,
+            update_name = #{updateName} ,
+            update_time = #{updateTime} ,
+            data_version = #{dataVersion} 
+        where
+                id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from flow_info
+        where
+            id = #{id}
+    </delete>
+
+</mapper>
