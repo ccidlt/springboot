@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,10 @@ import java.io.Serializable;
 public class BaseDTO implements Serializable {
 
     private static final long serialVersionUID = -512560835068732040L;
+
+    @ApiModelProperty(value = "操作人id")
+    @NotNull
+    private Long personId;
 
     @ApiModelProperty(value = "操作人工号")
     @NotBlank

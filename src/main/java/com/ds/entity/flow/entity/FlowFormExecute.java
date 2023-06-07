@@ -1,7 +1,5 @@
 package com.ds.entity.flow.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -27,10 +25,6 @@ import java.io.Serializable;
 public class FlowFormExecute extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.INPUT)
-    private Long id;
 
     @ApiModelProperty(value = "flow_form_info表id")
     private Long flowFormId;
