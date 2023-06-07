@@ -49,7 +49,7 @@ public class ${table.controllerName} {
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "服务器内部错误", response = Result.class)
     })
-    public Result<List<${entity}>>query(){
+    public Result<List<${entity}>> query(){
         return Result.ok(${table.entityPath}Service.list());
     }
 
