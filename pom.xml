@@ -475,6 +475,7 @@
         </resources>
         <!--设置最终打包的名称，jenkins部署需去除版本号-->
         <finalName>${project.artifactId}</finalName>
+        <!-- 打包命令：mvn clean package -P prd -->
         <plugins>
             <!--打包时候生成可执行jar包-->
             <plugin>
