@@ -2,6 +2,7 @@ package com.ds.config.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Date;
 
 @Configuration
-public class MybatisPlusConfig implements MetaObjectHandler {
+public class MybatisPlusConfig implements MetaObjectHandler, IdentifierGenerator {
 
     /*//自动填充
     @Override
@@ -60,7 +61,6 @@ public class MybatisPlusConfig implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "updateTime", Date.class, new Date());
         this.strictInsertFill(metaObject, "version", Integer.class, 1);
         this.strictInsertFill(metaObject, "isdelete", Integer.class, 0);
-        this.strictInsertFill(metaObject, "id", Long.class, snowflake.nextId());
         this.strictInsertFill(metaObject, "isDelete", Integer.class, 0);
         this.strictInsertFill(metaObject, "isDisable", Integer.class, 0);
     }
@@ -88,6 +88,11 @@ public class MybatisPlusConfig implements MetaObjectHandler {
     @Bean
     public DataScopeInnerInterceptor dataScopeInnerInterceptor() {
         return new DataScopeInnerInterceptor();
+    }
+
+    @Override
+    public Number nextId(Object entity) {
+        return snowflake.nextId();
     }
 }
 
