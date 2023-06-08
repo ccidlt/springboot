@@ -42,4 +42,10 @@ public class FlowController extends FlowExceptionController {
         return Result.ok(flowService.saveDraft(flowDraftDTO));
     }
 
+    @ApiOperation(value = "列表信息", notes = "列表信息")
+    @PostMapping("/queryList")
+    public Result<?> queryList(){
+        return Result.ok(flowService.queryList());
+    }
+
 }

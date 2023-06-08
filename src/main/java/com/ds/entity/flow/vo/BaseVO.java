@@ -22,6 +22,9 @@ public class BaseVO implements Serializable {
 
     private static final long serialVersionUID = 4712897953572241816L;
 
+    @ApiModelProperty(value = "主键")
+    private Long id;
+
     @ApiModelProperty(value = "0：正常，1：删除")
     private Integer isDelete;
 

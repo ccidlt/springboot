@@ -2,12 +2,16 @@ package com.ds.service.flow.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ds.entity.flow.dto.FlowDraftDTO;
 import com.ds.entity.flow.dto.FlowFormPersonDraftDTO;
 import com.ds.entity.flow.entity.FlowFormInfo;
 import com.ds.entity.flow.entity.FlowFormPerson;
 import com.ds.entity.flow.entity.FlowFormRecord;
 import com.ds.entity.flow.entity.FlowInfo;
+import com.ds.entity.flow.vo.FlowFormInfoVO;
+import com.ds.entity.flow.vo.FlowFormNumVO;
+import com.ds.entity.flow.vo.FlowInfoVO;
 import com.ds.enums.flow.FormRecordStatusEnum;
 import com.ds.enums.flow.FormStatusEnum;
 import com.ds.service.flow.*;
@@ -41,7 +45,7 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean saveDraft(FlowDraftDTO flowDraftDTO) {
+    public FlowFormNumVO saveDraft(FlowDraftDTO flowDraftDTO) {
         FlowInfo flowInfo = BeanUtil.copyProperties(flowDraftDTO, FlowInfo.class, "id");
         flowInfo.insert(flowDraftDTO);
         flowInfoService.save(flowInfo);
@@ -73,6 +77,22 @@ public class FlowServiceImpl implements FlowService {
         flowFormRecord.setRecordStatus(FormRecordStatusEnum.DRAFT.getValue());
         flowFormRecord.insert(flowDraftDTO);
         flowFormRecordService.save(flowFormRecord);
-        return true;
+        FlowFormNumVO flowFormNumVO = new FlowFormNumVO();
+        flowFormNumVO.setFlowId(flowInfo.getId());
+        flowFormNumVO.setFlowFormId(flowFormInfo.getId());
+        flowFormNumVO.setFormNum(formNum);
+        return flowFormNumVO;
+    }
+
+    @Override
+    public List<FlowInfoVO> queryList() {
+        List<FlowInfo> flowInfoList = flowInfoService.list(new QueryWrapper<FlowInfo>().lambda().orderByDesc(FlowInfo::getCreateTime));
+        List<FlowInfoVO> flowInfoVOList = BeanUtil.copyToList(flowInfoList, FlowInfoVO.class);
+        for (FlowInfoVO flowInfoVO : flowInfoVOList) {
+            FlowFormInfo flowFormInfo = flowFormInfoService.getOne(new QueryWrapper<FlowFormInfo>().lambda().eq(FlowFormInfo::getFlowId, flowInfoVO.getId()).last("limit 1"));
+            FlowFormInfoVO flowFormInfoVO = BeanUtil.copyProperties(flowFormInfo, FlowFormInfoVO.class);
+            flowInfoVO.setFlowFormInfoVO(flowFormInfoVO);
+        }
+        return flowInfoVOList;
     }
 }
