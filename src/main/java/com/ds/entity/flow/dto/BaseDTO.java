@@ -32,4 +32,7 @@ public class BaseDTO implements Serializable {
     @ApiModelProperty(value = "操作人姓名")
     private String personName;
 
+    @ApiModelProperty(value = "操作人角色编码")
+    private String roleCode;
+
 }

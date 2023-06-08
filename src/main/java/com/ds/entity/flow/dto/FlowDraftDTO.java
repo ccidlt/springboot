@@ -38,4 +38,7 @@ public class FlowDraftDTO extends BaseDTO implements Serializable {
     @ApiModelProperty(value = "审批人姓名")
     private String approvalPersonName;
 
+    @ApiModelProperty(value = "审批人角色编码")
+    private String approvalRoleCode;
+
 }

@@ -30,7 +30,7 @@ public class FlowFormPerson extends BaseEntity implements Serializable {
     private Long flowFormId;
 
     @ApiModelProperty(value = "单号")
-    private String flowNum;
+    private String formNum;
 
     @ApiModelProperty(value = "角色编码")
     private String roleCode;

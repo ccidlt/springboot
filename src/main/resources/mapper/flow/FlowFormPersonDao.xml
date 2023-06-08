@@ -6,7 +6,7 @@
         <resultMap id="BaseResultMap" type="com.ds.entity.flow.entity.FlowFormPerson">
                     <id column="id" property="id"/>
                     <result column="flow_form_id" property="flowFormId"/>
-                    <result column="flow_num" property="flowNum"/>
+                    <result column="form_num" property="formNum"/>
                     <result column="role_code" property="roleCode"/>
                     <result column="person_name" property="personName"/>
                     <result column="person_code" property="personCode"/>
@@ -25,7 +25,7 @@
 
         <!-- 通用查询结果列 -->
         <sql id="Base_Column_List">
-            id, flow_form_id, flow_num, role_code, person_name, person_code, person_dept_code, person_dept_name, is_delete, is_disable, create_id, create_name, create_time, update_id, update_name, update_time, data_version
+            id, flow_form_id, form_num, role_code, person_name, person_code, person_dept_code, person_dept_name, is_delete, is_disable, create_id, create_name, create_time, update_id, update_name, update_time, data_version
         </sql>
 
 
@@ -46,7 +46,7 @@
         insert into flow_form_person (
         id,
         flow_form_id,
-        flow_num,
+        form_num,
         role_code,
         person_name,
         person_code,
@@ -65,7 +65,7 @@
         values (
             #{id},
             #{flowFormId},
-            #{flowNum},
+            #{formNum},
             #{roleCode},
             #{personName},
             #{personCode},
@@ -87,7 +87,7 @@
         update flow_form_person
         set
             flow_form_id = #{flowFormId} ,
-            flow_num = #{flowNum} ,
+            form_num = #{formNum} ,
             role_code = #{roleCode} ,
             person_name = #{personName} ,
             person_code = #{personCode} ,
