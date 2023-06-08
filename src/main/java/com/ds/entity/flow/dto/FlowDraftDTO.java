@@ -8,11 +8,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
- * 审批单信息表
+ * 主体暂存信息
  * </p>
  *
  * @author lt
@@ -22,23 +25,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="FlowDraftDTO对象", description="暂存信息")
+@ApiModel(value="FlowDraftDTO对象", description="主体暂存信息")
 public class FlowDraftDTO extends BaseDTO implements Serializable {
 
     private static final long serialVersionUID = 3877614824880201274L;
 
     @ApiModelProperty(value = "请假原因")
     @NotBlank
+    @Size(max = 255)
     private String leaveReason;
 
-    @ApiModelProperty(value = "审批人工号")
-    @NotBlank
-    private String approvalPersonCode;
-
-    @ApiModelProperty(value = "审批人姓名")
-    private String approvalPersonName;
-
-    @ApiModelProperty(value = "审批人角色编码")
-    private String approvalRoleCode;
+    @ApiModelProperty(value = "审批人员信息")
+    @NotEmpty
+    private List<FlowFormPersonDraftDTO> flowFormPersonDraftDTOList;
 
 }

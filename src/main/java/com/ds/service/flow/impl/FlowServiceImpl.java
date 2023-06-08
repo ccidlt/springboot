@@ -3,6 +3,7 @@ package com.ds.service.flow.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ds.entity.flow.dto.FlowDraftDTO;
+import com.ds.entity.flow.dto.FlowFormPersonDraftDTO;
 import com.ds.entity.flow.entity.FlowFormInfo;
 import com.ds.entity.flow.entity.FlowFormPerson;
 import com.ds.entity.flow.entity.FlowFormRecord;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:
@@ -54,14 +56,17 @@ public class FlowServiceImpl implements FlowService {
         flowFormInfo.setFormStatus(FormStatusEnum.DRAFT.getValue());
         flowFormInfo.insert(flowDraftDTO);
         flowFormInfoService.save(flowFormInfo);
-        FlowFormPerson flowFormPerson = BeanUtil.copyProperties(flowDraftDTO, FlowFormPerson.class, "id");
-        flowFormPerson.setFlowFormId(flowFormInfo.getId());
-        flowFormPerson.setFormNum(formNum);
-        flowFormPerson.setPersonCode(flowDraftDTO.getApprovalPersonCode());
-        flowFormPerson.setPersonName(flowDraftDTO.getApprovalPersonName());
-        flowFormPerson.setRoleCode(flowDraftDTO.getApprovalRoleCode());
-        flowFormPerson.insert(flowDraftDTO);
-        flowFormPersonService.save(flowFormPerson);
+        List<FlowFormPersonDraftDTO> flowFormPersonDraftDTOList = flowDraftDTO.getFlowFormPersonDraftDTOList();
+        for (FlowFormPersonDraftDTO flowFormPersonDraftDTO : flowFormPersonDraftDTOList) {
+            FlowFormPerson flowFormPerson = BeanUtil.copyProperties(flowFormPersonDraftDTO, FlowFormPerson.class, "id");
+            flowFormPerson.setFlowFormId(flowFormInfo.getId());
+            flowFormPerson.setFormNum(formNum);
+            flowFormPerson.setPersonCode(flowFormPersonDraftDTO.getApprovalPersonCode());
+            flowFormPerson.setPersonName(flowFormPersonDraftDTO.getApprovalPersonName());
+            flowFormPerson.setRoleCode(flowFormPersonDraftDTO.getApprovalRoleCode());
+            flowFormPerson.insert(flowDraftDTO);
+            flowFormPersonService.save(flowFormPerson);
+        }
         FlowFormRecord flowFormRecord = BeanUtil.copyProperties(flowDraftDTO, FlowFormRecord.class, "id");
         flowFormRecord.setFlowFormId(flowFormInfo.getId());
         flowFormRecord.setFormNum(formNum);
