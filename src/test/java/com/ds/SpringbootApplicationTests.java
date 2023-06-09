@@ -703,6 +703,14 @@ public class SpringbootApplicationTests {
                 "}";
         String post1 = HttpUtil.post("http://localhost:8078/flow/saveDraft", paramJson, 60000);
         System.out.println(JSON.parseObject(post1, Result.class));*/
+        /*HashMap<String, Object> paramMap = new HashMap<>();
+        //文件上传只需将参数中的键指定（默认file），值设为文件对象即可，对于使用者来说，文件上传与普通表单提交并无区别
+        paramMap.put("file", FileUtil.file("D:\\face.jpg"));
+        String result= HttpUtil.post("https://www.baidu.com", paramMap);
+        String fileUrl = "http://mirrors.sohu.com/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-dvd1.iso";
+        //将文件下载后保存在E盘，返回结果为下载文件大小
+        long size = HttpUtil.downloadFile(fileUrl, FileUtil.file("e:/"));
+        System.out.println("Download size: " + size);*/
         //TreeUtil
         TreeStructure ts1 = new TreeStructure(1L,0L,"1",1);
         TreeStructure ts11 = new TreeStructure(11L,1L,"11",11);
