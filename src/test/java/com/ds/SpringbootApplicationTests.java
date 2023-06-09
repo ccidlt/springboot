@@ -469,6 +469,7 @@ public class SpringbootApplicationTests {
         System.out.println(NumberUtil.div(1.12, 10, 2));
         System.out.println(NumberUtil.roundStr(1.125, 2));
         System.out.println(NumberUtil.decimalFormat(",###", 299792458));//299,792,458
+        System.out.println(NumberUtil.decimalFormat("#.###", new BigDecimal("299792458.03456"), RoundingMode.HALF_UP));//299792458.035
         int[] array = NumberUtil.generateRandomNumber(0, 10, 8);// 生成随机数,用int类型数组承载
         System.out.println(StrUtil.join(",",array));
         //时间工具
@@ -646,6 +647,9 @@ public class SpringbootApplicationTests {
         double div35 = NumberUtil.div(1, 2, 2);
         String roundStr36 = NumberUtil.roundStr(div35, 2);
         String decimalFormat37 = NumberUtil.decimalFormat(",###", 299792458);//299,792,458
+        String decimalFormat371 = NumberUtil.decimalFormat("#.###", 299792458.00);//299792458
+        String decimalFormat372 = NumberUtil.decimalFormat("#.###",  new BigDecimal("299792458.0125"), RoundingMode.HALF_UP);//299792458.013
+        String decimalFormat373 = NumberUtil.decimalFormat("###,###.###",  new BigDecimal("299792458.0125"), RoundingMode.HALF_UP);//299,792,458.013
         //DateUtil
         Date date = DateUtil.date();
         int year = DateUtil.year(date);
