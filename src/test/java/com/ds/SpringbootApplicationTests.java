@@ -673,6 +673,7 @@ public class SpringbootApplicationTests {
         }
         //touch 创建文件，如果父目录不存在也自动创建
         File touch = FileUtil.touch("F:/XXX/XXX.txt");
+        File file1 = FileUtil.file("F:/XXX/XXX.txt");
         FileUtil.writeString("你我他", "F:/XXX/XXX.txt", CharsetUtil.UTF_8);
         System.out.println(touch.getPath());
         //mkdir 创建目录，会递归创建每层目录
