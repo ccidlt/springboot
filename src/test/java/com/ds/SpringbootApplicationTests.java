@@ -458,6 +458,9 @@ public class SpringbootApplicationTests {
         System.out.println(StrUtil.replace("{}+{}=2","{}","1"));//替换
         System.out.println(StrUtil.join(",","a","b"));
         System.out.println(StrUtil.fillBefore("ab",'c',5));
+        //ReUtil 正则工具
+        System.out.println(ReUtil.replaceAll("ab0", "[0-9]", "c"));
+        System.out.println(ReUtil.findAll("[0-9]", "ab0", 0));
         //数字工具
         System.out.println(NumberUtil.isNumber("1.2"));
         System.out.println(NumberUtil.add(1, 1.2, 1.3));
@@ -632,6 +635,9 @@ public class SpringbootApplicationTests {
         String replace = StrUtil.replace("abc", "c", "");
         String join = StrUtil.join(",", "a", "b", "c");
         String fillBefore = StrUtil.fillBefore("ab", 'c', 5);
+        //ReUtil 正则工具
+        String replaceAll = ReUtil.replaceAll("ab0", "[0-9]", "c");
+        List<String> findAll = ReUtil.findAll("\\d", "3ab012", 0);
         //NumberUtil
         boolean isNumber31 = NumberUtil.isNumber("1");
         double add32 = NumberUtil.add(1, 2, 3).doubleValue();
