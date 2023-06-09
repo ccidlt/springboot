@@ -10,7 +10,9 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
+import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.lang.ObjectId;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.lang.tree.Tree;
@@ -82,7 +84,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -662,6 +666,43 @@ public class SpringbootApplicationTests {
         Date beginOfMonth1 = DateUtil.beginOfMonth(date);
         Date endOfMonth1 = DateUtil.endOfMonth(date);
         //FileUtil 用spring的MultipartFile表单接收文件
+        //ls 列出目录和文件
+        File[] lsList = FileUtil.ls("F:/");
+        for (File file : lsList) {
+            System.out.println(file.getName());
+        }
+        //touch 创建文件，如果父目录不存在也自动创建
+        File touch = FileUtil.touch("F:/XXX/XXX.txt");
+        FileUtil.writeString("你我他", "F:/XXX/XXX.txt", CharsetUtil.UTF_8);
+        System.out.println(touch.getPath());
+        //mkdir 创建目录，会递归创建每层目录
+        File mkdir = FileUtil.touch("F:/YYY/YYY.txt");
+        System.out.println(mkdir.getPath());
+        //del 删除文件或目录（递归删除，不判断是否为空），这个方法相当于Linux的delete命令
+        FileUtil.del("F:/YYY");
+        //copy 拷贝文件或目录
+        byte[] bytes = FileUtil.readBytes("F:/XXX/XXX.txt");
+        File file = FileUtil.writeBytes(bytes, "F:/YYY/YYY.txt");
+        //ResourceUtil
+        InputStream inputStream = ResourceUtil.getStream("docs/header");
+        FileUtil.writeFromStream(inputStream, "F:/header.md");
+        //HttpUtil
+        /*String paramJson = "{\n" +
+                "    \"leaveReason\":\"请假\",\n" +
+                "    \"flowFormPersonDraftDTOList\":[\n" +
+                "        {\n" +
+                "            \"approvalPersonCode\":\"002\",\n" +
+                "            \"approvalPersonName\":\"赵老师\",\n" +
+                "            \"approvalRoleCode\":\"TEACHER\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"personId\":\"1\",\n" +
+                "    \"personCode\":\"001\",\n" +
+                "    \"personName\":\"小明\",\n" +
+                "    \"roleCode\":\"STUDENT\"\n" +
+                "}";
+        String post1 = HttpUtil.post("http://localhost:8078/flow/saveDraft", paramJson, 60000);
+        System.out.println(JSON.parseObject(post1, Result.class));*/
         //TreeUtil
         TreeStructure ts1 = new TreeStructure(1L,0L,"1",1);
         TreeStructure ts11 = new TreeStructure(11L,1L,"11",11);
