@@ -1,5 +1,6 @@
 package com.ds.config.webmvc;
 
+import com.ds.config.fileprogress.CustomMultipartResolver;
 import com.ds.config.perm.PermissionInterceptor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
@@ -46,6 +48,17 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     @Bean
     public PermissionInterceptor getPermissionInterceptor() {
         return new PermissionInterceptor();
+    }
+
+    /**
+     * 指定自定义解析器
+     * 将 multipartResolver 指向我们刚刚创建好的继承 CustomMultipartResolver 类的 自定义文件上传处理类
+     *
+     * @return
+     */
+    @Bean(name = "multipartResolver")
+    public MultipartResolver multipartResolver() {
+        return new CustomMultipartResolver();
     }
 
 //    @Autowired
