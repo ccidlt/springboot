@@ -45,7 +45,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -510,17 +509,13 @@ public class BoyController {
     @Resource
     private ProcessBusinessService processBusinessService;
     @RequestMapping("/toJava")
-    public ProcessBusiness process1() {
-        ProcessBusiness processBusiness = new ProcessBusiness();
-        processBusiness.setId(1L);
-        processBusiness.setMoney(new BigDecimal(300));
-        processBusiness.setUserId(1L);
-        return processBusiness;
-//        return processBusinessService.getById(8);
-    }
-    @RequestMapping("/toWeb")
-    public void process2(ProcessBusiness processBusiness) {
-        log.info("{},{}", processBusiness, processBusiness.getMoney().toString());
+    public List<ProcessBusiness> process1() {
+        List<ProcessBusiness> list = processBusinessService.list(
+                new LambdaQueryWrapper<ProcessBusiness>()
+                        .eq(ProcessBusiness::getUserId, 1L)
+        );
+        logger.info("{}", list);
+        return list;
     }
 
 }

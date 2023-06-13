@@ -1,10 +1,12 @@
 package com.ds.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.ds.config.webmvc.Decimal2Serializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.ds.config.webmvc.Decimal3Serializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,6 +14,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,14 +33,20 @@ public class ProcessBusiness implements Serializable {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.AUTO)
+    @JSONField(serializeUsing = ToStringSerializer.class)   //防止Long传输到前端丢失精度问题
     private Long id;
 
     @ApiModelProperty(value = "报销人")
     private Long userId;
 
     @ApiModelProperty(value = "报销费用")
-    @JsonSerialize(using = Decimal2Serializer.class)
+//    @JsonSerialize(using = Decimal2Serializer.class)
+    @JSONField(serializeUsing = Decimal3Serializer.class)
     private BigDecimal money;
+
+    @ApiModelProperty(value = "扩展字段", hidden = true)
+    @TableField(value = "expands", typeHandler = FastjsonTypeHandler.class, exist = false)
+    private Map<String, Object> expands;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "状态")

@@ -1,6 +1,9 @@
 package com.ds.entity.flow.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.ds.entity.flow.dto.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -9,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @Description: 基础类
@@ -24,7 +28,12 @@ public class BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @JSONField(serializeUsing = ToStringSerializer.class)   //防止Long传输到前端丢失精度问题
     private Long id;
+
+    @ApiModelProperty(value = "扩展字段", hidden = true)
+    @TableField(value = "expands", typeHandler = FastjsonTypeHandler.class, exist = false)
+    private Map<String, Object> expands;
 
     @ApiModelProperty(value = "0：正常，1：删除")
     @TableLogic
