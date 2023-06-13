@@ -27,6 +27,8 @@ import cn.hutool.jwt.JWTHeader;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ds.config.async.ReentrantLockOperate;
@@ -1474,6 +1476,15 @@ public class SpringbootApplicationTests {
     //审批
     public void approval(ProcessRecord processRecord){
         processRecordService.save(processRecord);
+    }
+
+    @Test
+    public void jsonConverter(){
+        List<Boy> boyList = boyDao.selectList(null);
+        List<Boy> list1 = JSON.parseObject(JSON.toJSONString(boyList, SerializerFeature.WriteMapNullValue), new TypeReference<List<Boy>>(){});
+        List<Boy> list2 = JSON.parseArray(JSON.toJSONString(boyList, SerializerFeature.WriteMapNullValue), Boy.class);
+        System.out.println(list1);
+        System.out.println(list2);
     }
 
 }
