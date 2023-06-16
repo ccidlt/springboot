@@ -37,6 +37,7 @@ import com.ds.controller.ElasticsearchController;
 import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
 import com.ds.dao.GirlDao;
+import com.ds.dao.UserDao;
 import com.ds.entity.*;
 import com.ds.entity.dto.BoyDTO;
 import com.ds.entity.dto.GirlDTO;
@@ -1485,6 +1486,18 @@ public class SpringbootApplicationTests {
         List<Boy> list2 = JSON.parseArray(JSON.toJSONString(boyList, SerializerFeature.WriteMapNullValue), Boy.class);
         System.out.println(list1);
         System.out.println(list2);
+    }
+
+    @Resource
+    private UserDao userDao;
+    @Test
+    public void procedureTest(){
+        String userName1 = userDao.callProcedure1(1);
+        System.out.println(userName1);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id",1);
+        Map<String,Object> userMap = userDao.callProcedure2(paramMap);
+        System.out.println(userMap);
     }
 
 }
