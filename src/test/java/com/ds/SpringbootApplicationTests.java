@@ -836,6 +836,7 @@ public class SpringbootApplicationTests {
         System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey1"));
         System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey2"));
         System.out.println(redisTemplate.opsForHash().keys(PREFIXTAG + "hash"));
+        System.out.println(redisTemplate.opsForHash().entries(PREFIXTAG + "hash"));
         System.out.println("=====================================");
         //列表
         redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "a");
