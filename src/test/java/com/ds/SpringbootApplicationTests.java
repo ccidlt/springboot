@@ -847,9 +847,10 @@ public class SpringbootApplicationTests {
         }
         Long size = redisTemplate.opsForList().size(PREFIXTAG + "list");
         System.out.println(size);
+        System.out.println(redisTemplate.opsForList().index(PREFIXTAG + "list",0));
         System.out.println(redisTemplate.opsForList().range(PREFIXTAG + "list",0,size-1));
         for(int i=0;i<size;i++){
-            System.out.println(redisTemplate.opsForList().rightPop(PREFIXTAG + "list"));
+            System.out.println(redisTemplate.opsForList().rightPop(PREFIXTAG + "list",1,TimeUnit.SECONDS));
         }
         System.out.println("=====================================");
         //集合
