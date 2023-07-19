@@ -42,11 +42,16 @@ public class AspectImpl {
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpServletRequest request = sra.getRequest();
-        String url = request.getRequestURL().toString();
-        String method = request.getMethod();
-        String uri = request.getRequestURI();
-        String remoteAddr = request.getRemoteAddr();
-        String queryString = request.getQueryString();
+        String url = request.getRequestURL().toString();//全路径
+        String scheme = request.getScheme(); //协议http或https
+        String serverName = request.getServerName();//返回项目所在的服务器的名字。如果你的项目是部署在本机中，那么返回的是localhost
+        int serverPort = request.getServerPort();//端口8080
+        String contextPath = request.getContextPath();//返回工程名部分，如果工程映射为/，此处返回则为空
+        String servletPath = request.getServletPath();//返回除去host和工程名部分的路径
+        String uri = request.getRequestURI(); //返回除去host（域名或者ip）部分的路径: request.getContextPath()+request.getServletPath()
+        String remoteAddr = request.getRemoteAddr();//获得客户端的ip地址
+        String method = request.getMethod();//请求方式get/post
+        String queryString = request.getQueryString();// ?a=b
         log.info("Request, url: {" + url + "}, method: {" + method + "}, uri: {" + uri + "}, remoteAddr: {" + remoteAddr + "}, params: {" + queryString + "}");
 
         //获取controller名
