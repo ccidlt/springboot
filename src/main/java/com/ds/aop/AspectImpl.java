@@ -51,7 +51,7 @@ public class AspectImpl {
         String uri = request.getRequestURI(); //返回除去host（域名或者ip）部分的路径: request.getContextPath()+request.getServletPath()
         String remoteAddr = request.getRemoteAddr();//获得客户端的ip地址
         String method = request.getMethod();//请求方式get/post
-        String queryString = request.getQueryString();// ?a=b
+        String queryString = request.getQueryString();// ?a=b&c=d
         log.info("Request, url: {" + url + "}, method: {" + method + "}, uri: {" + uri + "}, remoteAddr: {" + remoteAddr + "}, params: {" + queryString + "}");
 
         //获取controller名
