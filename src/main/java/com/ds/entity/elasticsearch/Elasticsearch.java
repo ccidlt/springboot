@@ -29,6 +29,7 @@ import java.util.Date;
  * createIndex 索引不存在时，是否自动创建索引，默认true
  *
  * 原版本的String先改为Text和Keyword，Text支持分词
+ * Text可以分词 ik_smart=粗粒度分词 ik_max_word 为细粒度分词
  *
  */
 @Document(indexName = "testindex", createIndex = false)

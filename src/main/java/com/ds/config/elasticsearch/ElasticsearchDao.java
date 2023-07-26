@@ -1,4 +1,4 @@
-package com.ds.dao;
+package com.ds.config.elasticsearch;
 
 import com.ds.entity.elasticsearch.Elasticsearch;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

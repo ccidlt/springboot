@@ -34,6 +34,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ds.config.async.ReentrantLockOperate;
 import com.ds.config.webmvc.MyEvent;
 import com.ds.controller.ElasticsearchController;
+import com.ds.controller.MongodbController;
 import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
 import com.ds.dao.GirlDao;
@@ -79,6 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -1230,13 +1232,27 @@ public class SpringbootApplicationTests {
      */
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private MongodbController mongodbController;
     @Test
     public void mongodb(){
-        Mongodb mongodb = Mongodb.builder().name("狄云").build();
-        Mongodb mongodb1 = mongoTemplate.save(mongodb);
-        log.info("{}",mongodb1);
-        List<Mongodb> all = mongoTemplate.findAll(Mongodb.class);
-        log.info("{}",all);
+//        Mongodb mongodb11 = Mongodb.builder().name("狄云").build();
+//        Mongodb mongodb12 = mongoTemplate.save(mongodb11);
+//        log.info("{}",mongodb12);
+//        List<Mongodb> all11 = mongoTemplate.findAll(Mongodb.class);
+//        log.info("{}",all11);
+//
+//        Mongodb mongodb21 = Mongodb.builder().name("杨过").build();
+//        Mongodb mongodb22 = mongodbController.save(mongodb21);
+//        log.info("{}",mongodb22);
+//        List<Mongodb> all21 = mongodbController.findAll();
+//        log.info("{}",all21);
+        List<Mongodb> all22 = mongodbController.findByName("杨过");
+        log.info("{}",all22);
+        Page<Mongodb> all23 = mongodbController.findByNameForPage("过",0,10);
+        List<Mongodb> out = new ArrayList<>();
+        all23.forEach(out::add);
+        log.info("{}",out);
     }
 
     @Resource
