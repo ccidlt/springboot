@@ -27,6 +27,9 @@ import java.util.Date;
  * shards    主分区数量，默认5
  * replicas  副本分区数量，默认1
  * createIndex 索引不存在时，是否自动创建索引，默认true
+ *
+ * 原版本的String先改为Text和Keyword，Text支持分词
+ *
  */
 @Document(indexName = "testindex", createIndex = false)
 public class Elasticsearch {
