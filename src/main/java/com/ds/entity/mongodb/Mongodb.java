@@ -1,4 +1,4 @@
-package com.ds.entity;
+package com.ds.entity.mongodb;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

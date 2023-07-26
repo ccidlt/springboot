@@ -1,8 +1,8 @@
 package com.ds.service.impl;
 
-import com.ds.dao.ElasticsearchDao;
+import com.ds.config.elasticsearch.ElasticsearchDao;
 import com.ds.entity.BusinessException;
-import com.ds.entity.Elasticsearch;
+import com.ds.entity.elasticsearch.Elasticsearch;
 import com.ds.service.ElasticsearchService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -137,8 +137,8 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
      * 通常都是将多个查询条件组合在一起，常用的有must、must_not、should
      *
      *
-     * @param key
-     * @param value
+     * @param key 字段
+     * @param value 值
      * @return
      */
     @Override
