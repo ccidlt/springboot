@@ -50,30 +50,6 @@ import com.ds.service.impl.BoyFeignServiceImpl;
 import com.ds.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.master.AcknowledgedResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.rest.RestStatus;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +67,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -973,195 +948,195 @@ public class SpringbootApplicationTests {
      * es
      * High Level Client
      */
-    @Autowired
-    private RestHighLevelClient restHighLevelClient;
-    /**
-     * 创建索引
-     */
-    @Test
-    public void testCreateIndexByIK() throws IOException {
-        CreateIndexRequest request = new CreateIndexRequest("boys");
-        String json = "{\n" +
-                "    \"mappings\":{\n" +
-                "        \"properties\":{\n" +
-                "            \"id\":{\n" +
-                "                \"type\":\"keyword\"\n" +
-                "            },\n" +
-                "            \"name\":{\n" +
-                "                \"type\":\"text\",\n" +
-                "                \"analyzer\":\"ik_max_word\",\n" +
-                "                \"copy_to\":\"all\"\n" +
-                "            },\n" +
-                "            \"all\":{\n" +
-                "                \"type\":\"text\",\n" +
-                "                \"analyzer\":\"ik_max_word\"\n" +
-                "            }\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
-        //设置请求中的参数
-        request.source(json, XContentType.JSON);
-        CreateIndexResponse response = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
-        restHighLevelClient.close();
-        log.info("{}",response.isAcknowledged());
-    }
-    /**
-     * 删除索引
-     */
-    @Test
-    public void testDeleteIndex() throws IOException {
-        DeleteIndexRequest request = new DeleteIndexRequest("boys");
-        AcknowledgedResponse response = restHighLevelClient.indices().delete(request, RequestOptions.DEFAULT);
-        log.info("{}",response.isAcknowledged());
-    }
-    /**
-     * 添加文档
-     */
-    @Test
-    public void testCreateDoc() throws IOException {
-        Boy boy = boyDao.selectById(1);
-        IndexRequest request = new IndexRequest("boys");
-        request.id(String.valueOf(boy.getId()));
-        String json = JSON.toJSONString(boy);
-        request.source(json,XContentType.JSON);
-        try {
-            IndexResponse response = restHighLevelClient.index(request, RequestOptions.DEFAULT);
-            log.info("{}",response.status().equals(RestStatus.OK));
-        } catch (IOException e) {
-            if(!StrUtil.contains(e.getMessage(),"200 OK")){
-                throw e;
-            }
-            log.error(e.getMessage());
-        } finally {
-            restHighLevelClient.close();
-        }
-    }
-    /**
-     * 批量添加文档
-     */
-    @Test
-    public void testCreateDocAll() throws IOException {
-        List<Boy> boyList = boyDao.selectList(null);
-        BulkRequest bulk = new BulkRequest();
-        for (Boy boy : boyList) {
-            IndexRequest request = new IndexRequest("boys");
-            request.id(String.valueOf(boy.getId()));
-            String json = JSON.toJSONString(boy);
-            request.source(json,XContentType.JSON);
-            bulk.add(request);
-        }
-        try {
-            BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
-            log.info("{}",response.status().equals(RestStatus.OK));
-        } catch (IOException e) {
-            if(!StrUtil.contains(e.getMessage(),"200 OK")){
-                throw e;
-            }
-            log.error(e.getMessage());
-        } finally {
-            restHighLevelClient.close();
-        }
-    }
-    /**
-     * 更新文档
-     */
-    public void testUpdateDoc() throws IOException {
-        Boy boy = boyDao.selectById(1);
-        UpdateRequest request = new UpdateRequest("boys", String.valueOf(boy.getId()));
-        request.doc(JSON.toJSONString(boy), XContentType.JSON);
-        try {
-            UpdateResponse response = restHighLevelClient.update(request, RequestOptions.DEFAULT);
-            log.info("{}",response.status().equals(RestStatus.OK));
-        } catch (IOException e) {
-            if(!StrUtil.contains(e.getMessage(),"200 OK")){
-                throw e;
-            }
-        } finally {
-            restHighLevelClient.close();
-        }
-    }
-    /**
-     * 删除文档
-     */
-    @Test
-    public void testDeleteDoc() throws IOException {
-        //参数 1: 删除请求对象 参数 2: 请求配置对象
-        DeleteRequest request = new DeleteRequest("boys");
-        request.id("1");
-        try {
-            DeleteResponse response = restHighLevelClient.delete(request, RequestOptions.DEFAULT);
-            log.info("{}",response.status().equals(RestStatus.OK));
-        } catch (IOException e) {
-            if(!StrUtil.contains(e.getMessage(),"200 OK")){
-                throw e;
-            }
-            log.error(e.getMessage());
-        } finally {
-            restHighLevelClient.close();
-        }
-    }
-    /**
-     * 批量删除文档
-     */
-    @Test
-    public void testDeleteDocAll() throws IOException {
-        List<Boy> boyList = boyDao.selectList(null);
-        BulkRequest bulk = new BulkRequest();
-        for (Boy boy : boyList) {
-            DeleteRequest request = new DeleteRequest("boys");
-            request.id(String.valueOf(boy.getId()));
-            bulk.add(request);
-        }
-        try {
-            BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
-            log.info("{}",response.status().equals(RestStatus.OK));
-        } catch (IOException e) {
-            if(!StrUtil.contains(e.getMessage(),"200 OK")){
-                throw e;
-            }
-            log.error(e.getMessage());
-        } finally {
-            restHighLevelClient.close();
-        }
-    }
-    /**
-     * 按id查询
-     */
-    @Test
-    public void testGet() throws IOException {
-        GetRequest request = new GetRequest("boys");
-        request.id("1");
-        GetResponse response = restHighLevelClient.get(request, RequestOptions.DEFAULT);
-        if(response.isExists()){
-            String json = response.getSourceAsString();
-            log.info(json);
-            log.info(JSON.parseObject(json, Boy.class).toString());
-        }else{
-            log.error("没有找到该id的文档");
-        }
-    }
-    /**
-     * 按条件查询
-     */
-    @Test
-    public void testSearch() throws IOException {
-        SearchRequest request = new SearchRequest("boys");
-
-        SearchSourceBuilder builder = new SearchSourceBuilder();
-        builder.query(QueryBuilders.matchAllQuery());
-//        builder.query(QueryBuilders.termQuery("name","郭靖"));
-//        builder.query(QueryBuilders.matchQuery("name","郭"));
-//        builder.query(QueryBuilders.wildcardQuery("all","*郭*"));
-        request.source(builder);
-
-        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
-        SearchHits hits = response.getHits();
-        for (SearchHit hit : hits) {
-            String source = hit.getSourceAsString();
-            Boy boy = JSON.parseObject(source, Boy.class);
-            log.info(boy.toString());
-        }
-    }
+//    @Autowired
+//    private RestHighLevelClient restHighLevelClient;
+//    /**
+//     * 创建索引
+//     */
+//    @Test
+//    public void testCreateIndexByIK() throws IOException {
+//        CreateIndexRequest request = new CreateIndexRequest("boys");
+//        String json = "{\n" +
+//                "    \"mappings\":{\n" +
+//                "        \"properties\":{\n" +
+//                "            \"id\":{\n" +
+//                "                \"type\":\"keyword\"\n" +
+//                "            },\n" +
+//                "            \"name\":{\n" +
+//                "                \"type\":\"text\",\n" +
+//                "                \"analyzer\":\"ik_max_word\",\n" +
+//                "                \"copy_to\":\"all\"\n" +
+//                "            },\n" +
+//                "            \"all\":{\n" +
+//                "                \"type\":\"text\",\n" +
+//                "                \"analyzer\":\"ik_max_word\"\n" +
+//                "            }\n" +
+//                "        }\n" +
+//                "    }\n" +
+//                "}";
+//        //设置请求中的参数
+//        request.source(json, XContentType.JSON);
+//        CreateIndexResponse response = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
+//        restHighLevelClient.close();
+//        log.info("{}",response.isAcknowledged());
+//    }
+//    /**
+//     * 删除索引
+//     */
+//    @Test
+//    public void testDeleteIndex() throws IOException {
+//        DeleteIndexRequest request = new DeleteIndexRequest("boys");
+//        AcknowledgedResponse response = restHighLevelClient.indices().delete(request, RequestOptions.DEFAULT);
+//        log.info("{}",response.isAcknowledged());
+//    }
+//    /**
+//     * 添加文档
+//     */
+//    @Test
+//    public void testCreateDoc() throws IOException {
+//        Boy boy = boyDao.selectById(1);
+//        IndexRequest request = new IndexRequest("boys");
+//        request.id(String.valueOf(boy.getId()));
+//        String json = JSON.toJSONString(boy);
+//        request.source(json,XContentType.JSON);
+//        try {
+//            IndexResponse response = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+//            log.info("{}",response.status().equals(RestStatus.OK));
+//        } catch (IOException e) {
+//            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+//                throw e;
+//            }
+//            log.error(e.getMessage());
+//        } finally {
+//            restHighLevelClient.close();
+//        }
+//    }
+//    /**
+//     * 批量添加文档
+//     */
+//    @Test
+//    public void testCreateDocAll() throws IOException {
+//        List<Boy> boyList = boyDao.selectList(null);
+//        BulkRequest bulk = new BulkRequest();
+//        for (Boy boy : boyList) {
+//            IndexRequest request = new IndexRequest("boys");
+//            request.id(String.valueOf(boy.getId()));
+//            String json = JSON.toJSONString(boy);
+//            request.source(json,XContentType.JSON);
+//            bulk.add(request);
+//        }
+//        try {
+//            BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
+//            log.info("{}",response.status().equals(RestStatus.OK));
+//        } catch (IOException e) {
+//            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+//                throw e;
+//            }
+//            log.error(e.getMessage());
+//        } finally {
+//            restHighLevelClient.close();
+//        }
+//    }
+//    /**
+//     * 更新文档
+//     */
+//    public void testUpdateDoc() throws IOException {
+//        Boy boy = boyDao.selectById(1);
+//        UpdateRequest request = new UpdateRequest("boys", String.valueOf(boy.getId()));
+//        request.doc(JSON.toJSONString(boy), XContentType.JSON);
+//        try {
+//            UpdateResponse response = restHighLevelClient.update(request, RequestOptions.DEFAULT);
+//            log.info("{}",response.status().equals(RestStatus.OK));
+//        } catch (IOException e) {
+//            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+//                throw e;
+//            }
+//        } finally {
+//            restHighLevelClient.close();
+//        }
+//    }
+//    /**
+//     * 删除文档
+//     */
+//    @Test
+//    public void testDeleteDoc() throws IOException {
+//        //参数 1: 删除请求对象 参数 2: 请求配置对象
+//        DeleteRequest request = new DeleteRequest("boys");
+//        request.id("1");
+//        try {
+//            DeleteResponse response = restHighLevelClient.delete(request, RequestOptions.DEFAULT);
+//            log.info("{}",response.status().equals(RestStatus.OK));
+//        } catch (IOException e) {
+//            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+//                throw e;
+//            }
+//            log.error(e.getMessage());
+//        } finally {
+//            restHighLevelClient.close();
+//        }
+//    }
+//    /**
+//     * 批量删除文档
+//     */
+//    @Test
+//    public void testDeleteDocAll() throws IOException {
+//        List<Boy> boyList = boyDao.selectList(null);
+//        BulkRequest bulk = new BulkRequest();
+//        for (Boy boy : boyList) {
+//            DeleteRequest request = new DeleteRequest("boys");
+//            request.id(String.valueOf(boy.getId()));
+//            bulk.add(request);
+//        }
+//        try {
+//            BulkResponse response = restHighLevelClient.bulk(bulk, RequestOptions.DEFAULT);
+//            log.info("{}",response.status().equals(RestStatus.OK));
+//        } catch (IOException e) {
+//            if(!StrUtil.contains(e.getMessage(),"200 OK")){
+//                throw e;
+//            }
+//            log.error(e.getMessage());
+//        } finally {
+//            restHighLevelClient.close();
+//        }
+//    }
+//    /**
+//     * 按id查询
+//     */
+//    @Test
+//    public void testGet() throws IOException {
+//        GetRequest request = new GetRequest("boys");
+//        request.id("1");
+//        GetResponse response = restHighLevelClient.get(request, RequestOptions.DEFAULT);
+//        if(response.isExists()){
+//            String json = response.getSourceAsString();
+//            log.info(json);
+//            log.info(JSON.parseObject(json, Boy.class).toString());
+//        }else{
+//            log.error("没有找到该id的文档");
+//        }
+//    }
+//    /**
+//     * 按条件查询
+//     */
+//    @Test
+//    public void testSearch() throws IOException {
+//        SearchRequest request = new SearchRequest("boys");
+//
+//        SearchSourceBuilder builder = new SearchSourceBuilder();
+//        builder.query(QueryBuilders.matchAllQuery());
+////        builder.query(QueryBuilders.termQuery("name","郭靖"));
+////        builder.query(QueryBuilders.matchQuery("name","郭"));
+////        builder.query(QueryBuilders.wildcardQuery("all","*郭*"));
+//        request.source(builder);
+//
+//        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+//        SearchHits hits = response.getHits();
+//        for (SearchHit hit : hits) {
+//            String source = hit.getSourceAsString();
+//            Boy boy = JSON.parseObject(source, Boy.class);
+//            log.info(boy.toString());
+//        }
+//    }
 
     /**
      * es
