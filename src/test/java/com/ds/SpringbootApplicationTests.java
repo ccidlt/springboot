@@ -965,7 +965,10 @@ public class SpringbootApplicationTests {
 
     @Resource
     private BoyDao boyDao;
-    //High Level Client
+    /**
+     * es
+     * High Level Client
+     */
     @Autowired
     private RestHighLevelClient restHighLevelClient;
     /**
@@ -1156,18 +1159,24 @@ public class SpringbootApplicationTests {
         }
     }
 
-    //Low Level Client
-    /*
-    spring:
-      elasticsearch:
-        rest:
-          uris: http://localhost:9200
-          username:
-          password:
-          # 连接超时时间(默认1s)
-          connection-timeout: 1000
-          # 读取超时时间(默认30s)
-          read-timeout: 1000
+    /**
+     * es
+     *
+     * Low Level Client
+     *
+     * spring:
+     *       elasticsearch:
+     *         rest:
+     *           uris: http://localhost:9200
+     *           username:
+     *           password:
+     *           # 连接超时时间(默认1s)
+     *           connection-timeout: 1000
+     *           # 读取超时时间(默认30s)
+     *           read-timeout: 1000
+     *
+     * 方式一：注入 ElasticsearchRestTemplate
+     * 方式二：继承 ElasticsearchRepository
      */
     @Autowired
     private ElasticsearchController elasticsearchController;
@@ -1214,6 +1223,8 @@ public class SpringbootApplicationTests {
 
     /**
      * mongodb
+     * 方式一: 注入 MongoTemplate
+     * 方式二: 继承 xxxMongoRepository
      */
     @Autowired
     private MongoTemplate mongoTemplate;

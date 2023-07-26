@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 /**
  * @Description:
@@ -19,7 +20,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "test")
 public class Mongodb {
     // @Id springboot-jpa定义了一组Java类和注解，可以将Java对象映射到数据库表，从而方便地进行CRUD操作
-    @Id
+//    @Id
+    @MongoId
     private String id;
     private String name;
 }
