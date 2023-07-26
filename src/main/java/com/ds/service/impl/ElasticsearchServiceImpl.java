@@ -120,6 +120,23 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     /**
      * termQuery：输入的查询内容是什么，就会按照什么去查询，并不会解析查询内容，对它分词
      * matchQuery：会将搜索词分词，再与目标查询字段进行匹配，若分词中的任意一个词与目标字段匹配上，则可查询到
+     *
+     *
+     * 基本查询
+     * 先来熟QueryBuilders这个类封装的基本查询
+     * QueryBuilders.matchQuery() 会根据分词器进行分词，分词之后去查询
+     * QueryBuilders.termQuery() 不会进行分词，且完全等于才会匹配
+     * QueryBuilders.termsQuery() 一个字段匹配多个值，where name = ‘A’ or name = ‘B’
+     * QueryBuilders.multiMatchQuery() 会分词 一个值对应多个字段 where username = ‘zs’ or password = ‘zs’
+     * QueryBuilders.matchPhraseQuery() 不会分词，当成一个整体去匹配，相当于 %like%
+     * 如果想使用一个字段匹配多个值，并且这多个值是and关系，如下 要求查询的数据中必须包含北京‘和’天津QueryBuilders.matchQuery(“address”,“北京 天津”).operator(Operator.AND)
+     * 如果想使用一个字段匹配多个值，并且这多个值是or关系，如下 要求查询的数据中必须包含北京‘或’天津
+     * QueryBuilders.matchQuery(“address”,“北京 天津”).operator(Operator.OR)
+     *
+     * 复合查询
+     * 通常都是将多个查询条件组合在一起，常用的有must、must_not、should
+     *
+     *
      * @param key
      * @param value
      * @return
@@ -139,8 +156,6 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     /**
-     * termQuery：输入的查询内容是什么，就会按照什么去查询，并不会解析查询内容，对它分词
-     * matchQuery：会将搜索词分词，再与目标查询字段进行匹配，若分词中的任意一个词与目标字段匹配上，则可查询到
      * 分页
      * @param pageNo 当前页码0开始
      * @param pageSize 每页显示的条数

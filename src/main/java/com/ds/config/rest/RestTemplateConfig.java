@@ -55,6 +55,7 @@ public class RestTemplateConfig {
     @LoadBalanced
     @SentinelRestTemplate(blockHandler = "handleException", blockHandlerClass = ExceptionUtil.class)
     public RestTemplate getRestTemplate() {
+        System.out.println();
         return new RestTemplate();
     }
 
