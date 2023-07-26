@@ -1,6 +1,6 @@
 package com.ds.service;
 
-import com.ds.entity.Elasticsearch;
+import com.ds.entity.elasticsearch.Elasticsearch;
 
 import java.util.List;
 

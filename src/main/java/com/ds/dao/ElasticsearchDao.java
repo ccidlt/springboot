@@ -1,6 +1,6 @@
 package com.ds.dao;
 
-import com.ds.entity.Elasticsearch;
+import com.ds.entity.elasticsearch.Elasticsearch;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

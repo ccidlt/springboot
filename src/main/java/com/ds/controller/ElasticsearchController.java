@@ -1,6 +1,6 @@
 package com.ds.controller;
 
-import com.ds.entity.Elasticsearch;
+import com.ds.entity.elasticsearch.Elasticsearch;
 import com.ds.service.ElasticsearchService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

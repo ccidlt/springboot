@@ -7,6 +7,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 /**
  * @Description: ES搜索引擎配置类
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date 2023/4/18 16:40
  */
 @Configuration
+@EnableElasticsearchRepositories(basePackages = "com.ds.entity.elasticsearch")
 public class ElasticsearchConfig {
 
     @Value("${spring.elasticsearch.rest.uris}")

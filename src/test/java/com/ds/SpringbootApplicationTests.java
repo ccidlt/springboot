@@ -40,6 +40,8 @@ import com.ds.dao.GirlDao;
 import com.ds.entity.*;
 import com.ds.entity.dto.BoyDTO;
 import com.ds.entity.dto.GirlDTO;
+import com.ds.entity.elasticsearch.Elasticsearch;
+import com.ds.entity.mongodb.Mongodb;
 import com.ds.enums.ProcessLineEnum;
 import com.ds.enums.ProcessNodeEnum;
 import com.ds.service.*;
@@ -1224,7 +1226,7 @@ public class SpringbootApplicationTests {
     /**
      * mongodb
      * 方式一: 注入 MongoTemplate
-     * 方式二: 继承 xxxMongoRepository
+     * 方式二: 继承 MongoRepository
      */
     @Autowired
     private MongoTemplate mongoTemplate;

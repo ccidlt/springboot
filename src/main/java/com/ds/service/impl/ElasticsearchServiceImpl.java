@@ -2,7 +2,7 @@ package com.ds.service.impl;
 
 import com.ds.dao.ElasticsearchDao;
 import com.ds.entity.BusinessException;
-import com.ds.entity.Elasticsearch;
+import com.ds.entity.elasticsearch.Elasticsearch;
 import com.ds.service.ElasticsearchService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

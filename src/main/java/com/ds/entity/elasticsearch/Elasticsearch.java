@@ -1,4 +1,4 @@
-package com.ds.entity;
+package com.ds.entity.elasticsearch;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
