@@ -29,9 +29,19 @@ public class MongodbController {
      * @param mongodb 入参
      * @return 返回值
      */
-    @PostMapping("save")
-    public Mongodb save(Mongodb mongodb) {
-        return mongodbService.save(mongodb);
+    @PostMapping("insert")
+    public Mongodb insert(Mongodb mongodb) {
+        return mongodbService.insert(mongodb);
+    }
+
+    /**
+     * 修改
+     * @param mongodb 入参
+     * @return 返回值
+     */
+    @PostMapping("update")
+    public Mongodb update(Mongodb mongodb) {
+        return mongodbService.update(mongodb);
     }
 
     /**
@@ -53,7 +63,7 @@ public class MongodbController {
     }
 
     /**
-     * 查询
+     * 按主键查询
      * @param id 主键
      * @return 返回值
      */
@@ -63,7 +73,7 @@ public class MongodbController {
     }
 
     /**
-     * 查询
+     * 按名称查询
      * @param name 名称
      * @return 返回值
      */

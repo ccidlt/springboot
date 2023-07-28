@@ -11,7 +11,9 @@ import java.util.List;
  * @date 2023/7/26 14:07
  */
 public interface MongodbService {
-    Mongodb save(Mongodb mongodb);
+    Mongodb insert(Mongodb mongodb);
+
+    Mongodb update(Mongodb mongodb);
 
     void delete(String id);
 

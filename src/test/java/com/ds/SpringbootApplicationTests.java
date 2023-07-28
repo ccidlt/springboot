@@ -1155,7 +1155,7 @@ public class SpringbootApplicationTests {
      *           read-timeout: 1000
      *
      * 方式一：注入 ElasticsearchRestTemplate
-     * 方式二：继承 ElasticsearchRepository
+     * 方式二：继承 ElasticsearchRepository（jpa方式）
      */
     @Autowired
     private ElasticsearchController elasticsearchController;
@@ -1195,7 +1195,7 @@ public class SpringbootApplicationTests {
     }
     @Test
     public void searchByPage() {
-        List<Elasticsearch> teacherList = elasticsearchController.searchByPage(0, 10, "name", "lt");
+        List<Elasticsearch> teacherList = elasticsearchController.searchByPage(1, 10, "name", "lt");
         System.err.println(teacherList);
     }
 
@@ -1203,7 +1203,7 @@ public class SpringbootApplicationTests {
     /**
      * mongodb
      * 方式一: 注入 MongoTemplate
-     * 方式二: 继承 MongoRepository
+     * 方式二: 继承 MongoRepository（jpa方式）
      */
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -1217,14 +1217,21 @@ public class SpringbootApplicationTests {
 //        List<Mongodb> all11 = mongoTemplate.findAll(Mongodb.class);
 //        log.info("{}",all11);
 //
-//        Mongodb mongodb21 = Mongodb.builder().name("杨过").build();
-//        Mongodb mongodb22 = mongodbController.save(mongodb21);
+//        Mongodb mongodb21 = Mongodb.builder().name("郭靖").build();
+//        Mongodb mongodb22 = mongodbController.insert(mongodb21);
 //        log.info("{}",mongodb22);
 //        List<Mongodb> all21 = mongodbController.findAll();
 //        log.info("{}",all21);
+
+//        Mongodb mongodb31 = Mongodb.builder().id("64c0c40ce4309378d998993d").name("杨过").build();
+//        Mongodb mongodb32 = mongodbController.update(mongodb31);
+//        log.info("{}",mongodb32);
+//        List<Mongodb> all31 = mongodbController.findAll();
+//        log.info("{}",all31);
+
         List<Mongodb> all22 = mongodbController.findByName("杨过");
         log.info("{}",all22);
-        Page<Mongodb> all23 = mongodbController.findByNameForPage("过",0,10);
+        Page<Mongodb> all23 = mongodbController.findByNameForPage("过",1,10);
         List<Mongodb> out = new ArrayList<>();
         all23.forEach(out::add);
         log.info("{}",out);
