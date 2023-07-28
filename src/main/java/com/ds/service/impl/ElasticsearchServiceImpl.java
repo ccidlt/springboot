@@ -166,7 +166,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     public List<Elasticsearch> searchByPage(Integer pageNo, Integer pageSize, String key, String value) {
         //设置查询分页
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, sort);
+        PageRequest pageRequest = PageRequest.of(pageNo-1, pageSize, sort);
         QueryBuilder queryBuilder = QueryBuilders.termQuery(key, value);
         Page<Elasticsearch> page = elasticsearchDao.search(queryBuilder, pageRequest);
         List<Elasticsearch> result = new ArrayList<>();

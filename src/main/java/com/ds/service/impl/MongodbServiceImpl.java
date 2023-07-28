@@ -21,8 +21,13 @@ public class MongodbServiceImpl implements MongodbService {
     private MongodbDao mongodbDao;
 
     @Override
-    public Mongodb save(Mongodb mongodb) {
+    public Mongodb insert(Mongodb mongodb) {
         return mongodbDao.insert(mongodb);
+    }
+
+    @Override
+    public Mongodb update(Mongodb mongodb) {
+        return mongodbDao.save(mongodb);
     }
 
     @Override
@@ -42,6 +47,7 @@ public class MongodbServiceImpl implements MongodbService {
 
     @Override
     public List<Mongodb> findByName(String name) {
+//        return mongodbDao.findByName(name);
         Mongodb mongodb = new Mongodb();
         mongodb.setName(name);
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("id");
@@ -56,10 +62,10 @@ public class MongodbServiceImpl implements MongodbService {
         //对name前后模糊查询
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("name",ExampleMatcher.GenericPropertyMatchers.contains())
-                .withIgnorePaths("id");
+                .withIgnorePaths("id", "pageNum", "pageSize");
         Example<Mongodb> example = Example.of(mongodb, matcher);
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, sort);
+        PageRequest pageRequest = PageRequest.of(pageNo-1, pageSize, sort);
         return mongodbDao.findAll(example,pageRequest);
     }
 }
