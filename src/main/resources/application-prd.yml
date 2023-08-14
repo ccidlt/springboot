@@ -199,6 +199,9 @@ management:
       enabled: true #打开shutdown端点
     health:
       show-details: always #获得健康检查中所有指标的详细信息
+  health:
+    rabbit:
+      enabled: false
 
 #文件路径
 filePath: /home/file/

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CaffeineConfig {
 
-    @Bean("cache")
+    @Bean("caffeine")
     public Cache<String, Object> caffeineCache() {
         return Caffeine.newBuilder()
                 // 多久过期
