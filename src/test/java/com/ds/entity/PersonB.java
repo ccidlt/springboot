@@ -14,5 +14,5 @@ public class PersonB implements Serializable {
 
     private static final long serialVersionUID = -879183414135409248L;
     private String id;
-    private List<Person> personList;
+    private List<PersonC> personList;
 }

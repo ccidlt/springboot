@@ -1508,7 +1508,8 @@ public class SpringbootApplicationTests {
         PersonB personB = BeanUtil.copyProperties(personA, PersonB.class);
         System.out.println(JSON.toJSONString(personB,SerializerFeature.WriteMapNullValue));
         System.out.println("=========================================");
-        personB.getPersonList().get(0).setTel("1380000000X");
+        personA.getPersonList().get(0).setTel("1380000000X");
+        personB.getPersonList().get(0).setTel("1380000001X");
         System.out.println(JSON.toJSONString(personA,SerializerFeature.WriteMapNullValue));
         System.out.println(JSON.toJSONString(personB,SerializerFeature.WriteMapNullValue));
         System.out.println("=========================================");
@@ -1522,6 +1523,13 @@ public class SpringbootApplicationTests {
         personB1.getPersonList().get(0).setTel("138000000XX");
         System.out.println(JSON.toJSONString(personA1,SerializerFeature.WriteMapNullValue));
         System.out.println(JSON.toJSONString(personB1,SerializerFeature.WriteMapNullValue));
+        System.out.println("=========================================");
+        Person person111 = new Person("张三", "13800000000", boyList);
+        Person person222 = new Person("李四", "13800000001",  CollUtil.newArrayList(boyDao.selectById(1)));
+        PersonA personA111 = new PersonA("1", CollUtil.newArrayList(person111,person222));
+        System.out.println(personA111);
+        PersonB personB222 = BeanUtil.copyProperties(personA111, PersonB.class);
+        System.out.println(personB222);
     }
 
 }
