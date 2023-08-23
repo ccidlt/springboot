@@ -1531,8 +1531,13 @@ public class SpringbootApplicationTests {
         Person person222 = new Person("李四", "13800000001",  CollUtil.newArrayList(boyDao.selectById(1)));
         PersonA personA111 = new PersonA("1", CollUtil.newArrayList(person111,person222));
         System.out.println(personA111);
+        //java.lang.ClassCastException: com.ds.entity.Person cannot be cast to com.ds.entity.PersonC
+//        PersonB personB222 = new PersonB();
+//        BeanUtils.copyProperties(personA111, personB222);
         PersonB personB222 = BeanUtil.copyProperties(personA111, PersonB.class);
         System.out.println(personB222);
+        System.out.println(personB222.getPersonList());
+        System.out.println(personB222.getPersonList().get(0).getTel());
     }
 
     @Resource
