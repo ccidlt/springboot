@@ -1547,16 +1547,4 @@ public class SpringbootApplicationTests {
         System.out.println(userMap);
     }
 
-    @Resource
-    private UserDao userDao;
-    @Test
-    public void procedureTest(){
-        String userName1 = userDao.callProcedure1(1);
-        System.out.println(userName1);
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("id",1);
-        Map<String,Object> userMap = userDao.callProcedure2(paramMap);
-        System.out.println(userMap);
-    }
-
 }
