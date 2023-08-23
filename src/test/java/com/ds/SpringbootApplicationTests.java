@@ -63,7 +63,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
@@ -90,6 +92,8 @@ import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
+@Rollback(false)
 @Slf4j
 public class SpringbootApplicationTests {
 
@@ -1499,6 +1503,48 @@ public class SpringbootApplicationTests {
         List<Boy> list2 = JSON.parseArray(JSON.toJSONString(boyList, SerializerFeature.WriteMapNullValue), Boy.class);
         System.out.println(list1);
         System.out.println(list2);
+        System.out.println("=========================================");
+        Person person1 = new Person("张三", "13800000000", boyList);
+        Person person2 = new Person("李四", "13800000001",  CollUtil.newArrayList(boyDao.selectById(1)));
+        PersonA personA = new PersonA("1", CollUtil.newArrayList(person1, person2));
+        System.out.println(JSON.toJSONString(personA,SerializerFeature.WriteMapNullValue));
+        PersonB personB = BeanUtil.copyProperties(personA, PersonB.class);
+        System.out.println(JSON.toJSONString(personB,SerializerFeature.WriteMapNullValue));
+        System.out.println("=========================================");
+        personA.getPersonList().get(0).setTel("1380000000X");
+        personB.getPersonList().get(0).setTel("1380000001X");
+        System.out.println(JSON.toJSONString(personA,SerializerFeature.WriteMapNullValue));
+        System.out.println(JSON.toJSONString(personB,SerializerFeature.WriteMapNullValue));
+        System.out.println("=========================================");
+        Person person3 = new Person("张三", "13800000000", boyList);
+        Person person4 = new Person("李四", "13800000001",  CollUtil.newArrayList(boyDao.selectById(1)));
+        PersonA personA1 = new PersonA("1", CollUtil.newArrayList(person3, person4));
+        System.out.println(JSON.toJSONString(personA1,SerializerFeature.WriteMapNullValue));
+        PersonB personB1 = JSON.parseObject(JSON.toJSONString(personA1, SerializerFeature.WriteMapNullValue), new TypeReference<PersonB>() {});
+        System.out.println(JSON.toJSONString(personB1,SerializerFeature.WriteMapNullValue));
+        System.out.println("=========================================");
+        personB1.getPersonList().get(0).setTel("138000000XX");
+        System.out.println(JSON.toJSONString(personA1,SerializerFeature.WriteMapNullValue));
+        System.out.println(JSON.toJSONString(personB1,SerializerFeature.WriteMapNullValue));
+        System.out.println("=========================================");
+        Person person111 = new Person("张三", "13800000000", boyList);
+        Person person222 = new Person("李四", "13800000001",  CollUtil.newArrayList(boyDao.selectById(1)));
+        PersonA personA111 = new PersonA("1", CollUtil.newArrayList(person111,person222));
+        System.out.println(personA111);
+        PersonB personB222 = BeanUtil.copyProperties(personA111, PersonB.class);
+        System.out.println(personB222);
+    }
+
+    @Resource
+    private UserDao userDao;
+    @Test
+    public void procedureTest(){
+        String userName1 = userDao.callProcedure1(1);
+        System.out.println(userName1);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id",1);
+        Map<String,Object> userMap = userDao.callProcedure2(paramMap);
+        System.out.println(userMap);
     }
 
     @Resource

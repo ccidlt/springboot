@@ -3,21 +3,22 @@ package com.ds.entity;
 import java.io.Serializable;
 import java.util.List;
 
-public class Person implements Serializable {
+
+public class PersonC implements Serializable {
 
     private static final long serialVersionUID = -5449634131757608891L;
     String name;
     String tel;
     List<Boy> boyList;
 
-    public Person() {}
+    public PersonC() {}
 
-    public Person(String name, String tel) {
+    public PersonC(String name, String tel) {
         this.name = name;
         this.tel = tel;
     }
 
-    public Person(String name, String tel, List<Boy> boyList) {
+    public PersonC(String name, String tel, List<Boy> boyList) {
         this.name = name;
         this.tel = tel;
         this.boyList = boyList;
@@ -49,7 +50,7 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "PersonC{" +
                 "name='" + name + '\'' +
                 ", tel='" + tel + '\'' +
                 ", boyList=" + boyList +

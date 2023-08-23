@@ -65,6 +65,10 @@ public class ReentrantLockOperate {
      *
      * 锁ReentrantLock，同一对象，所有线程同步
      *
+     * lock获取锁的线程执行，其他线程阻塞
+     * unlock释放锁
+     * tryLock尝试获取锁，其他线程在指定时间内拿不到直接放弃
+     *
      */
     ReentrantLock lock = new ReentrantLock();
 

@@ -18,5 +18,4 @@ public interface UserDao {
     String callProcedure1(Integer id);
 
     Map<String,Object> callProcedure2(Map<String, Object> paramMap);
-
 }
