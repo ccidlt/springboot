@@ -86,6 +86,12 @@ public class BoyController {
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("新增")
     @ApiOperationSupport(ignoreParameters = {"boy.id"})
+    /**
+     * value：资源名称，必需项
+     * blockHandler / blockHandlerClass：blockHandler 指定函数负责处理 BlockException 异常，可选项。blockHandler 函数默认需要和原方法在同一个类中，通过指定 blockHandlerClass 为对应类的 Class 对象，则可以指定其他类中的函数，但注意对应的函数必需为 static 函数，否则无法解析。
+     * fallback /fallbackClass：fallback 指定的函数负责处理业务运行的异常，可选项，fallback 函数可以针对所有类型的异常（除了exceptionsToIgnore里面排除掉的异常类型）进行处理。fallback 函数默认需要和原方法在同一个类中，通过指定 fallbackClass 为对应类的 Class 对象，则可以指定指定为其他类的函数，但注意对应的函数必需为 static 函数，否则无法解析。
+     * @SentinelResource 的 fallback 负责业务运行的异常，blockHandler 负责 sentinel 配置的违规。
+     */
     @SentinelResource(value = "saveBoy") //热点参数限流：value对应资源名
     public Boy saveBoy(
             @ApiParam(name = "boy", value = "Boy", required = true)

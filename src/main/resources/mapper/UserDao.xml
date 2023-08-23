@@ -32,4 +32,16 @@
         from user
         where id = #{id}
     </select>
+
+    <select id="callProcedure1" statementType="CALLABLE" resultType="java.lang.String">
+        call procedure1(#{id,mode=IN,jdbcType=INTEGER})
+    </select>
+
+    <select id="callProcedure2" statementType="CALLABLE" parameterType="java.util.Map" resultType="java.util.Map">
+        call procedure2(
+            #{id, mode=IN, jdbcType=INTEGER},
+            #{username, mode=OUT, jdbcType=VARCHAR},
+            #{account, mode=OUT, jdbcType=VARCHAR}
+            )
+    </select>
 </mapper>

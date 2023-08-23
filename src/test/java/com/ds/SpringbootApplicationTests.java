@@ -38,6 +38,7 @@ import com.ds.controller.MongodbController;
 import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
 import com.ds.dao.GirlDao;
+import com.ds.dao.UserDao;
 import com.ds.entity.*;
 import com.ds.entity.dto.BoyDTO;
 import com.ds.entity.dto.GirlDTO;
@@ -818,6 +819,7 @@ public class SpringbootApplicationTests {
         System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey1"));
         System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey2"));
         System.out.println(redisTemplate.opsForHash().keys(PREFIXTAG + "hash"));
+        System.out.println(redisTemplate.opsForHash().entries(PREFIXTAG + "hash"));
         System.out.println("=====================================");
         //列表
         redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "a");
@@ -828,9 +830,10 @@ public class SpringbootApplicationTests {
         }
         Long size = redisTemplate.opsForList().size(PREFIXTAG + "list");
         System.out.println(size);
+        System.out.println(redisTemplate.opsForList().index(PREFIXTAG + "list",0));
         System.out.println(redisTemplate.opsForList().range(PREFIXTAG + "list",0,size-1));
         for(int i=0;i<size;i++){
-            System.out.println(redisTemplate.opsForList().rightPop(PREFIXTAG + "list"));
+            System.out.println(redisTemplate.opsForList().rightPop(PREFIXTAG + "list",1,TimeUnit.SECONDS));
         }
         System.out.println("=====================================");
         //集合
@@ -1530,6 +1533,18 @@ public class SpringbootApplicationTests {
         System.out.println(personA111);
         PersonB personB222 = BeanUtil.copyProperties(personA111, PersonB.class);
         System.out.println(personB222);
+    }
+
+    @Resource
+    private UserDao userDao;
+    @Test
+    public void procedureTest(){
+        String userName1 = userDao.callProcedure1(1);
+        System.out.println(userName1);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id",1);
+        Map<String,Object> userMap = userDao.callProcedure2(paramMap);
+        System.out.println(userMap);
     }
 
 }
