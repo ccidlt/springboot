@@ -35,13 +35,34 @@ public class FeignConfig implements RequestInterceptor {
         }
         requestTemplate.header("ip", request.getRemoteAddr());
 
+        //处理header信息
         Enumeration<String> headerNames = request.getHeaderNames();
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
                 String name = headerNames.nextElement();
-                String values = request.getHeader(name);
-                if(!StrUtil.equals(name,"token"))requestTemplate.header(name, values);
+                if(!StrUtil.equals(name,"token"))continue;
+                Enumeration<String> values = request.getHeaders(name);
+                while (values.hasMoreElements()) {
+                    String value = values.nextElement();
+                    requestTemplate.header(name, value);
+                }
             }
         }
+
+        //处理请求体参数信息
+//        Enumeration<String> bodyNames = request.getParameterNames();
+//        StringBuilder body = new StringBuilder();
+//        if (bodyNames != null) {
+//            while (bodyNames.hasMoreElements()) {
+//                String name = bodyNames.nextElement();
+//                String values = request.getParameter(name);
+//                body.append(name).append("=").append(values).append("&");
+//            }
+//        }
+//        if (body.length() != 0) {
+//            body.deleteCharAt(body.length() - 1);
+//            requestTemplate.body(body.toString());
+//        }
+
     }
 }
