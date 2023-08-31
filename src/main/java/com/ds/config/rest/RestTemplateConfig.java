@@ -47,6 +47,10 @@ import org.springframework.web.client.RestTemplate;
  * //发送post请求并打印结果 以String类型接收响应结果JSON字符串
  * String s = restTemplate.postForObject(url, request, String.class);
  *
+ * GET有请求头，有参数，responseEntity.getBody()获取响应参数
+ * ResponseEntity<String> responseEntity = restTemplate.exchange("http://xxx?a=1", HttpMethod.GET, request, String.class);
+ * Object body = responseEntity.getBody();
+ *
  */
 @Configuration
 public class RestTemplateConfig {

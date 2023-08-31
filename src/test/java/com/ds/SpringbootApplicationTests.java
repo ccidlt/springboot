@@ -810,21 +810,36 @@ public class SpringbootApplicationTests {
         redisTemplate.opsForValue().set("value", "c", 1L, TimeUnit.MINUTES);//value=abc
         System.out.println(redisTemplate.opsForValue().get("value"));
         System.out.println("=====================================");
+        //分布式锁
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(PREFIXTAG + "absent", "a", 1L, TimeUnit.MINUTES);
+        System.out.println(ifAbsent+":::"+redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
+        Boolean ifAbsent2 = redisTemplate.opsForValue().setIfAbsent(PREFIXTAG + "absent", "b", 1L, TimeUnit.MINUTES);
+        System.out.println(ifAbsent2+":::"+redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
+        redisTemplate.opsForValue().set(PREFIXTAG + "absent","c", 1L, TimeUnit.MINUTES);
+        System.out.println(redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
+        System.out.println("=====================================");
+        //原子计数
+        Long increment = redisTemplate.opsForValue().increment(PREFIXTAG + "increment", 1L);
+        System.out.println(increment);
+        System.out.println("=====================================");
         //哈希
         redisTemplate.opsForHash().put(PREFIXTAG + "hash", "hashkey1", "a");
         redisTemplate.opsForHash().put(PREFIXTAG + "hash", "hashkey2", "b");
         if(redisTemplate.getExpire(PREFIXTAG + "hash") != null){
             redisTemplate.expire(PREFIXTAG + "hash", 1L, TimeUnit.MINUTES);
         }
+        redisTemplate.opsForHash().put(PREFIXTAG + "hash", "hashkey1", "a");
+        redisTemplate.opsForHash().putAll(PREFIXTAG + "hashobj", BeanUtil.beanToMap(new Boy(1, "zhangsan")));
         System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey1"));
         System.out.println(redisTemplate.opsForHash().get(PREFIXTAG + "hash", "hashkey2"));
         System.out.println(redisTemplate.opsForHash().keys(PREFIXTAG + "hash"));
         System.out.println(redisTemplate.opsForHash().entries(PREFIXTAG + "hash"));
+        System.out.println(BeanUtil.mapToBean(redisTemplate.opsForHash().entries(PREFIXTAG + "hash"),Boy.class,CopyOptions.create()));
         System.out.println("=====================================");
         //列表
-        redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "a");
-        redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "b");
-        redisTemplate.opsForList().leftPush(PREFIXTAG + "list", "c");
+        redisTemplate.opsForList().rightPush(PREFIXTAG + "list", "a");
+        redisTemplate.opsForList().rightPush(PREFIXTAG + "list", "b");
+        redisTemplate.opsForList().rightPush(PREFIXTAG + "list", "c");
         if(redisTemplate.getExpire(PREFIXTAG + "list") != null){
             redisTemplate.expire(PREFIXTAG + "list", 1L, TimeUnit.MINUTES);
         }
@@ -833,7 +848,7 @@ public class SpringbootApplicationTests {
         System.out.println(redisTemplate.opsForList().index(PREFIXTAG + "list",0));
         System.out.println(redisTemplate.opsForList().range(PREFIXTAG + "list",0,size-1));
         for(int i=0;i<size;i++){
-            System.out.println(redisTemplate.opsForList().rightPop(PREFIXTAG + "list",1,TimeUnit.SECONDS));
+            System.out.println(redisTemplate.opsForList().leftPop(PREFIXTAG + "list",1,TimeUnit.SECONDS));
         }
         System.out.println("=====================================");
         //集合
@@ -859,14 +874,6 @@ public class SpringbootApplicationTests {
         System.out.println(size2);
         System.out.println(redisTemplate.opsForZSet().range(PREFIXTAG + "zset",0,size2-1));
         System.out.println(redisTemplate.opsForZSet().rangeByScore(PREFIXTAG + "zset", 0, 0.5));
-        System.out.println("=====================================");
-        //setIfAbsent
-        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(PREFIXTAG + "absent", "a", 1L, TimeUnit.MINUTES);
-        System.out.println(ifAbsent+":::"+redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
-        Boolean ifAbsent2 = redisTemplate.opsForValue().setIfAbsent(PREFIXTAG + "absent", "b", 1L, TimeUnit.MINUTES);
-        System.out.println(ifAbsent2+":::"+redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
-        redisTemplate.opsForValue().set(PREFIXTAG + "absent","c", 1L, TimeUnit.MINUTES);
-        System.out.println(redisTemplate.opsForValue().get(PREFIXTAG + "absent"));
     }
 
     @Resource
@@ -1531,8 +1538,13 @@ public class SpringbootApplicationTests {
         Person person222 = new Person("李四", "13800000001",  CollUtil.newArrayList(boyDao.selectById(1)));
         PersonA personA111 = new PersonA("1", CollUtil.newArrayList(person111,person222));
         System.out.println(personA111);
+        //java.lang.ClassCastException: com.ds.entity.Person cannot be cast to com.ds.entity.PersonC
+//        PersonB personB222 = new PersonB();
+//        BeanUtils.copyProperties(personA111, personB222);
         PersonB personB222 = BeanUtil.copyProperties(personA111, PersonB.class);
         System.out.println(personB222);
+        System.out.println(personB222.getPersonList());
+        System.out.println(personB222.getPersonList().get(0).getTel());
     }
 
     @Resource
