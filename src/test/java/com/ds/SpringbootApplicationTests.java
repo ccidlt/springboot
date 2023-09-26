@@ -874,6 +874,14 @@ public class SpringbootApplicationTests {
         System.out.println(size2);
         System.out.println(redisTemplate.opsForZSet().range(PREFIXTAG + "zset",0,size2-1));
         System.out.println(redisTemplate.opsForZSet().rangeByScore(PREFIXTAG + "zset", 0, 0.5));
+        System.out.println("=====================================");
+        //自增长序列号
+        Long incrementS1 = redisTemplate.opsForValue().increment("YB" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "S");
+        Long incrementW1 = redisTemplate.opsForValue().increment("YB" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "W");
+        Long incrementS2 = redisTemplate.opsForValue().increment("YB" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "S");
+        System.out.println(StrUtil.fillBefore(StrUtil.toString(incrementS1), '0', 4));
+        System.out.println(StrUtil.fillBefore(StrUtil.toString(incrementW1), '0', 4));
+        System.out.println(StrUtil.fillBefore(StrUtil.toString(incrementS2), '0', 4));
     }
 
     @Resource
