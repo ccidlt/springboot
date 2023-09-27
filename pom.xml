@@ -324,12 +324,12 @@
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
-        <!-- http://localhost:8080/actuator 检测系统的健康情况、当前的Beans、@RequestMapping路径、系统的缓存等 -->
+        <!-- http://localhost:8080/actuator 应用程序的监控和管理功能，/actuator/health、/actuator/info 健康状况、指标数据、环境配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- prometheus指标监控 -->
+        <!-- http://localhost:8080/actuator/prometheus prometheus指标监控 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>

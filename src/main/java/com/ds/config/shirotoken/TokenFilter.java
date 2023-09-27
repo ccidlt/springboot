@@ -1,6 +1,6 @@
 package com.ds.config.shirotoken;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.ds.entity.Result;
 import lombok.SneakyThrows;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -34,11 +34,10 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
             } catch (Exception e) {
                 //token 错误
                 Throwable throwable = e.getCause() == null ? e : e.getCause();
-                Result r = Result.fail(throwable.getMessage());
-                String json = JSONObject.toJSONString(r);
                 HttpServletResponse httpServletResponse = (HttpServletResponse) response;
                 httpServletResponse.setHeader("content-type", "text/html;charset=UTF-8");//防止乱码
-                httpServletResponse.getWriter().print(json);
+                Result<?> result = Result.fail(throwable.getMessage());
+                httpServletResponse.getWriter().print(JSON.toJSON(result));
                 return false;
             }
         }
