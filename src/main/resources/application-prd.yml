@@ -202,6 +202,9 @@ management:
   health:
     rabbit:
       enabled: false
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 #文件路径
 filePath: /home/file/
