@@ -76,6 +76,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -1565,6 +1566,24 @@ public class SpringbootApplicationTests {
         paramMap.put("id",1);
         Map<String,Object> userMap = userDao.callProcedure2(paramMap);
         System.out.println(userMap);
+    }
+
+    /**
+     * 首字母排序
+     */
+    @Test
+    public void lnitialSortTest(){
+        List<String> of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
+        System.out.println(of.stream().sorted(Comparator.comparing(a->a)).collect(Collectors.toList()));
+        of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
+        of.sort(Comparator.comparing(a->a));
+        System.out.println(of);
+        of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
+        // 创建一个中文排序比较器
+        Collator chineseComparator = Collator.getInstance(Locale.CHINESE);
+        // 使用中文排序比较器对字符串列表进行排序
+        of.sort(chineseComparator);
+        System.out.println(of);
     }
 
 }
