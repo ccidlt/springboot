@@ -1,6 +1,7 @@
 package com.ds.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.ds.entity.enums.GrilEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class Boy implements Serializable {
     private String name;
 
     @ApiModelProperty("girl表id")
-    private Integer girlId;
+    private GrilEnum girlId;
 
     @ApiModelProperty("女朋友们")
     @TableField(exist = false)
