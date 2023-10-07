@@ -171,7 +171,7 @@ public class TestController {
                 Boy SysDictOne = mapper.selectOne(new LambdaQueryWrapper<Boy>().eq(Boy::getId, boy.getId()).last("limit 1"));
                 Boy boy1 = new Boy();
                 boy1.setName("DEF");
-                boy1.setGirlId(SysDictOne.getId());
+                boy1.setGirlId(SysDictOne.getGirlId());
                 mapper.insert(boy1);
                 int i = 1/0;
                 return "ok";
@@ -213,7 +213,7 @@ public class TestController {
                             Boy SysDictOne = boyService.getOne(new LambdaQueryWrapper<Boy>().eq(Boy::getId, boy.getId()).last("limit 1"));
                             Boy boy1 = new Boy();
                             boy1.setName("DEF");
-                            boy1.setGirlId(SysDictOne.getId());
+                            boy1.setGirlId(SysDictOne.getGirlId());
                             boyService.save(boy1);
                             transactionManager.commit(childStatus);
                         } catch (Exception e) {

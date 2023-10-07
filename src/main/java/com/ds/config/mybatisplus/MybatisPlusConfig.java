@@ -1,7 +1,10 @@
 package com.ds.config.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusPropertiesCustomizer;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
@@ -94,5 +97,19 @@ public class MybatisPlusConfig implements MetaObjectHandler, IdentifierGenerator
     public Number nextId(Object entity) {
         return snowflake.nextId();
     }
+
+    /**
+     * 配置Mybatis枚举
+     * @return
+     */
+    @Bean
+    public MybatisPlusPropertiesCustomizer mybatisPlusPropertiesCustomizer() {
+        return properties -> {
+            MybatisConfiguration configuration = new MybatisConfiguration();
+            configuration.setDefaultEnumTypeHandler(MybatisEnumTypeHandler.class); // 枚举处理类
+            properties.setConfiguration(configuration);
+        };
+    }
+
 }
 
