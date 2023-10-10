@@ -2,13 +2,16 @@ package com.ds.entity.enums;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @Description: boy对象枚举
  * @Author lt
  * @Date 2023/10/7 15:37
  */
+@JsonFormat(shape= JsonFormat.Shape.OBJECT)
 public enum GrilEnum {
 
     A(1,"黄蓉"),
@@ -23,15 +26,28 @@ public enum GrilEnum {
 
     ;
 
-    GrilEnum(Integer id, String value) {
+    @EnumValue
+    private Integer id;
+//    @JsonValue
+    private String value;
+
+    GrilEnum(int id, String value) {
         this.id = id;
         this.value = value;
     }
 
-    @EnumValue
-    private Integer id;
-    @JsonValue
-    private String value;
+    // 若不配置@JsonCreator，jackson反序列化时则使用@JsonValue标记的字段做映射
+    @JsonCreator
+    public static GrilEnum jacksonInstance(final JsonNode jsonNode) {
+        Integer id = jsonNode.asInt();
+        GrilEnum[] values = GrilEnum.values();
+        for (GrilEnum grilEnum : values) {
+            if (grilEnum.getId().equals(id)) {
+                return grilEnum;
+            }
+        }
+        return null;
+    }
 
     public Integer getId() {
         return id;
