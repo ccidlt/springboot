@@ -472,7 +472,7 @@ public class SpringbootApplicationTests {
         System.out.println(DateUtil.dayOfMonth(DateUtil.date()));
         Date date1 = DateUtil.parse("2019-09-20 17:35:35");
         Date date2 = DateUtil.parse("2019-09-17 14:35:35");
-        System.out.println(DateUtil.between(date1, date2, DateUnit.DAY));//3  计算日期时间之间的偏移量
+        System.out.println(DateUtil.between(date1, date2, DateUnit.DAY, false));//3  计算日期时间之间的偏移量
         Date newDate = DateUtil.offset(date1, DateField.DAY_OF_MONTH, 2); //计算日期时间之间的偏移量
         Date beginOfDay = DateUtil.beginOfDay(date1);//获取某天的开始时间
         Date endOfDay = DateUtil.endOfDay(date1);//获取某天的结束时间
@@ -649,7 +649,7 @@ public class SpringbootApplicationTests {
         String format1 = DateUtil.format(date, "yyyy-MM-dd");
         Date parse = DateUtil.parse(format1, "yyyy-MM-dd");
         Date offset = DateUtil.offset(date, DateField.DAY_OF_MONTH, 2);
-        long between = DateUtil.between(date, offset, DateUnit.DAY);
+        long between = DateUtil.between(date, offset, DateUnit.DAY, false);
         Date beginOfMonth1 = DateUtil.beginOfMonth(date);
         Date endOfMonth1 = DateUtil.endOfMonth(date);
         //FileUtil 用spring的MultipartFile表单接收文件
