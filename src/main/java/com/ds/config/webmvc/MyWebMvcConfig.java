@@ -20,17 +20,24 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.TimeZone;
 
 @Configuration
 public class MyWebMvcConfig implements WebMvcConfigurer {
@@ -189,8 +196,37 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //@RequestBody前端向后端或后端向前端日期传参格式化
-        objectMapper.setDateFormat(GlobalJsonDateConvert.instance);
+        //方式一
+        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         SimpleModule simpleModule = new SimpleModule();
+        //方式二
+//        simpleModule.addSerializer(Date.class, new JsonSerializer<Date>() {
+//            @Override
+//            public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider
+//                    serializerProvider) throws IOException {
+//                //将Date类型的转化为字符串
+//                if(date != null){
+//                    jsonGenerator.writeString(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+//                }else{
+//                    jsonGenerator.writeNull();
+//                }
+//            }
+//        });
+//        simpleModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
+//            @Override
+//            public Date deserialize(JsonParser jsonParser, DeserializationContext
+//                    deserializationContext) throws IOException {
+//                try {
+//                    if(StrUtil.isNotBlank(jsonParser.getText())){
+//                        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(jsonParser.getText());
+//                    }
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//        });
         // Json Long --> String 避免雪花等生成的id过长到前端自动截断
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
@@ -219,4 +255,5 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new GlobalFormDateConvert());
     }
+
 }
