@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
@@ -26,6 +27,7 @@ import java.util.List;
 @Slf4j
 @RefreshScope
 @RepeatSubmitAnno(seconds = 5)
+@Validated
 public class BoyController {
 
     private Logger logger = LoggerFactory.getLogger(BoyController.class);
@@ -55,7 +57,7 @@ public class BoyController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query", dataType = "int")
     })
-    public List<Boy> getBoysByParam(@RequestParam(value = "id",required = true) Integer id) {
+    public List<Boy> getBoysByParam(@RequestParam(value = "id",required = true) @NotBlank(message = "id不能为空") Integer id) {
         Boy boy = new Boy();
         boy.setId(id);
         return boyService.queryBoy(boy);
@@ -75,7 +77,7 @@ public class BoyController {
     @ApiOperation("新增/修改")
     public Boy addBoy(
             @ApiParam(name = "boy", value = "Boy", required = true)
-            @Validated
+            @Validated({Boy.save.class})
             @RequestBody(required = true) Boy boy) {
         //boy中有id则为修改，没有为新增
         boyService.saveOrUpdate(boy);
@@ -95,7 +97,7 @@ public class BoyController {
     @SentinelResource(value = "saveBoy") //热点参数限流：value对应资源名
     public Boy saveBoy(
             @ApiParam(name = "boy", value = "Boy", required = true)
-            @Validated
+            @Validated({Boy.save.class})
             @RequestBody(required = true) Boy boy) {
         return boyService.saveBoy(boy);
     }

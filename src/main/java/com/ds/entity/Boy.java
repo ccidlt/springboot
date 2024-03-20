@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.groups.Default;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,13 +23,16 @@ import java.util.Date;
 public class Boy implements Serializable {
 
     private static final long serialVersionUID = -2601915151478860998L;
+
+    public interface save extends Default {}
+
     @ApiModelProperty(value = "主键")
     @TableId(type = IdType.AUTO)
     private int id;
 
     @ApiModelProperty("名称")
     //@NotNull(message = "名称不能为空") //controller中可以用@Validated注解
-    @NotBlank(message = "名称不能为空") //controller中可以用@Validated注解
+    @NotBlank(message = "名称不能为空", groups = {save.class}) //controller中可以用@Validated注解
     private String name;
 
     @ApiModelProperty("girl表id")

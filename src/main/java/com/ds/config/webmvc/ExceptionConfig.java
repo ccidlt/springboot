@@ -4,17 +4,17 @@ import com.ds.entity.BusinessException;
 import com.ds.entity.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Set;
 
 @RestControllerAdvice
 @Order(999999)
@@ -22,39 +22,47 @@ public class ExceptionConfig {
 
     private Logger logger = LoggerFactory.getLogger(ExceptionConfig.class);
 
-    /**
-     * 捕捉其他所有异常
-     */
-    @ExceptionHandler(Throwable.class)
-    public Result throwGlobalException(HttpServletRequest request, Throwable e) {
-        if (e instanceof NoHandlerFoundException) {
-            return Result.build(HttpStatus.NOT_FOUND.value(), "找不到资源");
-        } else if (e instanceof TypeMismatchException) {
-            TypeMismatchException te = (TypeMismatchException) e;
-            if (Double.class.equals(te.getRequiredType()) || Integer.class.equals(te.getRequiredType())) {
-                String res = String.format("请求错误, %s不是一个数字", te.getValue());
-                return Result.build(HttpStatus.BAD_REQUEST.value(), res);
-            } else {
-                String res = String.format("请求错误, %s无效, 需要%s类型", te.getValue(), te.getRequiredType().getName());
-                return Result.build(HttpStatus.BAD_REQUEST.value(), res);
-            }
-        } else if (e instanceof MissingServletRequestParameterException) {
-            MissingServletRequestParameterException me = (MissingServletRequestParameterException) e;
-            String res = String.format("请求错误, 参数：%s是必须的, 类型：%s", me.getParameterName(), me.getParameterType());
-            return Result.build(HttpStatus.BAD_REQUEST.value(), res);
-        } else if (e instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException me = (MethodArgumentNotValidException) e;
-            return Result.build(HttpStatus.BAD_REQUEST.value(), me.getBindingResult().getFieldError().getDefaultMessage());
-        } else if (e instanceof BindException) {
-            BindException me = (BindException) e;
-            return Result.build(HttpStatus.BAD_REQUEST.value(), me.getBindingResult().getFieldError().getDefaultMessage());
-        } else {
-            return Result.build(HttpStatus.SERVICE_UNAVAILABLE.value(), e.getMessage());
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public Result exceptionHandler(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldError().getDefaultMessage();
+        logger.error(message);
+        return Result.build(HttpStatus.BAD_REQUEST.value(), message);
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public Result exceptionHandler(ConstraintViolationException e) {
+        StringBuilder sb = new StringBuilder();
+        Set<ConstraintViolation<?>> conSet = e.getConstraintViolations();
+        for (ConstraintViolation<?> con : conSet) {
+            String message = con.getMessage();
+            sb.append(message).append(";");
         }
+        logger.error(sb.toString());
+        return Result.build(HttpStatus.BAD_REQUEST.value(), sb.toString());
+    }
+
+    @ExceptionHandler(value = MissingServletRequestParameterException.class)
+    public Result exceptionHandler(MissingServletRequestParameterException e) {
+        String message = "缺少参数："+e.getParameterName();
+        logger.error(message);
+        return Result.build(HttpStatus.BAD_REQUEST.value(),message);
+    }
+
+    @ExceptionHandler(MissingPathVariableException.class)
+    public Result handleMissingPathVariableException(MissingPathVariableException e) {
+        String message = "缺少参数：" + e.getVariableName();
+        logger.error(message);
+        return Result.build(HttpStatus.BAD_REQUEST.value(),message);
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public Result exceptionHandler(Exception e) {
+        logger.error("系统异常", e);
+        return Result.build(HttpStatus.SERVICE_UNAVAILABLE.value(), e.getMessage());
     }
 
     @ExceptionHandler(BusinessException.class)
-    public Result throwBusinessException(BusinessException e) {
+    public Result exceptionHandler(BusinessException e) {
         return Result.build(e.getCode(), e.getMessage());
     }
 
