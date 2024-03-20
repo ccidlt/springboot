@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.groups.Default;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -15,9 +17,12 @@ import java.util.Date;
 @NoArgsConstructor
 public class Girl implements Serializable {
 
+    public interface save extends Default {}
+
     @TableId(type = IdType.AUTO)
     private int id;
 
+    @NotBlank(message = "名称不能为空", groups = {save.class})
     private String name;
 
     private int boyId;

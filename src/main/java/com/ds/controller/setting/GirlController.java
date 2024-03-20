@@ -5,9 +5,12 @@ import com.ds.entity.Girl;
 import com.ds.entity.Result;
 import com.ds.service.GirlService;
 import io.swagger.annotations.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -22,6 +25,7 @@ import java.util.List;
 @Api(value = "girlController", tags = "豪杰操作")
 @RestController
 @RequestMapping("/girl")
+@Validated
 public class GirlController {
 
     @Resource
@@ -39,19 +43,19 @@ public class GirlController {
     @ApiOperation(value = "查询（主键）", notes = "查询（主键）")
     @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "int")
     @RequestMapping(value = "/queryById/{id}", method = RequestMethod.GET)
-    public Result<Girl> queryById(@PathVariable Integer id){
+    public Result<Girl> queryById(@PathVariable @NotBlank(message = "id不能为空") Integer id){
         return Result.ok(girlService.getById(id));
     }
 
     @ApiOperation(value = "查询（分页）", notes = "查询（分页）")
     @RequestMapping(value = "/queryPage", method = RequestMethod.POST)
-    public Result<Page<Girl>>queryPage(@RequestParam Integer pageNum,@RequestParam Integer pageSize){
+    public Result<Page<Girl>>queryPage(@RequestParam @NotNull(message = "页码不能为空") Integer pageNum, @RequestParam @NotNull(message = "每页大小不能为空") Integer pageSize){
         return Result.ok(girlService.page(new Page<>(pageNum,pageSize)));
     }
 
     @ApiOperation(value = "新增、修改", notes = "新增、修改")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public Result<Girl> save(@RequestBody Girl girl){
+    public Result<Girl> save(@RequestBody @Validated({Girl.save.class}) Girl girl){
         girlService.saveOrUpdate(girl);
         return Result.ok(girlService.getById(girl.getId()));
     }
@@ -59,7 +63,7 @@ public class GirlController {
     @ApiOperation(value = "删除（主键）", notes = "删除（主键）")
     @ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "path", dataType = "int")
     @RequestMapping(value = "/deleteById/{id}", method = RequestMethod.GET)
-    public Result<Boolean> delete(@PathVariable Integer id){
+    public Result<Boolean> delete(@PathVariable @NotBlank(message = "id不能为空") Integer id){
         return Result.ok(girlService.removeById(id));
     }
 
