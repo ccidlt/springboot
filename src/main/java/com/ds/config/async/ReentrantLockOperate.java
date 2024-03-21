@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
@@ -46,6 +47,7 @@ public class ReentrantLockOperate {
      * boolean compareAndSet(int expect, int update)
      */
     AtomicInteger count = new AtomicInteger(30);
+    AtomicReference<String> atomicReference = new AtomicReference<>("Hello");
     /**
      * 减法计数器,用于线程阻塞
      * countDownLatch.countDown();计数器减一
