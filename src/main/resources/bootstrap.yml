@@ -10,7 +10,9 @@ spring:
   profiles:
     # 环境配置
     active: '@profile.active@'
-  cloud:
+#  cloud:
+#    zookeeper:
+#      connect-string: localhost:2181
     nacos:
       discovery:
         server-addr: ${nacos_host:@nacos.ip@}:${nacos_port:@nacos.port@}
