@@ -30,8 +30,18 @@ public class DataSourceConfig {
     @Resource
     private DynamicDataSourceProperties properties;
 
+    /**
+     * shardingjdbc有四种数据源，需要根据业务注入不同的数据源
+     *
+     * <p>1. 未使用分片, 脱敏的名称(默认): shardingDataSource;
+     * <p>2. 主从数据源: masterSlaveDataSource;
+     * <p>3. 脱敏数据源：encryptDataSource;
+     * <p>4. 影子数据源：shadowDataSource
+     * <p>5. 分片使用数据源：shardingSphereDataSource
+     *
+     */
     @Lazy
-    @Resource(name = "shardingDataSource") //shardingSphereDataSource
+    @Resource
     private DataSource shardingSphereDataSource;
 
 
