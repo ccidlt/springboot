@@ -1,5 +1,8 @@
 package com.ds.controller;
 
+import cn.afterturn.easypoi.word.WordExportUtil;
+import cn.afterturn.easypoi.word.entity.MyXWPFDocument;
+import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -15,11 +18,15 @@ import com.github.benmanes.caffeine.cache.Cache;
 import io.seata.core.context.RootContext;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -29,16 +36,34 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -303,6 +328,64 @@ public class TestController {
             });
         }
 
+    }
+
+
+    @Resource
+    private ResourceLoader resourceLoader;
+    @GetMapping("/exportWord")
+    public void exportWord(HttpServletResponse response) throws IOException {
+        Map<String, Object> dataMap = new HashMap<>();
+        // 获取资源文件的URL对象
+        InputStream inputStream = null;
+
+        MyXWPFDocument xwpfDocument = null;
+        ServletOutputStream out = null;
+        try {
+            org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:docx/test.docx");
+            inputStream = resource.getInputStream();
+            xwpfDocument = new MyXWPFDocument(inputStream);
+
+            dataMap.put("t1", "hello");
+            Ott ott1 = new Ott("1","2","3");
+            Ott ott2 = new Ott("4","5","6");
+            dataMap.put("t2", CollUtil.newArrayList(ott1,ott2));
+            WordExportUtil.exportWord07(xwpfDocument, dataMap);
+
+//            String tempDir = System.getProperty("java.io.tmpdir");
+//            xwpfDocument.write(new FileOutputStream(tempDir));
+
+            response.reset();
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/msword");
+            // 设置浏览器以下载的方式处理该文件名
+            String fileName = "test.docx";
+            response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode(fileName, "UTF-8"))));
+            out = response.getOutputStream();
+            xwpfDocument.write(out);
+        } catch (Exception e) {
+            log.error("easy poi 导出文档异常",e);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            if (xwpfDocument != null) {
+                xwpfDocument.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
+
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class Ott {
+        private String one;
+        private String two;
+        private String three;
     }
 
 }
