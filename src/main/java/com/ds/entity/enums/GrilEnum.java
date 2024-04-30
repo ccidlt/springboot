@@ -3,7 +3,7 @@ package com.ds.entity.enums;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @Author lt
  * @Date 2023/10/7 15:37
  */
-@JsonFormat(shape= JsonFormat.Shape.OBJECT)
+//@JsonFormat(shape= JsonFormat.Shape.OBJECT)
 public enum GrilEnum {
 
     A(1,"黄蓉"),
@@ -28,7 +28,7 @@ public enum GrilEnum {
 
     @EnumValue
     private Integer id;
-//    @JsonValue
+    @JsonValue
     private String value;
 
     GrilEnum(int id, String value) {
