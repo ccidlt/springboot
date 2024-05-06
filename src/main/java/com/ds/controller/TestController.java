@@ -15,6 +15,9 @@ import com.ds.entity.Boy;
 import com.ds.entity.Result;
 import com.ds.service.BoyService;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import io.seata.core.context.RootContext;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -342,7 +346,7 @@ public class TestController {
         MyXWPFDocument xwpfDocument = null;
         ServletOutputStream out = null;
         try {
-            org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:docx/test.docx");
+            org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:docx/template.docx");
             inputStream = resource.getInputStream();
             xwpfDocument = new MyXWPFDocument(inputStream);
 
@@ -386,6 +390,63 @@ public class TestController {
         private String one;
         private String two;
         private String three;
+    }
+
+
+
+    @GetMapping("/exportPdf")
+    public void exportPdf(HttpServletRequest request,HttpServletResponse response) throws Exception {
+        response.setHeader("content-disposition","attachment;fileName="+"test.pdf");
+        PdfReader reader = null;
+        PdfStamper stamper = null;
+        OutputStream fos = null;
+        ByteArrayOutputStream bos = null;
+        try {
+            // 模板文件路径
+            String templatePath = "pdf/template.pdf";
+
+            // 读取PDF模板
+            reader = new PdfReader(templatePath);
+            bos = new ByteArrayOutputStream();
+            // 创建输出文件的PdfStamper，用于填写表单
+            stamper = new PdfStamper(reader, bos);
+
+            // 获取表单域
+            AcroFields form = stamper.getAcroFields();
+
+            // 填充表单字段
+            form.setField("abc", "Hello,world!");
+
+            // 设置表单字段为只读（可选）
+            form.setFieldProperty("abc", "setReadOnly", true, null);
+
+            // 应用更改并关闭
+            stamper.setFormFlattening(true); // 设置为true会将表单扁平化，不可再编辑
+
+            if(stamper != null){
+                stamper.close();
+            }
+
+            //生成pdf路径存放的路径
+            fos = response.getOutputStream();
+            fos.write(bos.toByteArray());
+
+            System.out.println("PDF 文件已成功生成!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if(fos!=null){
+                fos.flush();
+                fos.close();
+            }
+            if (bos != null){
+                bos.close();
+            }
+            if(reader != null){
+                reader.close();
+            }
+        }
     }
 
 }
