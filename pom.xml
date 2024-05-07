@@ -506,6 +506,18 @@
             <artifactId>spire.doc.free</artifactId>
             <version>5.2.0</version>
         </dependency>
+        <!--word文件转化成pdf start-->
+        <dependency>
+            <groupId>com.documents4j</groupId>
+            <artifactId>documents4j-local</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.documents4j</groupId>
+            <artifactId>documents4j-transformer-msoffice-word</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <!--word文件转化成pdf end -->
     </dependencies>
 
     <!-- 无法引入时是因为maven的配置文件settings.xml配了阿里云镜像加速，这时我们需暂时将settings.xml中的镜像给剪切掉-->
