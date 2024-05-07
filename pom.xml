@@ -479,7 +479,42 @@
             <version>4.4.0</version>
         </dependency>
 
+        <!-- word文件转化成pdf -->
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.poi.xwpf.converter.pdf-gae</artifactId>
+            <version>2.0.2</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.apache.poi</artifactId>
+                    <groupId>poi-ooxml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--
+        word文件转化成pdf
+        需要配置
+        <repositories>
+            <repository>
+                <id>com.e-iceblue</id>
+                <url>https://repo.e-iceblue.cn/repository/maven-public/</url>
+            </repository>
+        </repositories>
+        -->
+        <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.doc.free</artifactId>
+            <version>5.2.0</version>
+        </dependency>
     </dependencies>
+
+    <!-- 无法引入时是因为maven的配置文件settings.xml配了阿里云镜像加速，这时我们需暂时将settings.xml中的镜像给剪切掉-->
+    <repositories>
+        <repository>
+            <id>com.e-iceblue</id>
+            <url>https://repo.e-iceblue.cn/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <!--jenkins环境打包配置-->
     <profiles>

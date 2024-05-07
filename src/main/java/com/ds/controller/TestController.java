@@ -18,6 +18,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.spire.doc.Document;
+import com.spire.doc.FileFormat;
 import io.seata.core.context.RootContext;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -335,6 +338,9 @@ public class TestController {
     }
 
 
+    /**
+     * easypoi使用word模板生成word
+     */
     @Resource
     private ResourceLoader resourceLoader;
     @GetMapping("/exportWord")
@@ -393,9 +399,11 @@ public class TestController {
     }
 
 
-
+    /**
+     * itextpdf使用pdf的模板新建表单域替换生成pdf
+     */
     @GetMapping("/exportPdf")
-    public void exportPdf(HttpServletRequest request,HttpServletResponse response) throws Exception {
+    public void exportPdf(HttpServletResponse response) throws Exception {
         response.setHeader("content-disposition","attachment;fileName="+"test.pdf");
         PdfReader reader = null;
         PdfStamper stamper = null;
@@ -447,6 +455,46 @@ public class TestController {
                 reader.close();
             }
         }
+    }
+
+
+    /**
+     * 方案一：使用POI工具，将word文件转化成pdf，生成的pdf文件会出现，些许格式的不一致，但是不介意的可以使用
+     * 方案二：使用spire.doc.free将doc文件转化成pdf，收费，只能免费转化前三页pdf
+     *
+     */
+    @GetMapping("/wordToPdf")
+    public void wordToPdf(HttpServletResponse response) throws IOException {
+        String wordPath = "docx/template.docx";
+        //使用POI工具，将word文件转化成pdf，生成的pdf文件会出现，些许格式的不一致，但是不介意的可以使用
+//        try {
+//            FileInputStream fileInputStream = new FileInputStream(wordPath);
+//            XWPFDocument xwpfDocument = new XWPFDocument(fileInputStream);
+//            PdfOptions pdfOptions = PdfOptions.create();
+//            ServletOutputStream os = response.getOutputStream();
+//            response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+//            response.setHeader("content-disposition","attachment;fileName="+"test.pdf");
+//            PdfConverter.getInstance().convert(xwpfDocument,os,pdfOptions);
+//            fileInputStream.close();
+//            os.close();
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
+        //使用spire.doc.free将doc文件转化成pdf，收费，只能免费转化前三页pdf
+        //实例化Document类的对象
+        Document doc = new Document();
+        //加载Word
+        doc.loadFromFile(wordPath);
+        //保存为PDF格式
+        ServletOutputStream os = response.getOutputStream();
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("content-disposition","attachment;fileName="+"test.pdf");
+        doc.saveToStream(os, FileFormat.PDF);
+        doc.close();
+        os.close();
     }
 
 }
