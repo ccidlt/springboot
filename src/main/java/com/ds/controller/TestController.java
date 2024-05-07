@@ -461,7 +461,7 @@ public class TestController {
     /**
      * 方案一：使用POI工具，将word文件转化成pdf，生成的pdf文件会出现，些许格式的不一致，但是不介意的可以使用
      * 方案二：使用spire.doc.free将doc文件转化成pdf，收费，只能免费转化前三页pdf
-     *
+     * 方案三：使用documents4j，本机需要安装Microsoft Office，通过启动 Microsoft Office 进程来执行文档转换
      */
     @GetMapping("/wordToPdf")
     public void wordToPdf(HttpServletResponse response) throws IOException {
@@ -495,6 +495,19 @@ public class TestController {
         doc.saveToStream(os, FileFormat.PDF);
         doc.close();
         os.close();
+
+//        //使用documents4j，本机需要安装Microsoft Office，通过启动 Microsoft Office 进程来执行文档转换
+//        ServletOutputStream os = response.getOutputStream();
+//        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+//        response.setHeader("content-disposition","attachment;fileName="+"test.pdf");
+//        FileInputStream fileInputStream = new FileInputStream(wordPath);
+//        IConverter converter = LocalConverter.builder().build();
+//        //转换docx=>pdf
+//        boolean flag = converter.convert(fileInputStream).as(DocumentType.DOC).to(os).as(DocumentType.PDF).execute();
+//        if (flag) {
+//            converter.shutDown();
+//        }
+//        os.close();
     }
 
 }
