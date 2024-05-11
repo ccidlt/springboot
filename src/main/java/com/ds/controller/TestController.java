@@ -28,6 +28,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.poi.xwpf.usermodel.BreakType;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -357,10 +363,18 @@ public class TestController {
             xwpfDocument = new MyXWPFDocument(inputStream);
 
             dataMap.put("t1", "hello");
-            Ott ott1 = new Ott("1","2","3");
+            Ott ott1 = new Ott("1","2","3\n13");
             Ott ott2 = new Ott("4","5","6");
             dataMap.put("t2", CollUtil.newArrayList(ott1,ott2));
             WordExportUtil.exportWord07(xwpfDocument, dataMap);
+
+            for (XWPFTable table : xwpfDocument.getTables()) {//表格
+                for (XWPFTableRow row : table.getRows()) {//行
+                    for (XWPFTableCell cell : row.getTableCells()) {
+                        addBreakInCell(cell);
+                    }
+                }
+            }
 
 //            String tempDir = System.getProperty("java.io.tmpdir");
 //            xwpfDocument.write(new FileOutputStream(tempDir));
@@ -396,6 +410,34 @@ public class TestController {
         private String one;
         private String two;
         private String three;
+    }
+
+
+    /**
+     * 替换word换行符为中断
+     *
+     * @param cell
+     */
+    private static void addBreakInCell(XWPFTableCell cell) {
+        //判断是否包含\n替换为中断
+        if (cell.getText() != null && cell.getText().contains("\n")) {
+            for (XWPFParagraph p : cell.getParagraphs()) {
+                for (XWPFRun run : p.getRuns()) {
+                    if (run.getText(0) != null && run.getText(0).contains("\n")) {
+                        String[] lines = run.getText(0).split("\n");
+                        if (lines.length > 0) {
+                            run.setText(lines[0], 0);
+                            for (int i = 1; i < lines.length; i++) {
+                                //中断
+                                run.addBreak(BreakType.TEXT_WRAPPING);
+//				                    run.addCarriageReturn();//回车符
+                                run.setText(lines[i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
