@@ -25,6 +25,13 @@
             (#{item.id},#{item.name},#{item.girlId})
         </foreach>
     </insert>
+    <insert id="addBoyBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into boy(name)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name})
+        </foreach>
+    </insert>
     <!-- 批量修改-->
     <update id="updateBatchByIds" parameterType="java.util.List">
         update boy

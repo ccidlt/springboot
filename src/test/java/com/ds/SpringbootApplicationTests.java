@@ -19,7 +19,14 @@ import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
-import cn.hutool.core.util.*;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.jwt.JWT;
@@ -39,14 +46,32 @@ import com.ds.controller.setting.BoyController;
 import com.ds.dao.BoyDao;
 import com.ds.dao.GirlDao;
 import com.ds.dao.UserDao;
-import com.ds.entity.*;
+import com.ds.entity.Boy;
+import com.ds.entity.FatherAndSon;
+import com.ds.entity.Girl;
+import com.ds.entity.Person;
+import com.ds.entity.PersonA;
+import com.ds.entity.PersonB;
+import com.ds.entity.ProcessApproval;
+import com.ds.entity.ProcessBusiness;
+import com.ds.entity.ProcessLine;
+import com.ds.entity.ProcessRecord;
+import com.ds.entity.TreeStructure;
+import com.ds.entity.User;
 import com.ds.entity.dto.BoyDTO;
 import com.ds.entity.dto.GirlDTO;
 import com.ds.entity.elasticsearch.Elasticsearch;
 import com.ds.entity.mongodb.Mongodb;
 import com.ds.enums.ProcessLineEnum;
 import com.ds.enums.ProcessNodeEnum;
-import com.ds.service.*;
+import com.ds.service.BoyService;
+import com.ds.service.GirlService;
+import com.ds.service.PersonFactory;
+import com.ds.service.ProcessApprovalService;
+import com.ds.service.ProcessBusinessService;
+import com.ds.service.ProcessLineService;
+import com.ds.service.ProcessRecordService;
+import com.ds.service.TestStarterService;
 import com.ds.service.impl.BoyFeignServiceImpl;
 import com.ds.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -76,11 +101,25 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IntSummaryStatistics;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -1164,7 +1203,7 @@ public class SpringbootApplicationTests {
     /**
      * es
      *
-     * Low Level Client
+     * 简化es操作
      *
      * spring:
      *       elasticsearch:
@@ -1178,7 +1217,7 @@ public class SpringbootApplicationTests {
      *           read-timeout: 1000
      *
      * 方式一：注入 ElasticsearchRestTemplate
-     * 方式二：继承 ElasticsearchRepository（jpa方式）
+     * 方式二：继承 ElasticsearchRepository（jpa方式）（High Level REST Client）
      */
     @Autowired
     private ElasticsearchController elasticsearchController;
@@ -1568,22 +1607,37 @@ public class SpringbootApplicationTests {
         System.out.println(userMap);
     }
 
+    @Resource
+    private BoyService boyService;
     /**
      * 首字母排序
      */
     @Test
     public void lnitialSortTest(){
-        List<String> of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
-        System.out.println(of.stream().sorted(Comparator.comparing(a->a)).collect(Collectors.toList()));
-        of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
-        of.sort(Comparator.comparing(a->a));
-        System.out.println(of);
-        of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
-        // 创建一个中文排序比较器
-        Collator chineseComparator = Collator.getInstance(Locale.CHINESE);
-        // 使用中文排序比较器对字符串列表进行排序
-        of.sort(chineseComparator);
-        System.out.println(of);
+//        List<String> of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
+//        System.out.println(of.stream().sorted(Comparator.comparing(a->a)).collect(Collectors.toList()));
+//        of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
+//        of.sort(Comparator.comparing(a->a));
+//        System.out.println(of);
+//        of = CollUtil.newArrayList("张三", "李四一", "王五", "3", "1", "2");
+//        // 创建一个中文排序比较器
+//        Collator chineseComparator = Collator.getInstance(Locale.CHINESE);
+//        // 使用中文排序比较器对字符串列表进行排序
+//        of.sort(chineseComparator);
+//        System.out.println(of);
+
+        List<Boy> boys = new ArrayList<>();
+        Boy boy = new Boy();
+        boy.setName("李寻欢");
+        boys.add(boy);
+        boy = new Boy();
+        boy.setName("楚留香");
+        boys.add(boy);
+        System.out.println(JSON.toJSONString(boys, SerializerFeature.WriteMapNullValue));
+        System.out.println("-------------------------------");
+//        boyService.saveBatch(boys);
+        boyService.addBoyBatch(boys);
+        System.out.println(JSON.toJSONString(boys, SerializerFeature.WriteMapNullValue));
     }
 
 }

@@ -233,4 +233,9 @@ public class BoyServiceImpl extends ServiceImpl<BoyDao, Boy> implements BoyServi
         int insert = boyDao.insert(boy);
         return insert;
     }
+
+    @Override
+    public int addBoyBatch(List<Boy> boys) {
+        return boyDao.addBoyBatch(boys);
+    }
 }

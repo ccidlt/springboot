@@ -28,4 +28,7 @@ public interface BoyDao extends BaseMapper<Boy> {
 
     @DataScope
     List<Boy> selectList(@Param("ew") Wrapper<Boy> queryWrapper);
+
+    int addBoyBatch(List<Boy> list);
+
 }

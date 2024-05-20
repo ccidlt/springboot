@@ -37,4 +37,6 @@ public interface BoyService extends IService<Boy> {
     void async();
 
     void atomic();
+
+    int addBoyBatch(List<Boy> boys);
 }
