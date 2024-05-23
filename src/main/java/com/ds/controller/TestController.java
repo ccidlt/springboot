@@ -3,6 +3,7 @@ package com.ds.controller;
 import cn.afterturn.easypoi.word.WordExportUtil;
 import cn.afterturn.easypoi.word.entity.MyXWPFDocument;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -35,11 +36,14 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -77,6 +81,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -550,6 +555,43 @@ public class TestController {
 //            converter.shutDown();
 //        }
 //        os.close();
+    }
+
+
+    @RequestMapping("/executeTask")
+    public void executeTask() throws Exception{
+        System.out.println(Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+        Future<String> future1 = ((TestController)AopContext.currentProxy()).futureResult();
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+            System.out.println("---测试2执行first，"+Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+            try {
+                Thread.sleep(1000);
+                System.out.println("---测试2执行second，"+Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "===测试结果2";
+        }, tptExecutor);
+        Future<String> future3 = tptExecutor.submit(() -> {
+            System.out.println("---测试3执行，"+Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+            return "===测试结果3";
+        });
+        CompletableFuture<String> future4 = CompletableFuture.supplyAsync(() -> {
+            System.out.println("---测试4执行，"+Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+            return "===测试结果4";
+        }, tptExecutor);
+        System.out.println(future1.get()+"，"+DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+        System.out.println(future2.thenAccept(a -> System.out.println(a+"，"+DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"))));
+        System.out.println(future4.thenAccept(a -> System.out.println(a+"，"+DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"))));
+        System.out.println(future3.get()+"，"+DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+    }
+
+    @Async(value = "tptExecutor")
+    public Future<String> futureResult() throws Exception {
+        System.out.println("---测试1执行first，"+Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+        Thread.sleep(2000);
+        System.out.println("---测试1执行second，"+Thread.currentThread().getName()+","+ DateUtil.format(new Date(),"yyyy-MM-dd HH:ss:mm SSS"));
+        return new AsyncResult<>("===测试结果1");
     }
 
 }
