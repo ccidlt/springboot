@@ -20,6 +20,15 @@ spring:
         url: jdbc:mysql://127.0.0.1:3306/db2?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&rewriteBatchedStatements=true
         username: root
         password: 123456
+    masterslave:
+      # 配置slave节点的负载均衡均衡策略,采用轮询机制
+      load-balance-algorithm-type: round_robin
+      # 配置主库master,负责数据的写入
+      master-data-source-name: db1
+      # 配置主从名称
+      name: ms
+      # 配置从库slave节点
+      slave-data-source-names: db2
     sharding:
       # 未配置分片规则的表将通过默认数据源定位-适用于单库单表，该表无需配置分片规则
       default-data-source-name: db1
